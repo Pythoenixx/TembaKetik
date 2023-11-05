@@ -3,3 +3,5 @@ WN_LEBAR = 500
 WN_TINGGI = 820
 
 FPS = 60
+
+PIC_ZOOM = 5

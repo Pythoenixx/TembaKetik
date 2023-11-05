@@ -11,15 +11,29 @@ clock = pygame.time.Clock()
 pygame.display.set_caption("Shootype")
 
 class Latar:
-    def __init__(self, x, y, veloX, veloY) -> None:
-        self.x = x
-        self.y = y
-        self.veloX = veloX
-        self.veloY = veloY
-latar_x,latar_y = 0,WN_TINGGI
-latar = pygame.image.load('img/angkasa1.png').convert_alpha()
+    def __init__(self) -> None:
+        self.x = 0
+        self.y = WN_TINGGI
+        self.veloX = 0
+        self.veloY = 0.2
+        self.gmbr = pygame.image.load('img/angkasa1.png').convert_alpha()
+        self.gmbr = pygame.transform.scale(self.gmbr,(WN_LEBAR*PIC_ZOOM,WN_TINGGI*PIC_ZOOM))
+        
+    
+    def gerak(self):
+        screen.blit(self.gmbr, self.gmbr.get_rect(midbottom=(self.x,round(self.y))))
+        
+        self.y += self.veloY
+        # Check if the image goes off the bottom of the screen
+        if self.y > (self.gmbr.get_height()):
+        # Wrap the image around to the top of the screen
+            self.y -= self.gmbr.get_height() - WN_TINGGI
+            self.x += 100
+            if self.x > (self.gmbr.get_width()):
+                self.x = random.randint(0,self.gmbr.get_width())
+        
+        
 
-latar = pygame.transform.scale(latar,(WN_LEBAR*10,WN_TINGGI*10))
 
 
 # Get the center of the screen
@@ -32,6 +46,8 @@ pygame.draw.line(screen, (255, 255, 255), (center_x - 100, center_y), (center_x 
 # Create a rectangle object with a position of (50, 50) and a size of (100, 100)
 rect = pygame.Rect(0, 0, 40, 40)
 rect.center = (center_x, WN_TINGGI - 100)
+
+latar = Latar()
 
 # Create a game loop
 running = True
@@ -52,21 +68,14 @@ while running:
             x, y = pygame.mouse.get_pos()
             # Print the mouse coordinates
             print(x, y)
-            
-    kotak_latar = latar.get_rect(midbottom=(latar_x,latar_y))
+    
+    #biar x de trail
     screen.fill((0, 0, 0))
-    screen.blit(latar, kotak_latar)
     
-    latar_y += 1
-    # Check if the image goes off the bottom of the screen
-    if latar_y > (latar.get_height()):
-        # Wrap the image around to the top of the screen
-        latar_y -= latar.get_height() - WN_TINGGI
-        latar_x += 100
-        if latar_x > (latar.get_width()):
-            latar_x = random.randint(0,latar.get_width())
+    latar.gerak()
     
-    print("coord Y",latar_y)
+    
+    print("coord Y",round(latar.y))
     # print(latar.get_size()) (5000, 8200)
     
     # Draw a red square on the screen using the rectangle object
