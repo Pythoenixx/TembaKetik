@@ -8,7 +8,7 @@ pygame.init()
 screen = pygame.display.set_mode((WN_LEBAR, WN_TINGGI))
 clock = pygame.time.Clock()
 # Set the title of the window
-pygame.display.set_caption("Shootype")
+pygame.display.set_caption("TembaKetik")
 
 class Latar:
     def __init__(self) -> None:
