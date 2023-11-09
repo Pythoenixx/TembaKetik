@@ -47,6 +47,14 @@ pygame.draw.line(screen, (255, 255, 255), (center_x - 100, center_y), (center_x 
 rect = pygame.Rect(0, 0, 40, 40)
 rect.center = (center_x, WN_TINGGI - 100)
 
+musuh_rect = pygame.Rect(0, 0, 20, 20)
+musuh_rect.center = (20, 100)
+
+# Define the speed and direction
+speed = 5
+direction = pygame.math.Vector2(rect.center) - pygame.math.Vector2(musuh_rect.center) # A vector from rect1 to rect2
+direction = direction.normalize() # A unit vector with the same direction
+
 latar = Latar()
 
 # Create a game loop
@@ -74,12 +82,17 @@ while running:
     
     latar.gerak()
     
+    # Update the position of rect1
+    musuh_rect.x += speed * direction.x
+    musuh_rect.y += speed * direction.y
+    
     
     print("coord Y",round(latar.y))
     # print(latar.get_size()) (5000, 8200)
     
     # Draw a red square on the screen using the rectangle object
     pygame.draw.rect(screen, (255, 0, 0), rect)
+    pygame.draw.rect(screen, (255, 255, 0), musuh_rect)
     
     pygame.display.flip()
     clock.tick(FPS)
