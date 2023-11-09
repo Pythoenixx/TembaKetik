@@ -31,10 +31,6 @@ class Latar:
             self.x += 100
             if self.x > (self.gmbr.get_width()):
                 self.x = random.randint(0,self.gmbr.get_width())
-        
-        
-
-
 
 # Get the center of the screen
 center_x = screen.get_width() // 2
@@ -44,19 +40,28 @@ center_y = screen.get_height() // 2
 pygame.draw.line(screen, (255, 255, 255), (center_x - 100, center_y), (center_x + 100, center_y), 5)
 
 # Create a rectangle object with a position of (50, 50) and a size of (100, 100)
-rect = pygame.Rect(0, 0, 40, 40)
-rect.center = (center_x, WN_TINGGI - 100)
+pemain_rect = pygame.Rect(0, 0, 40, 40)
+pemain_rect.center = (center_x, WN_TINGGI - 100)
 
 musuh_rect = pygame.Rect(0, 0, 20, 20)
 musuh_rect.center = (20, 100)
 
+musuh_rect2 = pygame.Rect(0, 0, 20, 20)
+musuh_rect2.center = (420, -69)
+
 # Define the speed and direction
-speed = 5
-direction = pygame.math.Vector2(rect.center) - pygame.math.Vector2(musuh_rect.center) # A vector from rect1 to rect2
+speed = 0.5
+direction = pygame.math.Vector2(pemain_rect.center) - pygame.math.Vector2(musuh_rect.center) # A vector from rect1 to rect2
 direction = direction.normalize() # A unit vector with the same direction
 
-latar = Latar()
+# Define the speed and direction
+speed2 = 0.8
+direction2 = pygame.math.Vector2(pemain_rect.center) - pygame.math.Vector2(musuh_rect2.center) # A vector from rect1 to rect2
+direction2 = direction2.normalize() # A unit vector with the same direction
 
+latar = Latar()
+gerakan_x,gerakan_y = musuh_rect.x,musuh_rect.y
+gerakan_x2,gerakan_y2 = musuh_rect2.x,musuh_rect2.y
 # Create a game loop
 running = True
 while running:
@@ -82,17 +87,28 @@ while running:
     
     latar.gerak()
     
+    gerakan_x +=  (speed * direction.x)
+    gerakan_y +=  (speed * direction.y)
+    
     # Update the position of rect1
-    musuh_rect.x += speed * direction.x
-    musuh_rect.y += speed * direction.y
+    musuh_rect.x = gerakan_x
+    musuh_rect.y = gerakan_y
+    
+    gerakan_x2 +=  (speed2 * direction2.x)
+    gerakan_y2 +=  (speed2 * direction2.y)
+    
+    # Update the position of rect1
+    musuh_rect2.x = gerakan_x2
+    musuh_rect2.y = gerakan_y2
     
     
-    print("coord Y",round(latar.y))
+    # print("coord Y",round(latar.y))
     # print(latar.get_size()) (5000, 8200)
     
     # Draw a red square on the screen using the rectangle object
-    pygame.draw.rect(screen, (255, 0, 0), rect)
+    pygame.draw.rect(screen, (255, 0, 0), pemain_rect)
     pygame.draw.rect(screen, (255, 255, 0), musuh_rect)
+    pygame.draw.rect(screen, (0, 255, 0), musuh_rect2)
     
     pygame.display.flip()
     clock.tick(FPS)
