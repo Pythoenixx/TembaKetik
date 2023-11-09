@@ -1,5 +1,5 @@
 import pygame,sys,random
-from pemalar import *
+from scripts.pemalar import *
 #klo penembak nya kat tgh pun agak interesting
 # Initialize pygame
 pygame.init()
