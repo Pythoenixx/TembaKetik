@@ -1,5 +1,6 @@
-import pygame,sys,random
+import pygame,sys
 from scripts.pemalar import *
+from scripts.latar import Latar
 #klo penembak nya kat tgh pun agak interesting
 # Initialize pygame
 pygame.init()
@@ -9,28 +10,6 @@ screen = pygame.display.set_mode((WN_LEBAR, WN_TINGGI))
 clock = pygame.time.Clock()
 # Set the title of the window
 pygame.display.set_caption("TembaKetik")
-
-class Latar:
-    def __init__(self) -> None:
-        self.x = 0
-        self.y = WN_TINGGI
-        self.veloX = 0
-        self.veloY = 0.2
-        self.gmbr = pygame.image.load('img/angkasa1.png').convert_alpha()
-        self.gmbr = pygame.transform.scale(self.gmbr,(WN_LEBAR*PIC_ZOOM,WN_TINGGI*PIC_ZOOM))
-        
-    
-    def gerak(self):
-        screen.blit(self.gmbr, self.gmbr.get_rect(midbottom=(self.x,round(self.y))))
-        
-        self.y += self.veloY
-        # Check if the image goes off the bottom of the screen
-        if self.y > (self.gmbr.get_height()):
-        # Wrap the image around to the top of the screen
-            self.y -= self.gmbr.get_height() - WN_TINGGI
-            self.x += 100
-            if self.x > (self.gmbr.get_width()):
-                self.x = random.randint(0,self.gmbr.get_width())
 
 # Get the center of the screen
 center_x = screen.get_width() // 2
@@ -59,7 +38,7 @@ speed2 = 0.8
 direction2 = pygame.math.Vector2(pemain_rect.center) - pygame.math.Vector2(musuh_rect2.center) # A vector from rect1 to rect2
 direction2 = direction2.normalize() # A unit vector with the same direction
 
-latar = Latar()
+latar = Latar(0, WN_TINGGI, 0, 0.2)
 gerakan_x,gerakan_y = musuh_rect.x,musuh_rect.y
 gerakan_x2,gerakan_y2 = musuh_rect2.x,musuh_rect2.y
 # Create a game loop
@@ -85,7 +64,7 @@ while running:
     #biar x de trail
     screen.fill((0, 0, 0))
     
-    latar.gerak()
+    latar.gerak(screen)
     
     gerakan_x +=  (speed * direction.x)
     gerakan_y +=  (speed * direction.y)
