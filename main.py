@@ -1,6 +1,8 @@
-import pygame,sys
+import pygame,sys,random
 from scripts.pemalar import *
 from scripts.latar import Latar
+from scripts.musuh import Musuh
+import random
 #klo penembak nya kat tgh pun agak interesting
 # Initialize pygame
 pygame.init()
@@ -22,25 +24,22 @@ pygame.draw.line(screen, (255, 255, 255), (center_x - 100, center_y), (center_x 
 pemain_rect = pygame.Rect(0, 0, 40, 40)
 pemain_rect.center = (center_x, WN_TINGGI - 100)
 
-musuh_rect = pygame.Rect(0, 0, 20, 20)
-musuh_rect.center = (20, 100)
+bilangan_musuh = 10
+list_musuh = []
 
-musuh_rect2 = pygame.Rect(0, 0, 20, 20)
-musuh_rect2.center = (420, -69)
-
-# Define the speed and direction
-speed = 0.5
-direction = pygame.math.Vector2(pemain_rect.center) - pygame.math.Vector2(musuh_rect.center) # A vector from rect1 to rect2
-direction = direction.normalize() # A unit vector with the same direction
-
-# Define the speed and direction
-speed2 = 0.8
-direction2 = pygame.math.Vector2(pemain_rect.center) - pygame.math.Vector2(musuh_rect2.center) # A vector from rect1 to rect2
-direction2 = direction2.normalize() # A unit vector with the same direction
+for i in range(bilangan_musuh):
+    # Generate random coordinates, size, and color for each rect
+    x = random.randint(0, WN_LEBAR)
+    y = random.randint(-100, 69)
+    w = random.randint(10, 50)
+    h = w #sbb nk buat square
+    color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+    laju = random.uniform(0.5, 10)
+    
+    musuh = Musuh(x, y, w, h, color, pemain_rect, laju)
+    list_musuh.append(musuh)
 
 latar = Latar(0, WN_TINGGI, 0, 0.2)
-gerakan_x,gerakan_y = musuh_rect.x,musuh_rect.y
-gerakan_x2,gerakan_y2 = musuh_rect2.x,musuh_rect2.y
 # Create a game loop
 running = True
 while running:
@@ -66,28 +65,15 @@ while running:
     
     latar.gerak(screen)
     
-    gerakan_x +=  (speed * direction.x)
-    gerakan_y +=  (speed * direction.y)
-    
-    # Update the position of rect1
-    musuh_rect.x = gerakan_x
-    musuh_rect.y = gerakan_y
-    
-    gerakan_x2 +=  (speed2 * direction2.x)
-    gerakan_y2 +=  (speed2 * direction2.y)
-    
-    # Update the position of rect1
-    musuh_rect2.x = gerakan_x2
-    musuh_rect2.y = gerakan_y2
-    
-    
     # print("coord Y",round(latar.y))
     # print(latar.get_size()) (5000, 8200)
     
     # Draw a red square on the screen using the rectangle object
     pygame.draw.rect(screen, (255, 0, 0), pemain_rect)
-    pygame.draw.rect(screen, (255, 255, 0), musuh_rect)
-    pygame.draw.rect(screen, (0, 255, 0), musuh_rect2)
+    
+    for musuh in list_musuh:
+        musuh.update()
+        musuh.draw(screen)
     
     pygame.display.flip()
     clock.tick(FPS)
