@@ -4,7 +4,7 @@ from scripts.pemalar import *
 class Latar:
     def __init__(self,x,y,veloX,veloY) -> None:
         self.x = x
-        self.y = WN_TINGGI
+        self.y = y
         self.veloX = veloX
         self.veloY = veloY
         
