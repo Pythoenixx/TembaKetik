@@ -24,20 +24,7 @@ pygame.draw.line(screen, (255, 255, 255), (center_x - 100, center_y), (center_x 
 pemain_rect = pygame.Rect(0, 0, 40, 40)
 pemain_rect.center = (center_x, WN_TINGGI - 100)
 
-bilangan_musuh = 10
-list_musuh = []
-
-for i in range(bilangan_musuh):
-    # Generate random coordinates, size, and color for each rect
-    x = random.randint(0, WN_LEBAR)
-    y = random.randint(-100, 69)
-    w = random.randint(10, 50)
-    h = w #sbb nk buat square
-    color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
-    laju = random.uniform(0.5, 10)
-    
-    musuh = Musuh(x, y, w, h, color, pemain_rect, laju)
-    list_musuh.append(musuh)
+list_musuh = Musuh.jana(15, WN_LEBAR, pemain_rect)
 
 latar = Latar(0, WN_TINGGI, 0, 0.2)
 # Create a game loop
