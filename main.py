@@ -1,7 +1,7 @@
 import pygame,sys,random
 from scripts.pemalar import *
 from scripts.latar import Latar
-from scripts.musuh import Musuh
+from scripts.musuh import Musuh,jana_musuh
 import random
 #klo penembak nya kat tgh pun agak interesting
 # Initialize pygame
@@ -24,7 +24,7 @@ pygame.draw.line(screen, (255, 255, 255), (center_x - 100, center_y), (center_x 
 pemain_rect = pygame.Rect(0, 0, 40, 40)
 pemain_rect.center = (center_x, WN_TINGGI - 100)
 
-list_musuh = Musuh.jana(15, WN_LEBAR, pemain_rect)
+group_musuh = jana_musuh(10, WN_LEBAR, pemain_rect)
 
 latar = Latar(0, WN_TINGGI, 0, 0.2)
 # Create a game loop
@@ -58,9 +58,9 @@ while running:
     # Draw a red square on the screen using the rectangle object
     pygame.draw.rect(screen, (255, 0, 0), pemain_rect)
     
-    for musuh in list_musuh:
-        musuh.update()
-        musuh.draw(screen)
+    group_musuh.draw(screen)
+    group_musuh.update(WN_TINGGI)
     
     pygame.display.flip()
     clock.tick(FPS)
+    pygame.display.set_caption(f'{clock.get_fps() :.1f}')
