@@ -1,17 +1,17 @@
-import pygame,sys,random
+import pygame,sys
 from scripts.pemalar import *
 from scripts.latar import Latar
-from scripts.musuh import Musuh,jana_musuh
+from scripts.entities import jana_musuh, Pemain
 import random
 #klo penembak nya kat tgh pun agak interesting
 # Initialize pygame
 pygame.init()
 
 # Create a window object
+icon = pygame.image.load('img/kapal_angkasa.PNG')#gmbr ni bgi libpng warning: iCCP: known incorrect sRGB profile?
+pygame.display.set_icon(icon)
 screen = pygame.display.set_mode((WN_LEBAR, WN_TINGGI))
 clock = pygame.time.Clock()
-# Set the title of the window
-pygame.display.set_caption("TembaKetik")
 
 # Get the center of the screen
 center_x = screen.get_width() // 2
@@ -24,7 +24,11 @@ pygame.draw.line(screen, (255, 255, 255), (center_x - 100, center_y), (center_x 
 pemain_rect = pygame.Rect(0, 0, 40, 40)
 pemain_rect.center = (center_x, WN_TINGGI - 100)
 
-group_musuh = jana_musuh(10, WN_LEBAR, pemain_rect)
+pemain = Pemain(center_x, WN_TINGGI - 100, 'img/kapal_angkasa.PNG')
+group_pemain = pygame.sprite.Group()
+group_pemain.add(pemain)
+
+group_musuh = jana_musuh(10, WN_LEBAR, pemain.rect)
 
 latar = Latar(0, WN_TINGGI, 0, 0.2)
 # Create a game loop
@@ -55,12 +59,12 @@ while running:
     # print("coord Y",round(latar.y))
     # print(latar.get_size()) (5000, 8200)
     
-    # Draw a red square on the screen using the rectangle object
-    pygame.draw.rect(screen, (255, 0, 0), pemain_rect)
+    group_pemain.draw(screen)
     
     group_musuh.draw(screen)
     group_musuh.update(WN_TINGGI)
     
     pygame.display.flip()
     clock.tick(FPS)
-    pygame.display.set_caption(f'{clock.get_fps() :.1f}')
+    pygame.display.set_caption(f'TembaKetik FPS: {clock.get_fps() :.1f}')# f' ' tu utk tukar jdi f-string (mcm string data type)
+
