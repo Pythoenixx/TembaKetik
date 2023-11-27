@@ -2,7 +2,7 @@ import pygame,sys
 from scripts.pemalar import *
 from scripts.latar import Latar
 from scripts.entities import jana_musuh, Pemain
-import random
+
 #klo penembak nya kat tgh pun agak interesting
 # Initialize pygame
 pygame.init()
@@ -28,7 +28,7 @@ pemain = Pemain(center_x, WN_TINGGI - 100, 'img/kapal_angkasa.PNG')
 group_pemain = pygame.sprite.Group()
 group_pemain.add(pemain)
 
-group_musuh = jana_musuh(10, WN_LEBAR, pemain.rect)
+group_musuh = jana_musuh(10, WN_LEBAR, pemain.rect, pygame.font.SysFont("Tahoma", 20))#bukan patut tinggi ke?
 
 latar = Latar(0, WN_TINGGI, 0, 0.2)
 # Create a game loop
@@ -62,7 +62,7 @@ while running:
     group_pemain.draw(screen)
     
     group_musuh.draw(screen)
-    group_musuh.update(WN_TINGGI)
+    group_musuh.update(screen, WN_TINGGI)
     
     pygame.display.flip()
     clock.tick(FPS)
