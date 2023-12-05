@@ -9,20 +9,26 @@ screen = pygame.display.set_mode((800, 600))
 # Fill the screen with black color
 screen.fill((0, 0, 0))
 
-# Create a font object
-font = pygame.font.SysFont("Arial", 64)
+image = pygame.image.load('img/tahi_bintang.png').convert_alpha()
+mask = pygame.mask.from_surface(image)
+outline_points = mask.outline()
+# Get the bottom left rectangle and its coordinates
+bottom_left_point = outline_points[1]
+bottom_left_x = bottom_left_point[0]
+bottom_left_y = bottom_left_point[1]
+# Sort the list by y-values in descending order
+outline_points.sort (key=lambda c: c [1], reverse=True)
 
-# Create a text surface object
-text = font.render("Hello, Pygame!", True, (255, 0, 0), (0, 0, 255))
+# Find the minimum x-value among the coordinates with the highest y-value
+min_x = min(c[0] for c in outline_points if c [1] == outline_points [0][1])
+print(outline_points[0][1])
 
-# Create a rectangular object for the text surface object
-text_rect = text.get_rect()
+# Return the coordinate that has both the highest y-value and the minimum x-value
+bottom_left = next(c for c in outline_points if c [0] == min_x and c [1] == outline_points [0][1])
 
-# Set the center of the rectangular object
-text_rect.center = (400, 300)
-
-
-
+clock = pygame.time.Clock()
+FPS = 60
+i = 0
 # Create a game loop
 running = True
 while running:
@@ -35,4 +41,15 @@ while running:
             # Exit the loop and quit the program
             running = False
             pygame.quit()
-    screen.blit(text, text_rect)
+    screen.blit(image, (0, 0))
+    # i += 1
+    # if i == len(outline_points):
+    #     i = 0
+    # print(i,len(outline_points))
+    
+    
+    # pygame.draw.circle(screen, (255, 0, 0), outline_points[len(outline_points)//2], 1)
+    # pygame.draw.circle(screen, (255, 0, 0), outline_points[len(outline_points)*3//4], 1)
+    pygame.draw.circle(screen, (255, 255, 255), bottom_left, 1)
+    clock.tick(FPS)
+    pygame.display.flip()
