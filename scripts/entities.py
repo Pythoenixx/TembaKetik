@@ -1,5 +1,12 @@
 import pygame,random
 
+# Open the file and read the words
+with open("txt/1000words.txt", "r") as f:
+    most_used_words = f.read().split()
+
+with open("txt/10000words.txt", "r") as f:
+    least_used_words = f.read().split()
+
 class Musuh(pygame.sprite.Sprite):
     def __init__(self, x, y, image_path, sasaran_rect, speed, font,text_offset) -> None:
         super().__init__()
@@ -10,7 +17,7 @@ class Musuh(pygame.sprite.Sprite):
         self.direction = pygame.math.Vector2(sasaran_rect.center) - pygame.math.Vector2(self.rect.center)
         self.direction = self.direction.normalize() # unit vector
         self.speed = speed
-        self.text = font.render('ayam', True, (255, 255, 255), (0, 0, 0))
+        self.text = font.render(random_word(most_used_words, least_used_words, 90), True, (255, 255, 255), (0, 0, 0))
         self.text_offset = text_offset
         
     def update(self, screen, WN_TINGGI):
@@ -38,7 +45,7 @@ class Pemain(pygame.sprite.Sprite):
     def __init__(self, x, y, image_path) -> None:
         super().__init__()
         self.image = pygame.image.load(image_path).convert_alpha()
-        self.image = pygame.transform.scale(self.image, (50, 50))
+        self.image = pygame.transform.scale(self.image, (69, 69))
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
         
@@ -49,7 +56,7 @@ class Pemain(pygame.sprite.Sprite):
 def jana_musuh(bilangan, WN_LEBAR, pemain_rect, font):
     image_path = 'img/tahi_bintang.png'
     image = pygame.image.load(image_path).convert_alpha()
-    image = pygame.transform.scale(image, (50, 50))
+    image = pygame.transform.scale(image, (50, 50)) #value ni kene sama dgn kat class Musuh
     bottomleft = cari_kiri_bawah(image)
     musuh_group = pygame.sprite.Group()
     for i in range(bilangan):
@@ -80,4 +87,13 @@ def cari_kiri_bawah(image):
     
     
     return bottom_left
+
+# Define a function that takes two lists of words and a percentage as parameters, and returns a random word from the lists based on the percentage
+def random_word(most_used, least_used, percentage):
+    # Generate a random number between 1 and 100
+    number = random.randint(1, 100)
+    # Use a ternary operator to pick a random word from the lists based on the percentage
+    word = random.choice(most_used) if number <= percentage else random.choice(least_used)
+    # Return the word
+    return word
 

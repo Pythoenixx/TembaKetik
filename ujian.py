@@ -1,4 +1,22 @@
 import pygame
+import random
+import math
+# Open the file and read the words
+with open("txt/1000words.txt", "r") as f:
+    most_used_words = f.read().split()
+
+with open("txt/10000words.txt", "r") as f:
+    least_used_words = f.read().split()
+
+# Define a function that takes two lists of words and a percentage as parameters, and returns a random word from the lists based on the percentage
+def random_word(most_used, least_used, percentage):
+    # Generate a random number between 1 and 100
+    number = random.randint(1, 100)
+    # Use a ternary operator to pick a random word from the lists based on the percentage
+    word = random.choice(most_used) if number <= percentage else random.choice(least_used)
+    # Return the word
+    return word
+
 
 # Initialize pygame
 pygame.init()
@@ -12,10 +30,7 @@ screen.fill((0, 0, 0))
 image = pygame.image.load('img/tahi_bintang.png').convert_alpha()
 mask = pygame.mask.from_surface(image)
 outline_points = mask.outline()
-# Get the bottom left rectangle and its coordinates
-bottom_left_point = outline_points[1]
-bottom_left_x = bottom_left_point[0]
-bottom_left_y = bottom_left_point[1]
+
 # Sort the list by y-values in descending order
 outline_points.sort (key=lambda c: c [1], reverse=True)
 
@@ -53,3 +68,4 @@ while running:
     pygame.draw.circle(screen, (255, 255, 255), bottom_left, 1)
     clock.tick(FPS)
     pygame.display.flip()
+    print(random_word(most_used_words, least_used_words, 80))
