@@ -1,4 +1,4 @@
-import pygame,random
+import pygame, random, math
 
 # Open the file and read the words
 with open("txt/1000words.txt", "r") as f:
@@ -6,6 +6,44 @@ with open("txt/1000words.txt", "r") as f:
 
 with open("txt/10000words.txt", "r") as f:
     least_used_words = f.read().split()
+
+class Pemain(pygame.sprite.Sprite):
+    def __init__(self, x, y, image_path) -> None:
+        super().__init__()
+        self.image = pygame.image.load(image_path).convert_alpha()
+        self.image = pygame.transform.scale(self.image, (69, 69))
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+        
+    def update(self, screen, enemy_group, char_typed):
+        if char_typed != '':
+            nearest_enemy = self.find_nearest_enemy(enemy_group, char_typed)
+            if nearest_enemy is not None:
+                # Draw a border around the sprite's rect
+                pygame.draw.rect(screen, (255, 0, 0), nearest_enemy.rect, 1)
+                print(self.find_nearest_enemy(enemy_group, char_typed).word)
+
+    # Define a function that takes a sprite and a list of sprites as parameters, and returns the nearest sprite in the list
+    def find_nearest_enemy(sprite, sprite_list, char_typed):
+        # Initialize the minimum distance and the nearest sprite
+        min_dist = math.inf
+        nearest_sprite = None
+        # Loop through the sprites in the list
+        for other_sprite in sprite_list:
+            # Calculate the distance between the centers of the two sprites
+            if other_sprite.word[0] != char_typed[-1]:
+                continue
+            
+            dx = other_sprite.rect.centerx - sprite.rect.centerx
+            dy = other_sprite.rect.centery - sprite.rect.centery
+            dist = math.sqrt(dx**2 + dy**2)
+            # Compare the distance with the minimum distance
+            if dist < min_dist:
+                # Update the minimum distance and the nearest sprite
+                min_dist = dist
+                nearest_sprite = other_sprite
+        # Return the nearest sprite
+        return nearest_sprite
 
 class Musuh(pygame.sprite.Sprite):
     def __init__(self, x, y, image_path, sasaran_rect, speed, font,text_offset) -> None:
@@ -17,7 +55,8 @@ class Musuh(pygame.sprite.Sprite):
         self.direction = pygame.math.Vector2(sasaran_rect.center) - pygame.math.Vector2(self.rect.center)
         self.direction = self.direction.normalize() # unit vector
         self.speed = speed
-        self.text = font.render(random_word(most_used_words, least_used_words, 90), True, (255, 255, 255), (0, 0, 0))
+        self.word = random_word(most_used_words, least_used_words, 90)
+        self.text = font.render(self.word, True, (255, 255, 255), (0, 0, 0))
         self.text_offset = text_offset
         
     def update(self, screen, WN_TINGGI):
@@ -40,18 +79,6 @@ class Musuh(pygame.sprite.Sprite):
     def destruct(self, WN_TINGGI):
         if self.gerakanY > WN_TINGGI + 69:
             self.kill()
-
-class Pemain(pygame.sprite.Sprite):
-    def __init__(self, x, y, image_path) -> None:
-        super().__init__()
-        self.image = pygame.image.load(image_path).convert_alpha()
-        self.image = pygame.transform.scale(self.image, (69, 69))
-        self.rect = self.image.get_rect()
-        self.rect.center = (x, y)
-        
-    def update(self):
-        pass
-        
 
 def jana_musuh(bilangan, WN_LEBAR, pemain_rect, font):
     image_path = 'img/tahi_bintang.png'
@@ -96,4 +123,3 @@ def random_word(most_used, least_used, percentage):
     word = random.choice(most_used) if number <= percentage else random.choice(least_used)
     # Return the word
     return word
-
