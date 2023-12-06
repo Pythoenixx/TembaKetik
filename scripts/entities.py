@@ -45,7 +45,7 @@ class Pemain(pygame.sprite.Sprite):
     def __init__(self, x, y, image_path) -> None:
         super().__init__()
         self.image = pygame.image.load(image_path).convert_alpha()
-        self.image = pygame.transform.scale(self.image, (50, 50))
+        self.image = pygame.transform.scale(self.image, (69, 69))
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
         
@@ -56,7 +56,7 @@ class Pemain(pygame.sprite.Sprite):
 def jana_musuh(bilangan, WN_LEBAR, pemain_rect, font):
     image_path = 'img/tahi_bintang.png'
     image = pygame.image.load(image_path).convert_alpha()
-    image = pygame.transform.scale(image, (50, 50))
+    image = pygame.transform.scale(image, (50, 50)) #value ni kene sama dgn kat class Musuh
     bottomleft = cari_kiri_bawah(image)
     musuh_group = pygame.sprite.Group()
     for i in range(bilangan):

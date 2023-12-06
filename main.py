@@ -24,7 +24,7 @@ pygame.draw.line(screen, (255, 255, 255), (center_x - 100, center_y), (center_x 
 pemain_rect = pygame.Rect(0, 0, 40, 40)
 pemain_rect.center = (center_x, WN_TINGGI - 100)
 
-pemain = Pemain(center_x, WN_TINGGI - 100, 'img/kapal_angkasa.PNG')
+pemain = Pemain(center_x, WN_TINGGI - 100, 'img/player_ship.PNG')
 group_pemain = pygame.sprite.Group()
 group_pemain.add(pemain)
 
