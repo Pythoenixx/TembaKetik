@@ -8,10 +8,13 @@ from scripts.entities import jana_musuh, Pemain
 pygame.init()
 
 # Create a window object
-icon = pygame.image.load('img/kapal_angkasa.PNG')#gmbr ni bgi libpng warning: iCCP: known incorrect sRGB profile?
+icon = pygame.image.load('img/kapal_angkasa.PNG')
 pygame.display.set_icon(icon)
 screen = pygame.display.set_mode((WN_LEBAR, WN_TINGGI))
 clock = pygame.time.Clock()
+char_typed = ''
+font = pygame.font.SysFont("Arial", 20)
+
 
 # Get the center of the screen
 center_x = screen.get_width() // 2
@@ -44,22 +47,23 @@ while running:
             running = False
             pygame.quit()
             sys.exit()
-        # Check if the mouse has moved
-        elif event.type == pygame.MOUSEMOTION:
-            # Get the mouse coordinates
-            x, y = pygame.mouse.get_pos()
-            # Print the mouse coordinates
-            print(x, y)
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_BACKSPACE:
+                char_typed = char_typed[:-1]  #amik smua value selain akhir sekali dlm list tu
+            else:
+                char_typed += event.unicode
     
     #biar x de trail
     screen.fill((0, 0, 0))
-    
     latar.gerak(screen)
     
+    text = font.render(char_typed, True, (255, 255, 255), (0, 0, 0))
+    screen.blit(text, (0, 0))
     # print("coord Y",round(latar.y))
     # print(latar.get_size()) (5000, 8200)
     
-    group_pemain.draw(screen)
+    group_pemain.draw(screen) #try cari group sprite utk yg ada 1 sprite je
+    group_pemain.update(screen, group_musuh, char_typed)
     
     group_musuh.draw(screen)
     group_musuh.update(screen, WN_TINGGI)
