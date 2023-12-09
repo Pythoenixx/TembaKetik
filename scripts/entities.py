@@ -14,16 +14,21 @@ class Pemain(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (69, 69))
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
+        self.nearest_enemy = None
         
     def update(self, screen, enemy_group, char_typed):
-        if char_typed != '':
-            nearest_enemy = self.find_nearest_enemy(enemy_group, char_typed)
-            if nearest_enemy is not None:
-                # Draw a border around the sprite's rect
-                pygame.draw.rect(screen, (255, 0, 0), nearest_enemy.rect, 1)
-                print(self.find_nearest_enemy(enemy_group, char_typed).word)
+        if char_typed != '' and (self.nearest_enemy is None or self.nearest_enemy.word == ''): #nmpknya klo enemy nya mati dia x jdi None so kene tgk ''
+            self.nearest_enemy = self.find_nearest_enemy(enemy_group, char_typed)
+        if self.nearest_enemy is not None:
+            # Draw a border around the sprite's rect
+            pygame.draw.rect(screen, (255, 0, 0), self.nearest_enemy.rect, 1)
+            # print(self.find_nearest_enemy(enemy_group, char_typed).word)
+            # if ada char baru buat benda bwh ni
+            if self.nearest_enemy.word[0] == char_typed[-1]: # cane ai tau??
+                self.nearest_enemy.word = self.nearest_enemy.word[1:] #dia phm aku nk delete word tu ke?
 
     # Define a function that takes a sprite and a list of sprites as parameters, and returns the nearest sprite in the list
+    # if all enemy move at the same speed, this only need to run once for optimization
     def find_nearest_enemy(sprite, sprite_list, char_typed):
         # Initialize the minimum distance and the nearest sprite
         min_dist = math.inf
@@ -56,7 +61,7 @@ class Musuh(pygame.sprite.Sprite):
         self.direction = self.direction.normalize() # unit vector
         self.speed = speed
         self.word = random_word(most_used_words, least_used_words, 90)
-        self.text = font.render(self.word, True, (255, 255, 255), (0, 0, 0))
+        self.font = font
         self.text_offset = text_offset
         
     def update(self, screen, WN_TINGGI):
@@ -70,6 +75,7 @@ class Musuh(pygame.sprite.Sprite):
         
         # # Draw a red circle around the bottom left point
         # pygame.draw.circle(screen, (255, 0, 0), (self.rect.x + self.text_offset[0], self.rect.y + self.text_offset[1]), 1)
+        self.text = self.font.render(self.word, True, (255, 255, 255), (0, 0, 0))
         self.text_rect = self.text.get_rect(topright = (self.rect.x + self.text_offset[0], self.rect.y + self.text_offset[1]))
         # screen.blit(self.mask_image, (0,0))
         screen.blit(self.text, self.text_rect)
@@ -77,6 +83,8 @@ class Musuh(pygame.sprite.Sprite):
         self.destruct(WN_TINGGI)
         
     def destruct(self, WN_TINGGI):
+        if self.word == '':
+            self.kill()
         if self.gerakanY > WN_TINGGI + 69:
             self.kill()
 
