@@ -52,6 +52,8 @@ while running:
                 char_typed = char_typed[:-1]  #amik smua value selain akhir sekali dlm list tu
             else:
                 char_typed += event.unicode
+            
+            group_pemain.update(screen, group_musuh, char_typed)
     
     #biar x de trail
     screen.fill((0, 0, 0))
@@ -63,7 +65,7 @@ while running:
     # print(latar.get_size()) (5000, 8200)
     
     group_pemain.draw(screen) #try cari group sprite utk yg ada 1 sprite je
-    group_pemain.update(screen, group_musuh, char_typed)
+    
     
     group_musuh.draw(screen)
     group_musuh.update(screen, WN_TINGGI)
