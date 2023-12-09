@@ -16,16 +16,19 @@ class Pemain(pygame.sprite.Sprite):
         self.rect.center = (x, y)
         self.nearest_enemy = None
         
-    def update(self, screen, enemy_group, char_typed):
-        if char_typed != '' and (self.nearest_enemy is None or self.nearest_enemy.word == ''): #nmpknya klo enemy nya mati dia x jdi None so kene tgk ''
+    def update(self, screen, enemy_group, char_typed, char_updated):
+        if char_typed and self.nearest_enemy is None and char_updated:
             self.nearest_enemy = self.find_nearest_enemy(enemy_group, char_typed)
+        
         if self.nearest_enemy is not None:
             # Draw a border around the sprite's rect
             pygame.draw.rect(screen, (255, 0, 0), self.nearest_enemy.rect, 1)
-            # print(self.find_nearest_enemy(enemy_group, char_typed).word)
-            # if ada char baru buat benda bwh ni
-            if self.nearest_enemy.word[0] == char_typed[-1]: # cane ai tau??
-                self.nearest_enemy.word = self.nearest_enemy.word[1:] #dia phm aku nk delete word tu ke?
+            if char_updated:
+                #update enemy
+                if self.nearest_enemy.word[0] == char_typed[-1]: # cane ai tau??
+                    self.nearest_enemy.word = self.nearest_enemy.word[1:] #dia phm aku nk delete word tu ke?
+                    if self.nearest_enemy.word == '':
+                        self.nearest_enemy = None
 
     # Define a function that takes a sprite and a list of sprites as parameters, and returns the nearest sprite in the list
     # if all enemy move at the same speed, this only need to run once for optimization
