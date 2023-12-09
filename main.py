@@ -11,21 +11,16 @@ pygame.init()
 icon = pygame.image.load('img/kapal_angkasa.PNG')
 pygame.display.set_icon(icon)
 screen = pygame.display.set_mode((WN_LEBAR, WN_TINGGI))
+
 clock = pygame.time.Clock()
 char_typed = ''
+char_updated = False
 font = pygame.font.SysFont("Arial", 20)
 
 
 # Get the center of the screen
 center_x = screen.get_width() // 2
 center_y = screen.get_height() // 2
-
-# Draw a horizontal line in the center of the screen
-pygame.draw.line(screen, (255, 255, 255), (center_x - 100, center_y), (center_x + 100, center_y), 5)
-
-# Create a rectangle object with a position of (50, 50) and a size of (100, 100)
-pemain_rect = pygame.Rect(0, 0, 40, 40)
-pemain_rect.center = (center_x, WN_TINGGI - 100)
 
 pemain = Pemain(center_x, WN_TINGGI - 100, 'img/player_ship.PNG')
 group_pemain = pygame.sprite.Group()
@@ -52,8 +47,8 @@ while running:
                 char_typed = char_typed[:-1]  #amik smua value selain akhir sekali dlm list tu
             else:
                 char_typed += event.unicode
+                char_updated = True
             
-            group_pemain.update(screen, group_musuh, char_typed)
     
     #biar x de trail
     screen.fill((0, 0, 0))
@@ -61,11 +56,10 @@ while running:
     
     text = font.render(char_typed, True, (255, 255, 255), (0, 0, 0))
     screen.blit(text, (0, 0))
-    # print("coord Y",round(latar.y))
-    # print(latar.get_size()) (5000, 8200)
     
     group_pemain.draw(screen) #try cari group sprite utk yg ada 1 sprite je
-    
+    group_pemain.update(screen, group_musuh, char_typed, char_updated)
+    char_updated = False
     
     group_musuh.draw(screen)
     group_musuh.update(screen, WN_TINGGI)
