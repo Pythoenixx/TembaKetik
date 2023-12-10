@@ -1,7 +1,8 @@
 import pygame,sys
 from scripts.pemalar import *
 from scripts.latar import Latar
-from scripts.entities import jana_musuh, Pemain
+from scripts.musuh import jana_musuh
+from scripts.pemain import Pemain
 
 #klo penembak nya kat tgh pun agak interesting
 # Initialize pygame
