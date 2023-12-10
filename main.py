@@ -62,7 +62,7 @@ while running:
     char_updated = False
     
     group_musuh.draw(screen)
-    group_musuh.update(screen, WN_TINGGI)
+    group_musuh.update(screen, WN_TINGGI, group_musuh)
     
     pygame.display.flip()
     clock.tick(FPS)

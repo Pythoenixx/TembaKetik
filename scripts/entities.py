@@ -21,8 +21,9 @@ class Pemain(pygame.sprite.Sprite):
             self.nearest_enemy = self.find_nearest_enemy(enemy_group, char_typed)
         
         if self.nearest_enemy is not None:
-            # Draw a border around the sprite's rect
+            self.nearest_enemy.text_color = (255, 0, 0)#red
             pygame.draw.rect(screen, (255, 0, 0), self.nearest_enemy.rect, 1)
+            self.nearest_enemy.targeted = True
             if char_updated:
                 #update enemy
                 if self.nearest_enemy.word[0] == char_typed[-1]: # cane ai tau??
@@ -65,9 +66,12 @@ class Musuh(pygame.sprite.Sprite):
         self.speed = speed
         self.word = random_word(most_used_words, least_used_words, 90)
         self.font = font
+        self.text_color = (255, 255, 255)
         self.text_offset = text_offset
+        self.targeted = False
+        self._layer = 0
         
-    def update(self, screen, WN_TINGGI):
+    def update(self, screen, WN_TINGGI, group_musuh):
         # Update the position of the rect
         self.gerakanX +=  (self.speed * self.direction.x)
         self.gerakanY +=  (self.speed * self.direction.y)
@@ -75,10 +79,12 @@ class Musuh(pygame.sprite.Sprite):
         self.rect.x = self.gerakanX
         self.rect.y = self.gerakanY
         
+        if self.targeted:
+            group_musuh.change_layer(self, 1)
         
-        # # Draw a red circle around the bottom left point
-        # pygame.draw.circle(screen, (255, 0, 0), (self.rect.x + self.text_offset[0], self.rect.y + self.text_offset[1]), 1)
-        self.text = self.font.render(self.word, True, (255, 255, 255), (0, 0, 0))
+        self.text = self.font.render(self.word, True, self.text_color, (0, 0, 0))
+        self.text.set_alpha(200)
+
         self.text_rect = self.text.get_rect(topright = (self.rect.x + self.text_offset[0], self.rect.y + self.text_offset[1]))
         # screen.blit(self.mask_image, (0,0))
         screen.blit(self.text, self.text_rect)
@@ -96,7 +102,7 @@ def jana_musuh(bilangan, WN_LEBAR, pemain_rect, font):
     image = pygame.image.load(image_path).convert_alpha()
     image = pygame.transform.scale(image, (50, 50)) #value ni kene sama dgn kat class Musuh
     bottomleft = cari_kiri_bawah(image)
-    musuh_group = pygame.sprite.Group()
+    musuh_group = pygame.sprite.LayeredUpdates()
     for i in range(bilangan):
         # Generate random coordinates, size, and color for each rect
         x = random.randint(0, WN_LEBAR)
