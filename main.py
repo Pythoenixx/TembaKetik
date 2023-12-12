@@ -1,7 +1,7 @@
 import pygame,sys
 from scripts.pemalar import *
 from scripts.latar import Latar
-from scripts.musuh import jana_musuh
+from scripts.musuh import jana_ombak, assets_load
 from scripts.pemain import Pemain
 
 #klo penembak nya kat tgh pun agak interesting
@@ -18,6 +18,11 @@ char_typed = ''
 char_updated = False
 font = pygame.font.SysFont("Arial", 20)
 
+assets = {
+    'Tiny_Kamikaze' : assets_load('img/tiny_kamikaze_ship.png',50),
+    'Kamikaze' : assets_load('img/kamikaze_ship.png',50),
+}
+
 
 # Get the center of the screen
 center_x = screen.get_width() // 2
@@ -27,7 +32,8 @@ pemain = Pemain(center_x, WN_TINGGI - 100, 'img/player_ship.PNG')
 group_pemain = pygame.sprite.Group()
 group_pemain.add(pemain)
 
-group_musuh = jana_musuh(10, WN_LEBAR, pemain.rect, pygame.font.SysFont("Tahoma", 20))#bukan patut tinggi ke?
+group_musuh = pygame.sprite.LayeredUpdates()
+jana_ombak(group_musuh, assets, WN_LEBAR, pemain.rect, font)
 
 latar = Latar(0, WN_TINGGI, 0, 0.2)
 # Create a game loop
