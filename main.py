@@ -20,7 +20,8 @@ font = pygame.font.SysFont("Arial", 20)
 
 assets = {
     'Tiny_Kamikaze' : assets_load('img/tiny_kamikaze_ship.png',50),
-    'Kamikaze' : assets_load('img/kamikaze_ship.png',50),
+    'Kamikaze' : assets_load('img/kamikaze_ship.png',40),
+    'Gunner' : assets_load('img/gunner_ship.png',69),
 }
 
 
@@ -33,16 +34,23 @@ group_pemain = pygame.sprite.Group()
 group_pemain.add(pemain)
 
 group_musuh = pygame.sprite.LayeredUpdates()
-jana_ombak(group_musuh, assets, WN_LEBAR, pemain.rect, font)
 
 latar = Latar(0, WN_TINGGI, 0, 0.2)
-# Create a game loop
+
+# Create a custom timer event
+WAVE_EVENT= pygame.USEREVENT + 1
+timer_setted = False
+group_musuh = jana_ombak(group_musuh, assets, WN_LEBAR, pemain.rect, font)
 running = True
 while running:
     # Get a list of events
     events = pygame.event.get()
     # Loop through the events
     for event in events:
+        if event.type == WAVE_EVENT:
+            group_musuh = jana_ombak(group_musuh, assets, WN_LEBAR, pemain.rect, font)
+            pygame.time.set_timer(WAVE_EVENT, 0)# Reset the timer to 0 to stop it
+            timer_setted = False
         # Check if the user has clicked the close button
         if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
             # Exit the loop and quit the program
@@ -53,7 +61,7 @@ while running:
             if event.key == pygame.K_BACKSPACE:
                 char_typed = char_typed[:-1]  #amik smua value selain akhir sekali dlm list tu
             else:
-                char_typed += event.unicode
+                char_typed += event.unicode #utk amik keyboard text input
                 char_updated = True
             
     
@@ -63,6 +71,11 @@ while running:
     
     text = font.render(char_typed, True, (255, 255, 255), (0, 0, 0))
     screen.blit(text, (0, 0))
+    
+    if group_musuh.sprites() == []:
+        if not timer_setted:
+            pygame.time.set_timer(WAVE_EVENT, 3000)#start 3s timer
+            timer_setted = True
     
     group_pemain.draw(screen) #try cari group sprite utk yg ada 1 sprite je
     group_pemain.update(screen, group_musuh, char_typed, char_updated)

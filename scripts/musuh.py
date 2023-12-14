@@ -6,6 +6,10 @@ with open("txt/1000words.txt", "r") as f:
 
 with open("txt/10000words.txt", "r") as f:
     least_used_words = f.read().split()
+
+long_words = [word for word in most_used_words if len(word) >= 6]
+rare_long_words = [word for word in least_used_words if len(word) >= 7]
+
 class Musuh(pygame.sprite.Sprite):
     def __init__(self, x, y, image, sasaran_rect, font,text_offset) -> None:
         super().__init__()
@@ -15,7 +19,6 @@ class Musuh(pygame.sprite.Sprite):
         self.direction = pygame.math.Vector2(sasaran_rect.center) - pygame.math.Vector2(self.rect.center)
         self.direction = self.direction.normalize() # unit vector
         self.speed = 0.69
-        self.word = random_word(most_used_words, least_used_words, 90)
         self.font = font
         self.text_color = (255, 255, 255)
         self.text_offset = text_offset
@@ -50,15 +53,20 @@ class Musuh(pygame.sprite.Sprite):
 class Tiny_Kamikaze(Musuh):
     def __init__(self, x, y, image, sasaran_rect, font,text_offset) -> None:
         super().__init__(x, y, image, sasaran_rect, font, text_offset)
-        
+        self.word = random_word(most_used_words, least_used_words, 90)
+class Kamikaze(Musuh):
+    def __init__(self, x, y, image, sasaran_rect, font,text_offset) -> None:
+        super().__init__(x, y, image, sasaran_rect, font, text_offset)
+        self.word = random.choice(long_words)
+        self.speed *= 0.8
+
+class Gunner(Musuh):
+    def __init__(self, x, y, image, sasaran_rect, font,text_offset) -> None:
+        super().__init__(x, y, image, sasaran_rect, font, text_offset)
+        self.word = random.choice(rare_long_words)
+        self.speed *= 0.69
 
 def jana_musuh(enemy_class, bilangan, musuh_group,assets_loaded, WN_LEBAR, pemain_rect, font):
-    
-    # image_path = 'img/tahi_bintang.png'#tdi sampai sini (tgh nk figure out cane nk buat dia calc bottomleft tu runs sekali je or atleast minimum)
-    # image = pygame.image.load(image_path)
-    # image = pygame.transform.scale(image, (50, 50)) #value ni kene sama dgn kat class Musuh
-    # bottomleft = cari_kiri_bawah(image)
-    # image,bottomleft = assets_load('img/tahi_bintang.png',50)#sampai sini(tdi nk buat assets mcm kat ninja tuto tu)
     for i in range(bilangan):
         # Generate random coordinates, size, and color for each rect
         x = random.randint(0, WN_LEBAR)#try phmkan blik napa value ni
@@ -68,9 +76,14 @@ def jana_musuh(enemy_class, bilangan, musuh_group,assets_loaded, WN_LEBAR, pemai
         musuh_group.add(musuh)
 
 def jana_ombak(musuh_group, assets, WN_LEBAR, pemain_rect, font):
-    bil_tiny_kamikaze = 5
-    jana_musuh(Tiny_Kamikaze,bil_tiny_kamikaze, musuh_group, assets['Tiny_Kamikaze'], WN_LEBAR, pemain_rect, font)    
+    bil_tiny_kamikaze = 0
+    bil_kamikaze = 5
+    bil_gunner = 5
+    jana_musuh(Tiny_Kamikaze,bil_tiny_kamikaze, musuh_group, assets['Tiny_Kamikaze'], WN_LEBAR, pemain_rect, font)
+    jana_musuh(Kamikaze,bil_kamikaze, musuh_group, assets['Kamikaze'], WN_LEBAR, pemain_rect, font)
+    jana_musuh(Gunner,bil_gunner, musuh_group, assets['Gunner'], WN_LEBAR, pemain_rect, font) 
     
+    return musuh_group
 
 def assets_load(image_path,scale):
     image = pygame.image.load(image_path)
