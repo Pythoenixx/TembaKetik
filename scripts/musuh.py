@@ -7,8 +7,15 @@ with open("txt/1000words.txt", "r") as f:
 with open("txt/10000words.txt", "r") as f:
     least_used_words = f.read().split()
 
+short_words = [word for word in most_used_words if len(word) <= 5]
 long_words = [word for word in most_used_words if len(word) >= 6]
 rare_long_words = [word for word in least_used_words if len(word) >= 7]
+
+bil_tiny_kamikaze = 0
+bil_kamikaze = 3
+bil_gunner = 0
+
+bil_ombak = 0
 
 class Musuh(pygame.sprite.Sprite):
     def __init__(self, x, y, image, sasaran_rect, font,text_offset) -> None:
@@ -53,11 +60,11 @@ class Musuh(pygame.sprite.Sprite):
 class Tiny_Kamikaze(Musuh):
     def __init__(self, x, y, image, sasaran_rect, font,text_offset) -> None:
         super().__init__(x, y, image, sasaran_rect, font, text_offset)
-        self.word = random_word(most_used_words, least_used_words, 90)
+        self.word = random_word(most_used_words, least_used_words, 90)[0]
 class Kamikaze(Musuh):
     def __init__(self, x, y, image, sasaran_rect, font,text_offset) -> None:
         super().__init__(x, y, image, sasaran_rect, font, text_offset)
-        self.word = random.choice(long_words)
+        self.word = random.choice(short_words)
         self.speed *= 0.8
 
 class Gunner(Musuh):
@@ -76,14 +83,21 @@ def jana_musuh(enemy_class, bilangan, musuh_group,assets_loaded, WN_LEBAR, pemai
         musuh_group.add(musuh)
 
 def jana_ombak(musuh_group, assets, WN_LEBAR, pemain_rect, font):
-    bil_tiny_kamikaze = 0
-    bil_kamikaze = 5
-    bil_gunner = 5
+    global bil_ombak,bil_tiny_kamikaze,bil_kamikaze,bil_gunner#maybe blh try buat func yg akan increase diff so x yh nk guna global var
+    #maybe blh buat class asing for this type of func
+    
     jana_musuh(Tiny_Kamikaze,bil_tiny_kamikaze, musuh_group, assets['Tiny_Kamikaze'], WN_LEBAR, pemain_rect, font)
     jana_musuh(Kamikaze,bil_kamikaze, musuh_group, assets['Kamikaze'], WN_LEBAR, pemain_rect, font)
-    jana_musuh(Gunner,bil_gunner, musuh_group, assets['Gunner'], WN_LEBAR, pemain_rect, font) 
+    jana_musuh(Gunner,bil_gunner, musuh_group, assets['Gunner'], WN_LEBAR, pemain_rect, font)
     
-    return musuh_group
+    bil_ombak += 1
+    bil_kamikaze = bil_ombak + 3
+    bil_tiny_kamikaze = bil_ombak 
+    bil_gunner += 1 if bil_ombak % 3 == 0 else 0
+    
+    
+    
+    return musuh_group,bil_ombak
 
 def assets_load(image_path,scale):
     image = pygame.image.load(image_path)
