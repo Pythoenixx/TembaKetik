@@ -40,7 +40,9 @@ latar = Latar(0, WN_TINGGI, 0, 0.2)
 # Create a custom timer event
 WAVE_EVENT= pygame.USEREVENT + 1
 timer_setted = False
-group_musuh = jana_ombak(group_musuh, assets, WN_LEBAR, pemain.rect, font)
+group_musuh,bil_ombak = jana_ombak(group_musuh, assets, WN_LEBAR, pemain.rect, font)
+text_ombak = font.render(str(bil_ombak), True, (255,255,255), (0, 0, 0))
+
 running = True
 while running:
     # Get a list of events
@@ -48,7 +50,7 @@ while running:
     # Loop through the events
     for event in events:
         if event.type == WAVE_EVENT:
-            group_musuh = jana_ombak(group_musuh, assets, WN_LEBAR, pemain.rect, font)
+            group_musuh,bil_ombak = jana_ombak(group_musuh, assets, WN_LEBAR, pemain.rect, font)
             pygame.time.set_timer(WAVE_EVENT, 0)# Reset the timer to 0 to stop it
             timer_setted = False
         # Check if the user has clicked the close button
@@ -73,6 +75,8 @@ while running:
     screen.blit(text, (0, 0))
     
     if group_musuh.sprites() == []:
+        text_ombak = font.render(f'WAVE:{bil_ombak} CLEARED', True, (255,255,255))
+        screen.blit(text_ombak, (100, center_y))
         if not timer_setted:
             pygame.time.set_timer(WAVE_EVENT, 3000)#start 3s timer
             timer_setted = True
