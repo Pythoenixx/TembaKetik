@@ -16,7 +16,6 @@ screen = pygame.display.set_mode((WN_LEBAR, WN_TINGGI))
 clock = pygame.time.Clock()
 char_typed = ''
 char_updated = False
-font = pygame.font.SysFont("Arial", 20)
 
 assets = {
     'Tiny_Kamikaze' : assets_load('img/tiny_kamikaze_ship.png',50),
@@ -24,6 +23,7 @@ assets = {
     'Gunner' : assets_load('img/gunner_ship.png',69),
 }
 
+font = pygame.font.SysFont("Arial", 20)
 
 # Get the center of the screen
 center_x = screen.get_width() // 2
@@ -40,7 +40,7 @@ latar = Latar(0, WN_TINGGI, 0, 0.2)
 # Create a custom timer event
 WAVE_EVENT= pygame.USEREVENT + 1
 timer_setted = False
-group_musuh,bil_ombak = jana_ombak(group_musuh, assets, WN_LEBAR, pemain.rect, font)
+group_musuh,bil_ombak = jana_ombak(group_musuh, assets, pemain.rect)
 text_ombak = font.render(str(bil_ombak), True, (255,255,255), (0, 0, 0))
 
 running = True
@@ -50,7 +50,7 @@ while running:
     # Loop through the events
     for event in events:
         if event.type == WAVE_EVENT:
-            group_musuh,bil_ombak = jana_ombak(group_musuh, assets, WN_LEBAR, pemain.rect, font)
+            group_musuh,bil_ombak = jana_ombak(group_musuh, assets, pemain.rect)
             pygame.time.set_timer(WAVE_EVENT, 0)# Reset the timer to 0 to stop it
             timer_setted = False
         # Check if the user has clicked the close button
@@ -86,7 +86,7 @@ while running:
     char_updated = False
     
     group_musuh.draw(screen)
-    group_musuh.update(screen, WN_TINGGI, group_musuh)
+    group_musuh.update(screen, group_musuh)
     
     pygame.display.flip()
     clock.tick(FPS)

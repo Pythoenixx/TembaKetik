@@ -1,4 +1,5 @@
 import pygame, random
+from scripts.pemalar import WN_LEBAR,WN_TINGGI
 
 # Open the file and read the words
 with open("txt/1000words.txt", "r") as f:
@@ -18,7 +19,7 @@ bil_gunner = 0
 bil_ombak = 0
 
 class Musuh(pygame.sprite.Sprite):
-    def __init__(self, x, y, image, sasaran_rect, font,text_offset) -> None:
+    def __init__(self, x, y, image, sasaran_rect, text_offset) -> None:
         super().__init__()
         self.image = image
         self.mask = pygame.mask.from_surface(self.image)
@@ -27,13 +28,13 @@ class Musuh(pygame.sprite.Sprite):
         self.direction = pygame.math.Vector2(sasaran_rect.center) - pygame.math.Vector2(self.rect.center)
         self.direction = self.direction.normalize() # unit vector
         self.speed = 0.69
-        self.font = font
+        self.font = pygame.font.SysFont("Arial", 20)
         self.text_color = (255, 255, 255)
         self.text_offset = text_offset
         self.targeted = False
         self._layer = 0
         
-    def update(self, screen, WN_TINGGI, group_musuh):
+    def update(self, screen, group_musuh):
         # Update the position of the rect
         self.gerakanX +=  (self.speed * self.direction.x)
         self.gerakanY +=  (self.speed * self.direction.y)
@@ -51,45 +52,45 @@ class Musuh(pygame.sprite.Sprite):
         # screen.blit(self.mask_image, (0,0))
         screen.blit(self.text, self.text_rect)
         
-        self.destruct(WN_TINGGI)
+        self.destruct()
         
-    def destruct(self, WN_TINGGI):
+    def destruct(self):
         if self.word == '':
             self.kill()
         if self.gerakanY > WN_TINGGI + 69:
             self.kill()
 class Tiny_Kamikaze(Musuh):
-    def __init__(self, x, y, image, sasaran_rect, font,text_offset) -> None:
-        super().__init__(x, y, image, sasaran_rect, font, text_offset)
+    def __init__(self, x, y, image, sasaran_rect, text_offset) -> None:
+        super().__init__(x, y, image, sasaran_rect, text_offset)
         self.word = random_word(most_used_words, least_used_words, 90)[0]
 class Kamikaze(Musuh):
-    def __init__(self, x, y, image, sasaran_rect, font,text_offset) -> None:
-        super().__init__(x, y, image, sasaran_rect, font, text_offset)
+    def __init__(self, x, y, image, sasaran_rect, text_offset) -> None:
+        super().__init__(x, y, image, sasaran_rect, text_offset)
         self.word = random.choice(short_words)
         self.speed *= 0.8
 
 class Gunner(Musuh):
-    def __init__(self, x, y, image, sasaran_rect, font,text_offset) -> None:
-        super().__init__(x, y, image, sasaran_rect, font, text_offset)
+    def __init__(self, x, y, image, sasaran_rect, text_offset) -> None:
+        super().__init__(x, y, image, sasaran_rect, text_offset)
         self.word = random.choice(rare_long_words)
         self.speed *= 0.69
 
-def jana_musuh(enemy_class, bilangan, musuh_group,assets_loaded, WN_LEBAR, pemain_rect, font):
+def jana_musuh(enemy_class, bilangan, musuh_group,assets_loaded, pemain_rect):
     for i in range(bilangan):
         # Generate random coordinates, size, and color for each rect
         x = random.randint(0, WN_LEBAR)#try phmkan blik napa value ni
         y = random.randint(-100, 69)
         
-        musuh = enemy_class(x, y, assets_loaded[0], pemain_rect, font, assets_loaded[1])
+        musuh = enemy_class(x, y, assets_loaded[0], pemain_rect, assets_loaded[1])
         musuh_group.add(musuh)
 
-def jana_ombak(musuh_group, assets, WN_LEBAR, pemain_rect, font):
+def jana_ombak(musuh_group, assets, pemain_rect):
     global bil_ombak,bil_tiny_kamikaze,bil_kamikaze,bil_gunner#maybe blh try buat func yg akan increase diff so x yh nk guna global var
     #maybe blh buat class asing for this type of func
     
-    jana_musuh(Tiny_Kamikaze,bil_tiny_kamikaze, musuh_group, assets['Tiny_Kamikaze'], WN_LEBAR, pemain_rect, font)
-    jana_musuh(Kamikaze,bil_kamikaze, musuh_group, assets['Kamikaze'], WN_LEBAR, pemain_rect, font)
-    jana_musuh(Gunner,bil_gunner, musuh_group, assets['Gunner'], WN_LEBAR, pemain_rect, font)
+    jana_musuh(Tiny_Kamikaze,bil_tiny_kamikaze, musuh_group, assets['Tiny_Kamikaze'], pemain_rect)
+    jana_musuh(Kamikaze,bil_kamikaze, musuh_group, assets['Kamikaze'], pemain_rect)
+    jana_musuh(Gunner,bil_gunner, musuh_group, assets['Gunner'], pemain_rect)
     
     bil_ombak += 1
     bil_kamikaze = bil_ombak + 3
