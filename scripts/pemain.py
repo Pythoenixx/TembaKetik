@@ -7,6 +7,7 @@ class Pemain(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.image.load(image_path).convert_alpha()
         self.image = pygame.transform.scale(self.image, (69, 69))
+        self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
         self.nearest_enemy = None
@@ -26,6 +27,10 @@ class Pemain(pygame.sprite.Sprite):
                     self.nearest_enemy.word = self.nearest_enemy.word[1:] #dia phm aku nk delete word tu ke?
                     if self.nearest_enemy.word == '':
                         self.nearest_enemy = None
+        
+        if pygame.sprite.spritecollide(self, enemy_group, False):#klo dh dekat dgn player baru check mask collision
+            if pygame.sprite.spritecollide(self, enemy_group, True, pygame.sprite.collide_mask):
+                self.kill()
 
     # Define a function that takes a sprite and a list of sprites as parameters, and returns the nearest sprite in the list
     # if all enemy move at the same speed, this only need to run once for optimization

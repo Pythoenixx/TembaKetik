@@ -21,6 +21,7 @@ class Musuh(pygame.sprite.Sprite):
     def __init__(self, x, y, image, sasaran_rect, font,text_offset) -> None:
         super().__init__()
         self.image = image
+        self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect(center = (x, y))
         self.gerakanX,self.gerakanY = self.rect.x,self.rect.y #kene buat lagi satu variables coords sbb coords yg kat rect pygame x blh jdi float so akan ada rounding error
         self.direction = pygame.math.Vector2(sasaran_rect.center) - pygame.math.Vector2(self.rect.center)
