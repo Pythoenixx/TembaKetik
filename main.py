@@ -30,7 +30,7 @@ center_x = screen.get_width() // 2
 center_y = screen.get_height() // 2
 
 pemain = Pemain(center_x, WN_TINGGI - 100, 'img/player_ship.PNG')
-group_pemain = pygame.sprite.Group()
+group_pemain = pygame.sprite.GroupSingle()
 group_pemain.add(pemain)
 
 group_musuh = pygame.sprite.LayeredUpdates()
