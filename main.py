@@ -4,7 +4,6 @@ from scripts.latar import Latar
 from scripts.musuh import jana_ombak, assets_load
 from scripts.pemain import Pemain
 
-#klo penembak nya kat tgh pun agak interesting
 # Initialize pygame
 pygame.init()
 

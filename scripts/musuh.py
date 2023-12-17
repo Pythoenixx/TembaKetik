@@ -28,7 +28,7 @@ class Musuh(pygame.sprite.Sprite):
         self.direction = pygame.math.Vector2(sasaran_rect.center) - pygame.math.Vector2(self.rect.center)
         self.direction = self.direction.normalize() # unit vector
         self.speed = 0.69
-        self.font = pygame.font.SysFont("Arial", 20)
+        self.font = pygame.font.SysFont("Arial", 22)
         self.text_color = (255, 255, 255)
         self.text_offset = text_offset
         self.targeted = False
@@ -78,8 +78,8 @@ class Gunner(Musuh):
 def jana_musuh(enemy_class, bilangan, musuh_group,assets_loaded, pemain_rect):
     for i in range(bilangan):
         # Generate random coordinates, size, and color for each rect
-        x = random.randint(0, WN_LEBAR)#try phmkan blik napa value ni
-        y = random.randint(-100, 69)
+        x = random.randint(0, WN_LEBAR)
+        y = random.randint(-100, 0)
         
         musuh = enemy_class(x, y, assets_loaded[0], pemain_rect, assets_loaded[1])
         musuh_group.add(musuh)
