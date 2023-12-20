@@ -28,7 +28,7 @@ class Musuh(pygame.sprite.Sprite):
         self.direction = pygame.math.Vector2(sasaran_rect.center) - pygame.math.Vector2(self.rect.center)
         self.direction = self.direction.normalize() # unit vector
         self.speed = 0.69
-        self.font = pygame.font.SysFont("Arial", 22)
+        self.font = pygame.font.SysFont("Arial", 21)
         self.text_color = (255, 255, 255)
         self.text_offset = text_offset
         self.targeted = False
