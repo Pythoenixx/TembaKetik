@@ -79,6 +79,32 @@ def main_menu():
                 if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                     pygame.quit()
                     sys.exit()
+                    
+        pygame.display.update()
+        
+def options():
+    while True:
+        OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
+
+        SCREEN.fill("white")
+
+        OPTIONS_TEXT = font.render("This is the OPTIONS screen.", True, "Black")
+        OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(center_x, 260))
+        SCREEN.blit(OPTIONS_TEXT, OPTIONS_RECT)
+
+        OPTIONS_BACK = Button(image=None, pos=(center_x, 460), 
+                            text_input="BACK", font=font, base_color="Black", hovering_color="Green")
+
+        OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS)
+        OPTIONS_BACK.update(SCREEN)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
+                    main_menu()
 
         pygame.display.update()
 
@@ -141,33 +167,7 @@ def play():
         pygame.display.flip()
         clock.tick(FPS)
         pygame.display.set_caption(f'TembaKetik FPS: {clock.get_fps() :.1f}')# f' ' tu utk tukar jdi f-string (mcm string data type)
-
-def options():
-    while True:
-        OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
-
-        SCREEN.fill("white")
-
-        OPTIONS_TEXT = font.render("This is the OPTIONS screen.", True, "Black")
-        OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(center_x, 260))
-        SCREEN.blit(OPTIONS_TEXT, OPTIONS_RECT)
-
-        OPTIONS_BACK = Button(image=None, pos=(center_x, 460), 
-                            text_input="BACK", font=font, base_color="Black", hovering_color="Green")
-
-        OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS)
-        OPTIONS_BACK.update(SCREEN)
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
-                    main_menu()
-
-        pygame.display.update()
-
+        print('pemain wpm:',pemain.wpm)
 
 main_menu()
 
