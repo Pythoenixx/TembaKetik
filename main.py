@@ -35,7 +35,8 @@ latar = Latar(0, WN_TINGGI, 0, 0.2)
 
 def main_menu():
     LOGO = pygame.image.load('img/logo.png').convert_alpha()
-    LOGO = pygame.transform.scale(LOGO, (300, 200))
+    LOGO = pygame.transform.scale(LOGO, (600, 500))
+    LOGO_RECT = LOGO.get_rect(center=(center_x, 150))
     
     TITLE_FONT = pygame.font.Font('font/font.ttf', 40)
     MENU_TEXT = TITLE_FONT.render("TembaKetik", True, "#b68f40")
@@ -43,6 +44,7 @@ def main_menu():
     
     BG = pygame.image.load('img/angkasa1.png').convert_alpha()
     BG = pygame.transform.scale(BG, (WN_LEBAR, WN_TINGGI))
+    
     BTN_BG = pygame.image.load('img/buttonBG.png').convert_alpha()
     BTN_BG = pygame.transform.scale(BTN_BG, (300, 100))
     
@@ -53,7 +55,6 @@ def main_menu():
     QUIT_BUTTON = Button(image=BTN_BG, pos=(center_x, 720), 
                             text_input="QUIT", font=font, base_color="#d7fcd4", hovering_color="GOLD")
     
-    LOGO_RECT = LOGO.get_rect(center=(center_x, 100))
     while True:
         SCREEN.blit(BG, (0, 0))
 
