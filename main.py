@@ -35,11 +35,13 @@ group_pemain.add(pemain)
 
 latar = Latar(0, WN_TINGGI, 0, 0.2)
 
+# loading the background music
 mixer.music.load('soundEffect/backgroundsound.mp3')
 # Set the initial volume
-initial_volume = 0.05
+initial_volume = 0.5
 pygame.mixer.music.set_volume(initial_volume)
 
+# play the music
 mixer.music.play()
 
 btnSound = pygame.mixer.Sound('soundEffect/buttonclicksound.mp3')
@@ -156,8 +158,7 @@ def play():
                     char_typed = char_typed[:-1]  #amik smua value selain akhir sekali dlm list tu
                 else:
                     char_typed += event.unicode #utk amik keyboard text input
-                    char_updated = True
-                
+                    char_updated = True 
         
         #biar x de trail
         SCREEN.fill((0, 0, 0))
