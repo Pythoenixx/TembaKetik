@@ -1,4 +1,5 @@
 import pygame,sys
+from pygame import mixer
 from scripts.pemalar import *
 from scripts.latar import Latar
 from scripts.musuh import jana_ombak, assets_load
@@ -7,7 +8,8 @@ from scripts.button import Button
 
 # Initialize pygame
 pygame.init()
-
+# Initialize mixer
+mixer.init()
 # Create a window object
 icon = pygame.image.load('img/kapal_angkasa.PNG')
 pygame.display.set_icon(icon)
@@ -32,6 +34,9 @@ group_pemain = pygame.sprite.GroupSingle()
 group_pemain.add(pemain)
 
 latar = Latar(0, WN_TINGGI, 0, 0.2)
+
+mixer.music.load('soundEffect/backgroundsound.mp3')
+mixer.music.play()
 
 def main_menu():
     LOGO = pygame.image.load('img/logo.png').convert_alpha()
