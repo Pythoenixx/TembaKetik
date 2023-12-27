@@ -36,6 +36,10 @@ group_pemain.add(pemain)
 latar = Latar(0, WN_TINGGI, 0, 0.2)
 
 mixer.music.load('soundEffect/backgroundsound.mp3')
+# Set the initial volume
+initial_volume = 0.05
+pygame.mixer.music.set_volume(initial_volume)
+
 mixer.music.play()
 
 def main_menu():
