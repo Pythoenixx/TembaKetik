@@ -42,6 +42,8 @@ pygame.mixer.music.set_volume(initial_volume)
 
 mixer.music.play()
 
+btnSound = pygame.mixer.Sound('soundEffect/buttonclicksound.mp3')
+btnSound.set_volume(0.05)
 def main_menu():
     LOGO = pygame.image.load('img/logo.png').convert_alpha()
     LOGO = pygame.transform.scale(LOGO, (600, 500))
@@ -83,10 +85,14 @@ def main_menu():
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
+                    btnSound.play()
+                    pygame.mixer.music.stop()
                     play()
                 if OPTIONS_BUTTON.checkForInput(MENU_MOUSE_POS):
+                    btnSound.play()
                     options()
                 if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
+                    btnSound.play()
                     pygame.quit()
                     sys.exit()
                     
