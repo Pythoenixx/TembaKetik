@@ -13,6 +13,7 @@ class Pemain(pygame.sprite.Sprite):
         self.nearest_enemy = None
         self.score = 0
         self.miss = 0
+        self.miss_word = []
         self.accuracy = 0
         self.enemy_killed = 0#in wave
         self.start_time = 0
@@ -32,7 +33,6 @@ class Pemain(pygame.sprite.Sprite):
         
         if self.nearest_enemy is not None:
             #highlight enemy
-            
             self.nearest_enemy.text_color = 'Gold'
             pygame.draw.rect(screen, 'Gold', self.nearest_enemy.rect, 1)
             self.nearest_enemy.targeted = True
@@ -52,6 +52,7 @@ class Pemain(pygame.sprite.Sprite):
                             self.start_time = 0 #utk benarkan timer start balik
                 else:
                     self.miss += 1
+                    self.miss_word.append(self.nearest_enemy.ori_word)
         
         if pygame.sprite.spritecollide(self, enemy_group, False):#klo dh dekat dgn player baru check mask collision
             if pygame.sprite.spritecollide(self, enemy_group, True, pygame.sprite.collide_mask):
