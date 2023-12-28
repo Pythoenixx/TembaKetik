@@ -19,7 +19,7 @@ bil_gunner = 0
 bil_ombak = 0
 
 class Musuh(pygame.sprite.Sprite):
-    def __init__(self, x, y, image, sasaran_rect, text_offset) -> None:
+    def __init__(self, x, y, image, sasaran_rect, text_offset, word) -> None:
         super().__init__()
         self.image = image
         self.mask = pygame.mask.from_surface(self.image)
@@ -27,6 +27,8 @@ class Musuh(pygame.sprite.Sprite):
         self.gerakanX,self.gerakanY = self.rect.x,self.rect.y #kene buat lagi satu variables coords sbb coords yg kat rect pygame x blh jdi float so akan ada rounding error
         self.direction = pygame.math.Vector2(sasaran_rect.center) - pygame.math.Vector2(self.rect.center)
         self.direction = self.direction.normalize() # unit vector
+        self.word = word
+        self.ori_word = self.word
         self.speed = 0.69
         self.font = pygame.font.SysFont("Arial", 21)
         self.text_color = (255, 255, 255)
@@ -61,23 +63,24 @@ class Musuh(pygame.sprite.Sprite):
             self.kill()
 class Tiny_Kamikaze(Musuh):
     def __init__(self, x, y, image, sasaran_rect, text_offset) -> None:
-        super().__init__(x, y, image, sasaran_rect, text_offset)
-        self.word = random_word(most_used_words, least_used_words, 90)[0]
+        word = random_word(most_used_words, least_used_words, 90)[0]
+        super().__init__(x, y, image, sasaran_rect, text_offset, word)
+        
 class Kamikaze(Musuh):
     def __init__(self, x, y, image, sasaran_rect, text_offset) -> None:
-        super().__init__(x, y, image, sasaran_rect, text_offset)
-        self.word = random.choice(short_words)
+        word = random.choice(short_words)
+        super().__init__(x, y, image, sasaran_rect, text_offset, word)
         self.speed *= 0.8
 
 class Gunner(Musuh):
     def __init__(self, x, y, image, sasaran_rect, text_offset) -> None:
-        super().__init__(x, y, image, sasaran_rect, text_offset)
-        self.word = random.choice(rare_long_words)
+        word = random.choice(rare_long_words)
+        super().__init__(x, y, image, sasaran_rect, text_offset, word)
         self.speed *= 0.69
 
 def jana_musuh(enemy_class, bilangan, musuh_group,assets_loaded, pemain_rect):
     for i in range(bilangan):
-        # Generate random coordinates, size, and color for each rect
+        # Generate random coordinates
         x = random.randint(0, WN_LEBAR)
         y = random.randint(-100, 0)
         
