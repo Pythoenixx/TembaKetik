@@ -1,4 +1,5 @@
 import pygame,sys
+from pygame import mixer
 from scripts.pemalar import *
 from scripts.latar import Latar
 from scripts.musuh import jana_ombak, assets_load
@@ -7,7 +8,8 @@ from scripts.button import Button
 
 # Initialize pygame
 pygame.init()
-
+# Initialize mixer
+mixer.init()
 # Create a window object
 icon = pygame.image.load('img/kapal_angkasa.PNG')
 pygame.display.set_icon(icon)
@@ -33,6 +35,17 @@ group_pemain.add(pemain)
 
 latar = Latar(0, WN_TINGGI, 0, 0.2)
 
+# loading the background music
+mixer.music.load('soundEffect/backgroundsound.mp3')
+# Set the initial volume
+initial_volume = 0.5
+pygame.mixer.music.set_volume(initial_volume)
+
+# play the music
+mixer.music.play()
+
+btnSound = pygame.mixer.Sound('soundEffect/buttonclicksound.mp3')
+btnSound.set_volume(0.05)
 def main_menu():
     LOGO = pygame.image.load('img/logo.png').convert_alpha()
     LOGO = pygame.transform.scale(LOGO, (600, 500))
@@ -74,10 +87,14 @@ def main_menu():
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
+                    btnSound.play()
+                    pygame.mixer.music.stop()
                     play()
                 if OPTIONS_BUTTON.checkForInput(MENU_MOUSE_POS):
+                    btnSound.play()
                     options()
                 if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
+                    btnSound.play()
                     pygame.quit()
                     sys.exit()
                     
@@ -141,8 +158,7 @@ def play():
                     char_typed = char_typed[:-1]  #amik smua value selain akhir sekali dlm list tu
                 else:
                     char_typed += event.unicode #utk amik keyboard text input
-                    char_updated = True
-                
+                    char_updated = True 
         
         #biar x de trail
         SCREEN.fill((0, 0, 0))
