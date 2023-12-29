@@ -9,7 +9,7 @@ with open("txt/10000words.txt", "r") as f:
     least_used_words = f.read().split()
 
 with open("txt/malaywords.txt", "r") as f:
-    least_used_words = f.read().split()
+    least_used_words = f.read().split() 
 
 short_words = [word for word in most_used_words if len(word) <= 5]
 long_words = [word for word in most_used_words if len(word) >= 6]

@@ -36,15 +36,15 @@ group_pemain.add(pemain)
 latar = Latar(0, WN_TINGGI, 0, 0.2)
 
 # loading the background music
-mixer.music.load('soundEffect/backgroundsound.mp3')
+mixer.music.load('sound/backgroundsound.mp3')
 # Set the initial volume
-initial_volume = 0.5
+initial_volume = 0.01
 pygame.mixer.music.set_volume(initial_volume)
 
 # play the music
 mixer.music.play()
 
-btnSound = pygame.mixer.Sound('soundEffect/buttonclicksound.mp3')
+btnSound = pygame.mixer.Sound('sound/buttonclicksound.mp3')
 btnSound.set_volume(0.05)
 def main_menu():
     LOGO = pygame.image.load('img/logo.png').convert_alpha()
