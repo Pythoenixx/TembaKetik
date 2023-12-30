@@ -1,4 +1,4 @@
-import pygame,sys
+import pygame,sys,asyncio
 from pygame import mixer
 from scripts.pemalar import *
 from scripts.latar import Latar
