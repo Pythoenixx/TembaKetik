@@ -1,71 +1,82 @@
-import pygame
-import random
-import math
-# Open the file and read the words
-with open("txt/1000words.txt", "r") as f:
-    most_used_words = f.read().split()
+import pygame as pg
 
-with open("txt/10000words.txt", "r") as f:
-    least_used_words = f.read().split()
+# Define some constants
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
+FPS = 60
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+GREEN = (0, 128, 0)
+BROWN = (139, 69, 19)
 
-# Define a function that takes two lists of words and a percentage as parameters, and returns a random word from the lists based on the percentage
-def random_word(most_used, least_used, percentage):
-    # Generate a random number between 1 and 100
-    number = random.randint(1, 100)
-    # Use a ternary operator to pick a random word from the lists based on the percentage
-    word = random.choice(most_used) if number <= percentage else random.choice(least_used)
-    # Return the word
-    return word
+# Create a player sprite
+class Player(pg.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+        self.image = pg.Surface((50, 100))
+        self.image.fill(WHITE)
+        self.rect = self.image.get_rect(center=(x, y))
+        # The sprite will be added to this layer in the LayeredUpdates group
+        self._layer = self.rect.bottom
 
+    def update(self):
+        # Move the player with the arrow keys
+        keys = pg.key.get_pressed()
+        if keys[pg.K_LEFT]:
+            self.rect.x -= 5
+        if keys[pg.K_RIGHT]:
+            self.rect.x += 5
+        if keys[pg.K_UP]:
+            self.rect.y -= 5
+        if keys[pg.K_DOWN]:
+            self.rect.y += 5
+        # Keep the player within the screen bounds
+        self.rect.clamp_ip(screen_rect)
+        # Set the layer of the player sprite to its rect.bottom position
+        sprites.change_layer(self, self.rect.bottom)
+
+# Create a tree sprite
+class Tree(pg.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+        self.image = pg.Surface((100, 150))
+        self.image.fill(BLACK)
+        self.image.set_colorkey(BLACK)
+        # Draw a simple tree shape
+        pg.draw.rect(self.image, BROWN, (40, 100, 20, 50))
+        pg.draw.ellipse(self.image, GREEN, (0, 0, 100, 100))
+        self.rect = self.image.get_rect(center=(x, y))
+        # The sprite will be added to this layer in the LayeredUpdates group
+        self._layer = self.rect.bottom
 
 # Initialize pygame
-pygame.init()
+pg.init()
+screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+screen_rect = screen.get_rect()
+pg.display.set_caption("Layered Updates Example")
+clock = pg.time.Clock()
 
-# Create a screen surface with a size of 800 by 600 pixels
-screen = pygame.display.set_mode((800, 600))
+# Create a LayeredUpdates group and add some sprites
+sprites = pg.sprite.LayeredUpdates()
+player = Player(400, 300)
+tree = Tree(400, 300)
+sprites.add(player)
+sprites.add(tree)
 
-# Fill the screen with black color
-screen.fill((0, 0, 0))
-
-image = pygame.image.load('img/tahi_bintang.png').convert_alpha()
-mask = pygame.mask.from_surface(image)
-outline_points = mask.outline()
-
-# Sort the list by y-values in descending order
-outline_points.sort (key=lambda c: c [1], reverse=True)
-
-# Find the minimum x-value among the coordinates with the highest y-value
-min_x = min(c[0] for c in outline_points if c [1] == outline_points [0][1])
-print(outline_points[0][1])
-
-# Return the coordinate that has both the highest y-value and the minimum x-value
-bottom_left = next(c for c in outline_points if c [0] == min_x and c [1] == outline_points [0][1])
-
-clock = pygame.time.Clock()
-FPS = 60
-i = 0
-# Create a game loop
+# Main game loop
 running = True
 while running:
-    # Get a list of events
-    events = pygame.event.get()
-    # Loop through the events
-    for event in events:
-        # Check if the user has clicked the close button
-        if event.type == pygame.QUIT:
-            # Exit the loop and quit the program
+    # Handle events
+    for event in pg.event.get():
+        if event.type == pg.QUIT:
             running = False
-            pygame.quit()
-    screen.blit(image, (0, 0))
-    # i += 1
-    # if i == len(outline_points):
-    #     i = 0
-    # print(i,len(outline_points))
-    
-    
-    # pygame.draw.circle(screen, (255, 0, 0), outline_points[len(outline_points)//2], 1)
-    # pygame.draw.circle(screen, (255, 0, 0), outline_points[len(outline_points)*3//4], 1)
-    pygame.draw.circle(screen, (255, 255, 255), bottom_left, 1)
+
+    # Update and draw sprites
+    sprites.update()
+    screen.fill(BLACK)
+    sprites.draw(screen)
+    pg.display.flip()
     clock.tick(FPS)
-    pygame.display.flip()
-    print(random_word(most_used_words, least_used_words, 80))
+
+# Quit pygame
+pg.quit()
