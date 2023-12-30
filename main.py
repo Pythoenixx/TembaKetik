@@ -115,9 +115,10 @@ def main_menu():
 # i drawed the textbox but now i don't know how to type in it
 def login():
     global username, password
-    username = ""
-    password = ""
-    
+    username = ''
+    password = ''
+    active_textbox = None  # Variable to track the active textbox (None for no textbox)
+
     while True:
         LOGIN_MOUSE_POS = pygame.mouse.get_pos()
 
@@ -127,18 +128,21 @@ def login():
         SCREEN.blit(LOGIN_TEXT, LOGIN_RECT)
 
         # Draw username input
-        username_input = font.render("Username:", True, "Black")
+        username_input = font.render("Username: " + username, True, "Black")
         username_rect = username_input.get_rect(center=(center_x - 75, 370))
         SCREEN.blit(username_input, username_rect)
 
         # Draw password input
-        password_input = font.render("Password:", True, "Black")
+        password_input = font.render("Password: " + '*' * len(password), True, "Black")
         password_rect = password_input.get_rect(center=(center_x - 75, 420))
         SCREEN.blit(password_input, password_rect)
 
         # Draw input boxes
-        pygame.draw.rect(SCREEN, "Black", pygame.Rect(center_x + 25, 355, 200, 30), 2)  # Username input box
-        pygame.draw.rect(SCREEN, "Black", pygame.Rect(center_x + 25, 405, 200, 30), 2)  # Password input box
+        username_box = pygame.Rect(center_x + 25, 355, 200, 30)
+        pygame.draw.rect(SCREEN, "Black", username_box, 2)  # Username input box
+
+        password_box = pygame.Rect(center_x + 25, 405, 200, 30)
+        pygame.draw.rect(SCREEN, "Black", password_box, 2)  # Password input box
 
         # Draw back button
         LOGIN_BACK = Button(image=None, pos=(center_x, 500),
@@ -154,6 +158,38 @@ def login():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if LOGIN_BACK.checkForInput(LOGIN_MOUSE_POS):
                     return  # Go back to the main menu
+                # Check if the mouse click is inside the username input box
+                if username_box.collidepoint(event.pos):
+                    active_textbox = 'username'
+                # Check if the mouse click is inside the password input box
+                elif password_box.collidepoint(event.pos):
+                    active_textbox = 'password'
+                else:
+                    active_textbox = None
+
+            if event.type == pygame.KEYDOWN:
+                if active_textbox == 'username':
+                    if event.key == pygame.K_RETURN:
+                        print(f'Logging in with Username: {username}, Password: {password}')
+                        # Add your login logic here
+                    elif event.key == pygame.K_BACKSPACE:
+                        username = username[:-1]
+                    else:
+                        username += event.unicode
+                    # Adjust the position of the input text based on the length of the text
+                    username_input = font.render("Username: " + username, True, "Black")
+                    username_rect = username_input.get_rect(center=(center_x - 75, 370))
+                elif active_textbox == 'password':
+                    if event.key == pygame.K_RETURN:
+                        print(f'Logging in with Username: {username}, Password: {password}')
+                        # Add your login logic here
+                    elif event.key == pygame.K_BACKSPACE:
+                        password = password[:-1]
+                    else:
+                        password += event.unicode
+                    # Adjust the position of the input text based on the length of the text
+                    password_input = font.render("Password: " + '*' * len(password), True, "Black")
+                    password_rect = password_input.get_rect(center=(center_x - 75, 420))
 
         pygame.display.update()
 
