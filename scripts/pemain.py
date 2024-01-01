@@ -25,7 +25,7 @@ class Pemain(pygame.sprite.Sprite):
         self.elapsed_time_list = []
         self.wpm = 0
     def gameOver(self):
-        return 0    
+        return 0    #what this method for?
     def update(self, screen, enemy_group, char_typed, char_updated):
         if char_updated:
             if char_typed and self.nearest_enemy is None:
