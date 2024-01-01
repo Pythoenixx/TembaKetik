@@ -137,12 +137,19 @@ def login():
         password_rect = password_input.get_rect(center=(center_x - 75, 420))
         SCREEN.blit(password_input, password_rect)
 
-        # Draw input boxes
+        # Draw input boxes with different colors based on selection
         username_box = pygame.Rect(center_x + 25, 355, 200, 30)
-        pygame.draw.rect(SCREEN, "Black", username_box, 2)  # Username input box
-
         password_box = pygame.Rect(center_x + 25, 405, 200, 30)
-        pygame.draw.rect(SCREEN, "Black", password_box, 2)  # Password input box
+
+        if active_textbox == 'username':
+            pygame.draw.rect(SCREEN, "Green", username_box, 2)  # Username input box with green border
+        else:
+            pygame.draw.rect(SCREEN, "Black", username_box, 2)  # Username input box with black border
+
+        if active_textbox == 'password':
+            pygame.draw.rect(SCREEN, "Green", password_box, 2)  # Password input box with green border
+        else:
+            pygame.draw.rect(SCREEN, "Black", password_box, 2)  # Password input box with black border
 
         # Draw back button
         LOGIN_BACK = Button(image=None, pos=(center_x, 500),
@@ -166,7 +173,6 @@ def login():
                     active_textbox = 'password'
                 else:
                     active_textbox = None
-
             if event.type == pygame.KEYDOWN:
                 if active_textbox == 'username':
                     if event.key == pygame.K_RETURN:
@@ -193,10 +199,12 @@ def login():
 
         pygame.display.update()
 
-#same goes for here
+
 def register():
     username = ""
     password = ""
+    confirm_password = ""
+    active_textbox = None
 
     while True:
         REGISTER_MOUSE_POS = pygame.mouse.get_pos()
@@ -208,22 +216,43 @@ def register():
         SCREEN.blit(REGISTER_TEXT, REGISTER_RECT)
 
         # Draw username input
-        username_input = font.render("Username:", True, "Black")
-        username_rect = username_input.get_rect(center=(center_x - 75, 370))
+        username_input = font.render("Username: " + username, True, "Black")
+        username_rect = username_input.get_rect(center=(center_x - 75, 330))
         SCREEN.blit(username_input, username_rect)
 
         # Draw password input
-        password_input = font.render("Password:", True, "Black")
-        password_rect = password_input.get_rect(center=(center_x - 75, 420))
+        password_input = font.render("Password: " + '*' * len(password), True, "Black")
+        password_rect = password_input.get_rect(center=(center_x - 75, 380))
         SCREEN.blit(password_input, password_rect)
 
-        # Draw input boxes
-        pygame.draw.rect(SCREEN, "Black", pygame.Rect(center_x + 25, 355, 200, 30), 2)  # Username input box
-        pygame.draw.rect(SCREEN, "Black", pygame.Rect(center_x + 25, 405, 200, 30), 2)  # Password input box
+        # Draw confirm password input
+        confirm_password_input = font.render("ConfirmPass: " + '*' * len(confirm_password), True, "Black")
+        confirm_password_rect = confirm_password_input.get_rect(center=(center_x - 80, 430))
+        SCREEN.blit(confirm_password_input, confirm_password_rect)
+
+        # Draw input boxes with different colors based on selection
+        username_box = pygame.Rect(center_x + 25, 315, 200, 30)
+        password_box = pygame.Rect(center_x + 25, 365, 200, 30)
+        confirm_password_box = pygame.Rect(center_x + 25, 415, 200, 30)
+
+        if active_textbox == 'username':
+            pygame.draw.rect(SCREEN, "Green", username_box, 2)  # Username input box with green border
+        else:
+            pygame.draw.rect(SCREEN, "Black", username_box, 2)  # Username input box with black border
+
+        if active_textbox == 'password':
+            pygame.draw.rect(SCREEN, "Green", password_box, 2)  # Password input box with green border
+        else:
+            pygame.draw.rect(SCREEN, "Black", password_box, 2)  # Password input box with black border
+
+        if active_textbox == 'confirm_password':
+            pygame.draw.rect(SCREEN, "Green", confirm_password_box, 2)  # Confirm Password input box with green border
+        else:
+            pygame.draw.rect(SCREEN, "Black", confirm_password_box, 2)  # Confirm Password input box with black border
 
         # Draw back button
-        REGISTER_BACK = Button(image=None, pos=(center_x, 460),
-                                text_input="BACK", font=font, base_color="Black", hovering_color="Green")
+        REGISTER_BACK = Button(image=None, pos=(center_x, 480),
+                               text_input="BACK", font=font, base_color="Black", hovering_color="Green")
 
         REGISTER_BACK.changeColor(REGISTER_MOUSE_POS)
         REGISTER_BACK.draw(SCREEN)
@@ -232,9 +261,46 @@ def register():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if REGISTER_BACK.checkForInput(REGISTER_MOUSE_POS):
-                    return  # Go back to the main menu
+                    return 
+                if username_box.collidepoint(event.pos):
+                    active_textbox = 'username'
+                elif password_box.collidepoint(event.pos):
+                    active_textbox = 'password'
+                elif confirm_password_box.collidepoint(event.pos):
+                    active_textbox = 'confirm_password'
+                else:
+                    active_textbox = None
+
+            if event.type == pygame.KEYDOWN:
+                if active_textbox == 'username':
+                    if event.key == pygame.K_RETURN:
+                        # Add logic for username submission if needed
+                        print(f'Username: {username}')
+                    elif event.key == pygame.K_BACKSPACE:
+                        username = username[:-1]
+                    else:
+                        username += event.unicode
+                elif active_textbox == 'password':
+                    if event.key == pygame.K_RETURN:
+                        # Add logic for password submission if needed
+                        print(f'Password: {password}')
+                    elif event.key == pygame.K_BACKSPACE:
+                        password = password[:-1]
+                    else:
+                        password += event.unicode
+                elif active_textbox == 'confirm_password':
+                    if event.key == pygame.K_RETURN:
+                        if password == confirm_password:
+                            print(f'Password Confirmed: {confirm_password}')
+                        else:
+                            print("Passwords do not match. Please try again.")
+                    elif event.key == pygame.K_BACKSPACE:
+                        confirm_password = confirm_password[:-1]
+                    else:
+                        confirm_password += event.unicode
 
         pygame.display.update()
         
