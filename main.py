@@ -62,10 +62,10 @@ def main_menu():
     BTN_BG = pygame.transform.scale(BTN_BG, (300, 100))
     
     LOGIN_BUTTON = Button(image=BTN_BG, pos=(center_x, 400), 
-                              text_input="LOGIN", font=font, base_color="#d7fcd4", hovering_color="Gold")
+                        text_input="LOGIN", font=font, base_color="#d7fcd4", hovering_color="Gold")
     
     REGISTER_BUTTON = Button(image=BTN_BG, pos=(center_x, 480), 
-                                 text_input="REGISTER", font=font, base_color="#d7fcd4", hovering_color="GOLD")
+                            text_input="REGISTER", font=font, base_color="#d7fcd4", hovering_color="GOLD")
     
     PLAY_BUTTON = Button(image=BTN_BG, pos=(center_x, 560), 
                             text_input="PLAY", font=font, base_color="#d7fcd4", hovering_color="Gold")
@@ -85,13 +85,19 @@ def main_menu():
 
         for button in [PLAY_BUTTON, OPTIONS_BUTTON, QUIT_BUTTON, LOGIN_BUTTON, REGISTER_BUTTON]:
             button.changeColor(MENU_MOUSE_POS)
-            button.update(SCREEN)
+            button.draw(SCREEN)
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
+                if LOGIN_BUTTON.checkForInput(MENU_MOUSE_POS):
+                    btnSound.play()
+                    login()
+                if REGISTER_BUTTON.checkForInput(MENU_MOUSE_POS):
+                    btnSound.play()
+                    register()
                 if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
                     btnSound.play()
                     pygame.mixer.music.stop()
@@ -103,12 +109,6 @@ def main_menu():
                     btnSound.play()
                     pygame.quit()
                     sys.exit()
-                if LOGIN_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    btnSound.play()
-                    login()
-                if REGISTER_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    btnSound.play()
-                    register()
                     
         pygame.display.update()
 
@@ -149,7 +149,7 @@ def login():
                             text_input="BACK", font=font, base_color="Black", hovering_color="Green")
 
         LOGIN_BACK.changeColor(LOGIN_MOUSE_POS)
-        LOGIN_BACK.update(SCREEN)
+        LOGIN_BACK.draw(SCREEN)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -223,10 +223,10 @@ def register():
 
         # Draw back button
         REGISTER_BACK = Button(image=None, pos=(center_x, 460),
-                               text_input="BACK", font=font, base_color="Black", hovering_color="Green")
+                                text_input="BACK", font=font, base_color="Black", hovering_color="Green")
 
         REGISTER_BACK.changeColor(REGISTER_MOUSE_POS)
-        REGISTER_BACK.update(SCREEN)
+        REGISTER_BACK.draw(SCREEN)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -252,7 +252,7 @@ def options():
                             text_input="BACK", font=font, base_color="Black", hovering_color="Green")
 
         OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS)
-        OPTIONS_BACK.update(SCREEN)
+        OPTIONS_BACK.draw(SCREEN)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -260,7 +260,7 @@ def options():
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
-                    main_menu()
+                    return
 
         pygame.display.update()
 
