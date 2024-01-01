@@ -18,9 +18,9 @@ SCREEN = pygame.display.set_mode((WN_LEBAR, WN_TINGGI))
 clock = pygame.time.Clock()
 
 assets = {
-    'Tiny_Kamikaze' : assets_load('img/tiny_kamikaze_ship.png',50),
-    'Kamikaze' : assets_load('img/kamikaze_ship.png',40),
-    'Gunner' : assets_load('img/gunner_ship.png',69),
+    'Tiny_Kamikaze' : assets_load('renew/tiniykamikazeship/tinykamikazeship1.PNG',60),
+    'Kamikaze' : assets_load('renew/kamikazeship/kamikazeship1.PNG',40),
+    'Gunner' : assets_load('renew/gunnership/gunnership1.PNG',69),
 }
 
 font = pygame.font.Font("font/font.ttf",20)
@@ -29,7 +29,7 @@ font = pygame.font.Font("font/font.ttf",20)
 center_x = SCREEN.get_width() // 2
 center_y = SCREEN.get_height() // 2
 
-pemain = Pemain(center_x, WN_TINGGI - 100, 'img/player_ship.PNG')
+pemain = Pemain(center_x, WN_TINGGI - 100, 'renew/PlayerShip/playership1.PNG')
 group_pemain = pygame.sprite.GroupSingle()
 group_pemain.add(pemain)
 
