@@ -1,7 +1,10 @@
 import math
 import pygame
+from pygame import mixer
 
+mixer.init()
 
+gameover = pygame.mixer.Sound('sound/gameover.mp3')
 class Pemain(pygame.sprite.Sprite):
     def __init__(self, x, y, image_path) -> None:
         super().__init__()
@@ -21,7 +24,8 @@ class Pemain(pygame.sprite.Sprite):
         self.elapsed_time = 0
         self.elapsed_time_list = []
         self.wpm = 0
-        
+    def gameOver(self):
+        return 0    
     def update(self, screen, enemy_group, char_typed, char_updated):
         if char_updated:
             if char_typed and self.nearest_enemy is None:
@@ -56,6 +60,7 @@ class Pemain(pygame.sprite.Sprite):
         
         if pygame.sprite.spritecollide(self, enemy_group, False):#klo dh dekat dgn player baru check mask collision
             if pygame.sprite.spritecollide(self, enemy_group, True, pygame.sprite.collide_mask):
+                gameover.play()
                 self.kill()
                 self.accuracy = (self.score / (self.score + self.miss)) * 100 if self.score + self.miss != 0 else 0
                 #average spw to wpm conversion sbb tu 60 kat depan
