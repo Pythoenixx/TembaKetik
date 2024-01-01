@@ -294,7 +294,7 @@ def register():
                 elif active_textbox == 'confirm_password':
                     if event.key == pygame.K_RETURN:
                         if password == confirm_password:
-                            print(f'Password Confirmed: {confirm_password}')
+                            print(f'Username : {username} Password Confirmed: {confirm_password}')
                         else:
                             print("Passwords do not match. Please try again.")
                     elif event.key == pygame.K_BACKSPACE:
@@ -303,7 +303,7 @@ def register():
                         confirm_password += event.unicode
 
         pygame.display.update()
-        
+
 def options():
     while True:
         OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
