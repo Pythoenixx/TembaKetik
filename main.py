@@ -47,6 +47,7 @@ mixer.music.play()
 btnSound = pygame.mixer.Sound('sound/buttonclicksound.mp3')
 btnSound.set_volume(0.05)
 def main_menu():
+    is_logged_in = False
     LOGO = pygame.image.load('img/logo.png').convert_alpha()
     LOGO = pygame.transform.scale(LOGO, (600, 500))
     LOGO_RECT = LOGO.get_rect(center=(center_x, 150))
@@ -82,33 +83,40 @@ def main_menu():
         SCREEN.blit(LOGO, LOGO_RECT)
 
         SCREEN.blit(MENU_TEXT, MENU_RECT)
-
-        for button in [PLAY_BUTTON, OPTIONS_BUTTON, QUIT_BUTTON, LOGIN_BUTTON, REGISTER_BUTTON]:
-            button.changeColor(MENU_MOUSE_POS)
-            button.draw(SCREEN)
-        
+        if is_logged_in:
+            for button in [PLAY_BUTTON, OPTIONS_BUTTON, QUIT_BUTTON]:
+                button.changeColor(MENU_MOUSE_POS)
+                button.draw(SCREEN)
+        else:
+            for button in [LOGIN_BUTTON, REGISTER_BUTTON]:
+                button.changeColor(MENU_MOUSE_POS)
+                button.draw(SCREEN)
+            
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if LOGIN_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    btnSound.play()
-                    login()
-                if REGISTER_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    btnSound.play()
-                    register()
-                if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    btnSound.play()
-                    pygame.mixer.music.stop()
-                    play()
-                if OPTIONS_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    btnSound.play()
-                    options()
-                if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    btnSound.play()
-                    pygame.quit()
-                    sys.exit()
+                if is_logged_in:
+                    if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
+                        btnSound.play()
+                        pygame.mixer.music.stop()
+                        play()
+                    elif OPTIONS_BUTTON.checkForInput(MENU_MOUSE_POS):
+                        btnSound.play()
+                        options()
+                    elif QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
+                        btnSound.play()
+                        pygame.quit()
+                        sys.exit()
+                else:
+                    if LOGIN_BUTTON.checkForInput(MENU_MOUSE_POS):
+                        btnSound.play()
+                        is_logged_in = login()
+                    elif REGISTER_BUTTON.checkForInput(MENU_MOUSE_POS):
+                        btnSound.play()
+                        register()
+                
                     
         pygame.display.update()
 
