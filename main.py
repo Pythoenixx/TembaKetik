@@ -114,11 +114,11 @@ def main_menu():
 
 # i drawed the textbox but now i don't know how to type in it
 def login():
-    global username, password
-    username = ''
-    password = ''
+    global loginUsername, loginPassword
+    loginUsername = ''
+    loginPassword = ''
     active_textbox = None  # Variable to track the active textbox (None for no textbox)
-
+    
     while True:
         LOGIN_MOUSE_POS = pygame.mouse.get_pos()
 
@@ -128,12 +128,12 @@ def login():
         SCREEN.blit(LOGIN_TEXT, LOGIN_RECT)
 
         # Draw username input
-        username_input = font.render("Username: " + username, True, "Black")
+        username_input = font.render("Username: " + loginUsername, True, "Black")
         username_rect = username_input.get_rect(center=(center_x - 75, 370))
         SCREEN.blit(username_input, username_rect)
 
         # Draw password input
-        password_input = font.render("Password: " + '*' * len(password), True, "Black")
+        password_input = font.render("Password: " + '*' * len(loginPassword), True, "Black")
         password_rect = password_input.get_rect(center=(center_x - 75, 420))
         SCREEN.blit(password_input, password_rect)
 
@@ -176,34 +176,36 @@ def login():
             if event.type == pygame.KEYDOWN:
                 if active_textbox == 'username':
                     if event.key == pygame.K_RETURN:
-                        print(f'Logging in with Username: {username}, Password: {password}')
                         # Add your login logic here
+                        return loginUsername, loginPassword  # Return the entered values
                     elif event.key == pygame.K_BACKSPACE:
-                        username = username[:-1]
+                        loginUsername = loginUsername[:-1]
                     else:
-                        username += event.unicode
+                        loginUsername += event.unicode
                     # Adjust the position of the input text based on the length of the text
-                    username_input = font.render("Username: " + username, True, "Black")
+                    username_input = font.render("Username: " + loginUsername, True, "Black")
                     username_rect = username_input.get_rect(center=(center_x - 75, 370))
                 elif active_textbox == 'password':
                     if event.key == pygame.K_RETURN:
-                        print(f'Logging in with Username: {username}, Password: {password}')
                         # Add your login logic here
+                        return loginUsername, loginPassword  # Return the entered values
                     elif event.key == pygame.K_BACKSPACE:
-                        password = password[:-1]
+                        loginPassword = loginPassword[:-1]
                     else:
-                        password += event.unicode
+                        loginPassword += event.unicode
                     # Adjust the position of the input text based on the length of the text
-                    password_input = font.render("Password: " + '*' * len(password), True, "Black")
+                    password_input = font.render("Password: " + '*' * len(loginPassword), True, "Black")
                     password_rect = password_input.get_rect(center=(center_x - 75, 420))
 
+        
         pygame.display.update()
 
 
 def register():
-    username = ""
-    password = ""
-    confirm_password = ""
+    global registerUsername, registerPassword, confirmRegisterPassword
+    registerUsername = ""
+    registerPassword = ""
+    confirmRegisterPassword = ""
     active_textbox = None
 
     while True:
@@ -216,17 +218,17 @@ def register():
         SCREEN.blit(REGISTER_TEXT, REGISTER_RECT)
 
         # Draw username input
-        username_input = font.render("Username: " + username, True, "Black")
+        username_input = font.render("Username: " + registerUsername, True, "Black")
         username_rect = username_input.get_rect(center=(center_x - 75, 330))
         SCREEN.blit(username_input, username_rect)
 
         # Draw password input
-        password_input = font.render("Password: " + '*' * len(password), True, "Black")
+        password_input = font.render("Password: " + '*' * len(registerPassword), True, "Black")
         password_rect = password_input.get_rect(center=(center_x - 75, 380))
         SCREEN.blit(password_input, password_rect)
 
         # Draw confirm password input
-        confirm_password_input = font.render("ConfirmPass: " + '*' * len(confirm_password), True, "Black")
+        confirm_password_input = font.render("ConfirmPass: " + '*' * len(confirmRegisterPassword), True, "Black")
         confirm_password_rect = confirm_password_input.get_rect(center=(center_x - 80, 430))
         SCREEN.blit(confirm_password_input, confirm_password_rect)
 
@@ -278,29 +280,29 @@ def register():
                 if active_textbox == 'username':
                     if event.key == pygame.K_RETURN:
                         # Add logic for username submission if needed
-                        print(f'Username: {username}')
+                        return registerUsername, registerPassword, confirmRegisterPassword  # Return the entered values
                     elif event.key == pygame.K_BACKSPACE:
-                        username = username[:-1]
+                        registerUsername = registerUsername[:-1]
                     else:
-                        username += event.unicode
+                        registerUsername += event.unicode
                 elif active_textbox == 'password':
                     if event.key == pygame.K_RETURN:
                         # Add logic for password submission if needed
-                        print(f'Password: {password}')
+                        return registerUsername, registerPassword, confirmRegisterPassword  # Return the entered values
                     elif event.key == pygame.K_BACKSPACE:
-                        password = password[:-1]
+                        registerPassword = registerPassword[:-1]
                     else:
-                        password += event.unicode
+                        registerPassword += event.unicode
                 elif active_textbox == 'confirm_password':
                     if event.key == pygame.K_RETURN:
-                        if password == confirm_password:
-                            print(f'Username : {username} Password Confirmed: {confirm_password}')
+                        if registerPassword == confirmRegisterPassword:
+                            return registerUsername, registerPassword, confirmRegisterPassword  # Return the entered values
                         else:
                             print("Passwords do not match. Please try again.")
                     elif event.key == pygame.K_BACKSPACE:
-                        confirm_password = confirm_password[:-1]
+                        confirmRegisterPassword = confirmRegisterPassword[:-1]
                     else:
-                        confirm_password += event.unicode
+                        confirmRegisterPassword += event.unicode
 
         pygame.display.update()
 
