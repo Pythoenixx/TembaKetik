@@ -46,6 +46,8 @@ mixer.music.play()
 
 btnSound = pygame.mixer.Sound('sound/buttonclicksound.mp3')
 btnSound.set_volume(0.05)
+btnType = pygame.mixer.Sound('sound/keypressed.mp3')
+btnType.set_volume(0.1)
 def main_menu():
     is_logged_in = False
     LOGO = pygame.image.load('img/logo.png').convert_alpha()
@@ -371,6 +373,7 @@ def play():
                 if event.key == pygame.K_BACKSPACE:
                     char_typed = char_typed[:-1]  #amik smua value selain akhir sekali dlm list tu
                 else:
+                    btnType.play()
                     char_typed += event.unicode #utk amik keyboard text input
                     char_updated = True 
         
