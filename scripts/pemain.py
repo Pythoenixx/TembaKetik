@@ -2,8 +2,9 @@ import math
 import pygame
 from pygame import mixer
 
-mixer.init()
 
+mixer.init()
+meletup = pygame.mixer.Sound('sound/meletup.mp3')
 gameover = pygame.mixer.Sound('sound/gameover.mp3')
 class Pemain(pygame.sprite.Sprite):
     def __init__(self, x, y, image_path) -> None:
@@ -45,6 +46,7 @@ class Pemain(pygame.sprite.Sprite):
                     self.nearest_enemy.word = self.nearest_enemy.word[1:] #dia phm aku nk delete word tu ke?
                     self.score += 1
                     if self.nearest_enemy.word == '':
+                        meletup.play()
                         self.enemy_killed += 1
                         self.nearest_enemy = None
                         if len(enemy_group.sprites()) == 1: #last musuh blm mati lagi sbb update dia lepas pemain and dia akan mati sbb enemy.word == '' so kene cek klo tinggal 1 bukan 0
