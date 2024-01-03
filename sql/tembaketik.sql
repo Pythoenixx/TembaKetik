@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 01, 2024 at 08:42 AM
+-- Generation Time: Jan 03, 2024 at 03:43 PM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.1.12
 
@@ -55,9 +55,17 @@ CREATE TABLE `missed` (
 
 CREATE TABLE `player` (
   `ID` int(11) NOT NULL,
-  `Username` varchar(69) DEFAULT NULL,
-  `Password` varchar(69) DEFAULT NULL
+  `Username` varchar(20) DEFAULT NULL,
+  `Password` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `player`
+--
+
+INSERT INTO `player` (`ID`, `Username`, `Password`) VALUES
+(1, 'Pythoenix', 'yatagarasu'),
+(2, 'dummy', '123');
 
 -- --------------------------------------------------------
 
@@ -66,11 +74,10 @@ CREATE TABLE `player` (
 --
 
 CREATE TABLE `score` (
-  `ID` int(11) NOT NULL,
-  `miss_ID` int(11) DEFAULT NULL,
-  `accuracy_ID` int(11) DEFAULT NULL,
-  `WPM_ID` int(11) DEFAULT NULL,
-  `value` int(11) DEFAULT NULL
+  `miss_ID` int(11) NOT NULL,
+  `accuracy_ID` int(11) NOT NULL,
+  `WPM_ID` int(11) NOT NULL,
+  `nilai` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -83,7 +90,7 @@ CREATE TABLE `wpm` (
   `ID` int(11) NOT NULL,
   `player_ID` int(11) DEFAULT NULL,
   `typed_word_count` int(11) DEFAULT NULL,
-  `value` int(11) DEFAULT NULL
+  `nilai` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -115,8 +122,7 @@ ALTER TABLE `player`
 -- Indexes for table `score`
 --
 ALTER TABLE `score`
-  ADD PRIMARY KEY (`ID`),
-  ADD KEY `miss_ID` (`miss_ID`),
+  ADD PRIMARY KEY (`miss_ID`,`accuracy_ID`,`WPM_ID`),
   ADD KEY `accuracy_ID` (`accuracy_ID`),
   ADD KEY `WPM_ID` (`WPM_ID`);
 
@@ -126,6 +132,34 @@ ALTER TABLE `score`
 ALTER TABLE `wpm`
   ADD PRIMARY KEY (`ID`),
   ADD KEY `player_ID` (`player_ID`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `accuracy`
+--
+ALTER TABLE `accuracy`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `missed`
+--
+ALTER TABLE `missed`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `player`
+--
+ALTER TABLE `player`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `wpm`
+--
+ALTER TABLE `wpm`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables
