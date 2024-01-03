@@ -18,9 +18,9 @@ SCREEN = pygame.display.set_mode((WN_LEBAR, WN_TINGGI))
 clock = pygame.time.Clock()
 
 assets = {
-    'Tiny_Kamikaze' : assets_load('img/tiny_kamikaze_ship.png',50),
-    'Kamikaze' : assets_load('img/kamikaze_ship.png',40),
-    'Gunner' : assets_load('img/gunner_ship.png',69),
+    'Tiny_Kamikaze' : assets_load('renew/tiniykamikazeship/tinykamikazeship1.PNG',60),
+    'Kamikaze' : assets_load('renew/kamikazeship/kamikazeship1.PNG',40),
+    'Gunner' : assets_load('renew/gunnership/gunnership1.PNG',69),
 }
 
 font = pygame.font.Font("font/font.ttf",20)
@@ -29,7 +29,7 @@ font = pygame.font.Font("font/font.ttf",20)
 center_x = SCREEN.get_width() // 2
 center_y = SCREEN.get_height() // 2
 
-pemain = Pemain(center_x, WN_TINGGI - 100, 'img/player_ship.PNG')
+pemain = Pemain(center_x, WN_TINGGI - 100, 'renew/PlayerShip/playership1.PNG')
 group_pemain = pygame.sprite.GroupSingle()
 group_pemain.add(pemain)
 
@@ -38,7 +38,7 @@ latar = Latar(0, WN_TINGGI, 0, 0.2)
 # loading the background music
 mixer.music.load('sound/backgroundsound.mp3')
 # Set the initial volume
-initial_volume = 0.01
+initial_volume = 0.1
 pygame.mixer.music.set_volume(initial_volume)
 
 # play the music
@@ -46,7 +46,10 @@ mixer.music.play()
 
 btnSound = pygame.mixer.Sound('sound/buttonclicksound.mp3')
 btnSound.set_volume(0.05)
+btnType = pygame.mixer.Sound('sound/keypressed.mp3')
+btnType.set_volume(0.1)
 def main_menu():
+    is_logged_in = False
     LOGO = pygame.image.load('img/logo.png').convert_alpha()
     LOGO = pygame.transform.scale(LOGO, (600, 500))
     LOGO_RECT = LOGO.get_rect(center=(center_x, 150))
@@ -60,6 +63,12 @@ def main_menu():
     
     BTN_BG = pygame.image.load('img/buttonBG.png').convert_alpha()
     BTN_BG = pygame.transform.scale(BTN_BG, (300, 100))
+    
+    LOGIN_BUTTON = Button(image=BTN_BG, pos=(center_x, 400), 
+                        text_input="LOGIN", font=font, base_color="#d7fcd4", hovering_color="Gold")
+    
+    REGISTER_BUTTON = Button(image=BTN_BG, pos=(center_x, 480), 
+                            text_input="REGISTER", font=font, base_color="#d7fcd4", hovering_color="GOLD")
     
     PLAY_BUTTON = Button(image=BTN_BG, pos=(center_x, 560), 
                             text_input="PLAY", font=font, base_color="#d7fcd4", hovering_color="Gold")
@@ -76,30 +85,237 @@ def main_menu():
         SCREEN.blit(LOGO, LOGO_RECT)
 
         SCREEN.blit(MENU_TEXT, MENU_RECT)
-
-        for button in [PLAY_BUTTON, OPTIONS_BUTTON, QUIT_BUTTON]:
-            button.changeColor(MENU_MOUSE_POS)
-            button.update(SCREEN)
-        
+        if is_logged_in:
+            for button in [PLAY_BUTTON, OPTIONS_BUTTON, QUIT_BUTTON]:
+                button.changeColor(MENU_MOUSE_POS)
+                button.draw(SCREEN)
+        else:
+            for button in [LOGIN_BUTTON, REGISTER_BUTTON]:
+                button.changeColor(MENU_MOUSE_POS)
+                button.draw(SCREEN)
+            
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    btnSound.play()
-                    pygame.mixer.music.stop()
-                    play()
-                if OPTIONS_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    btnSound.play()
-                    options()
-                if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    btnSound.play()
-                    pygame.quit()
-                    sys.exit()
+                if is_logged_in:
+                    if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
+                        btnSound.play()
+                        pygame.mixer.music.stop()
+                        play()
+                    elif OPTIONS_BUTTON.checkForInput(MENU_MOUSE_POS):
+                        btnSound.play()
+                        options()
+                    elif QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
+                        btnSound.play()
+                        pygame.quit()
+                        sys.exit()
+                else:
+                    if LOGIN_BUTTON.checkForInput(MENU_MOUSE_POS):
+                        btnSound.play()
+                        is_logged_in = login()
+                    elif REGISTER_BUTTON.checkForInput(MENU_MOUSE_POS):
+                        btnSound.play()
+                        register()
+                
                     
         pygame.display.update()
+
+# i drawed the textbox but now i don't know how to type in it
+def login():
+    global loginUsername, loginPassword
+    loginUsername = ''
+    loginPassword = ''
+    active_textbox = None  # Variable to track the active textbox (None for no textbox)
+    
+    while True:
+        LOGIN_MOUSE_POS = pygame.mouse.get_pos()
+
+        SCREEN.fill("gray")
+        LOGIN_TEXT = font.render("Login Screen", True, "Black")
+        LOGIN_RECT = LOGIN_TEXT.get_rect(center=(center_x, 260))
+        SCREEN.blit(LOGIN_TEXT, LOGIN_RECT)
+
+        # Draw username input
+        username_input = font.render("Username: " + loginUsername, True, "Black")
+        username_rect = username_input.get_rect(center=(center_x - 75, 370))
+        SCREEN.blit(username_input, username_rect)
+
+        # Draw password input
+        password_input = font.render("Password: " + '*' * len(loginPassword), True, "Black")
+        password_rect = password_input.get_rect(center=(center_x - 75, 420))
+        SCREEN.blit(password_input, password_rect)
+
+        # Draw input boxes with different colors based on selection
+        username_box = pygame.Rect(center_x + 25, 355, 200, 30)
+        password_box = pygame.Rect(center_x + 25, 405, 200, 30)
+
+        if active_textbox == 'username':
+            pygame.draw.rect(SCREEN, "Green", username_box, 2)  # Username input box with green border
+        else:
+            pygame.draw.rect(SCREEN, "Black", username_box, 2)  # Username input box with black border
+
+        if active_textbox == 'password':
+            pygame.draw.rect(SCREEN, "Green", password_box, 2)  # Password input box with green border
+        else:
+            pygame.draw.rect(SCREEN, "Black", password_box, 2)  # Password input box with black border
+
+        # Draw back button
+        LOGIN_BACK = Button(image=None, pos=(center_x, 500),
+                            text_input="BACK", font=font, base_color="Black", hovering_color="Green")
+
+        LOGIN_BACK.changeColor(LOGIN_MOUSE_POS)
+        LOGIN_BACK.draw(SCREEN)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if LOGIN_BACK.checkForInput(LOGIN_MOUSE_POS):
+                    return  # Go back to the main menu
+                # Check if the mouse click is inside the username input box
+                if username_box.collidepoint(event.pos):
+                    active_textbox = 'username'
+                # Check if the mouse click is inside the password input box
+                elif password_box.collidepoint(event.pos):
+                    active_textbox = 'password'
+                else:
+                    active_textbox = None
+            if event.type == pygame.KEYDOWN:
+                if active_textbox == 'username':
+                    if event.key == pygame.K_RETURN:
+                        # Add your login logic here
+                        return loginUsername, loginPassword  # Return the entered values
+                    elif event.key == pygame.K_BACKSPACE:
+                        loginUsername = loginUsername[:-1]
+                    else:
+                        loginUsername += event.unicode
+                    # Adjust the position of the input text based on the length of the text
+                    username_input = font.render("Username: " + loginUsername, True, "Black")
+                    username_rect = username_input.get_rect(center=(center_x - 75, 370))
+                elif active_textbox == 'password':
+                    if event.key == pygame.K_RETURN:
+                        # Add your login logic here
+                        return loginUsername, loginPassword  # Return the entered values
+                    elif event.key == pygame.K_BACKSPACE:
+                        loginPassword = loginPassword[:-1]
+                    else:
+                        loginPassword += event.unicode
+                    # Adjust the position of the input text based on the length of the text
+                    password_input = font.render("Password: " + '*' * len(loginPassword), True, "Black")
+                    password_rect = password_input.get_rect(center=(center_x - 75, 420))
+
         
+        pygame.display.update()
+
+
+def register():
+    global registerUsername, registerPassword, confirmRegisterPassword
+    registerUsername = ""
+    registerPassword = ""
+    confirmRegisterPassword = ""
+    active_textbox = None
+
+    while True:
+        REGISTER_MOUSE_POS = pygame.mouse.get_pos()
+
+        SCREEN.fill("gray")
+
+        REGISTER_TEXT = font.render("Register Screen", True, "Black")
+        REGISTER_RECT = REGISTER_TEXT.get_rect(center=(center_x, 260))
+        SCREEN.blit(REGISTER_TEXT, REGISTER_RECT)
+
+        # Draw username input
+        username_input = font.render("Username: " + registerUsername, True, "Black")
+        username_rect = username_input.get_rect(center=(center_x - 75, 330))
+        SCREEN.blit(username_input, username_rect)
+
+        # Draw password input
+        password_input = font.render("Password: " + '*' * len(registerPassword), True, "Black")
+        password_rect = password_input.get_rect(center=(center_x - 75, 380))
+        SCREEN.blit(password_input, password_rect)
+
+        # Draw confirm password input
+        confirm_password_input = font.render("ConfirmPass: " + '*' * len(confirmRegisterPassword), True, "Black")
+        confirm_password_rect = confirm_password_input.get_rect(center=(center_x - 80, 430))
+        SCREEN.blit(confirm_password_input, confirm_password_rect)
+
+        # Draw input boxes with different colors based on selection
+        username_box = pygame.Rect(center_x + 25, 315, 200, 30)
+        password_box = pygame.Rect(center_x + 25, 365, 200, 30)
+        confirm_password_box = pygame.Rect(center_x + 25, 415, 200, 30)
+
+        if active_textbox == 'username':
+            pygame.draw.rect(SCREEN, "Green", username_box, 2)  # Username input box with green border
+        else:
+            pygame.draw.rect(SCREEN, "Black", username_box, 2)  # Username input box with black border
+
+        if active_textbox == 'password':
+            pygame.draw.rect(SCREEN, "Green", password_box, 2)  # Password input box with green border
+        else:
+            pygame.draw.rect(SCREEN, "Black", password_box, 2)  # Password input box with black border
+
+        if active_textbox == 'confirm_password':
+            pygame.draw.rect(SCREEN, "Green", confirm_password_box, 2)  # Confirm Password input box with green border
+        else:
+            pygame.draw.rect(SCREEN, "Black", confirm_password_box, 2)  # Confirm Password input box with black border
+
+        # Draw back button
+        REGISTER_BACK = Button(image=None, pos=(center_x, 480),
+                               text_input="BACK", font=font, base_color="Black", hovering_color="Green")
+
+        REGISTER_BACK.changeColor(REGISTER_MOUSE_POS)
+        REGISTER_BACK.draw(SCREEN)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if REGISTER_BACK.checkForInput(REGISTER_MOUSE_POS):
+                    return 
+                if username_box.collidepoint(event.pos):
+                    active_textbox = 'username'
+                elif password_box.collidepoint(event.pos):
+                    active_textbox = 'password'
+                elif confirm_password_box.collidepoint(event.pos):
+                    active_textbox = 'confirm_password'
+                else:
+                    active_textbox = None
+
+            if event.type == pygame.KEYDOWN:
+                if active_textbox == 'username':
+                    if event.key == pygame.K_RETURN:
+                        # Add logic for username submission if needed
+                        return registerUsername, registerPassword, confirmRegisterPassword  # Return the entered values
+                    elif event.key == pygame.K_BACKSPACE:
+                        registerUsername = registerUsername[:-1]
+                    else:
+                        registerUsername += event.unicode
+                elif active_textbox == 'password':
+                    if event.key == pygame.K_RETURN:
+                        # Add logic for password submission if needed
+                        return registerUsername, registerPassword, confirmRegisterPassword  # Return the entered values
+                    elif event.key == pygame.K_BACKSPACE:
+                        registerPassword = registerPassword[:-1]
+                    else:
+                        registerPassword += event.unicode
+                elif active_textbox == 'confirm_password':
+                    if event.key == pygame.K_RETURN:
+                        if registerPassword == confirmRegisterPassword:
+                            return registerUsername, registerPassword, confirmRegisterPassword  # Return the entered values
+                        else:
+                            print("Passwords do not match. Please try again.")
+                    elif event.key == pygame.K_BACKSPACE:
+                        confirmRegisterPassword = confirmRegisterPassword[:-1]
+                    else:
+                        confirmRegisterPassword += event.unicode
+
+        pygame.display.update()
+
 def options():
     while True:
         OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
@@ -114,7 +330,7 @@ def options():
                             text_input="BACK", font=font, base_color="Black", hovering_color="Green")
 
         OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS)
-        OPTIONS_BACK.update(SCREEN)
+        OPTIONS_BACK.draw(SCREEN)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -122,7 +338,7 @@ def options():
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
-                    main_menu()
+                    return
 
         pygame.display.update()
 
@@ -157,6 +373,7 @@ def play():
                 if event.key == pygame.K_BACKSPACE:
                     char_typed = char_typed[:-1]  #amik smua value selain akhir sekali dlm list tu
                 else:
+                    btnType.play()
                     char_typed += event.unicode #utk amik keyboard text input
                     char_updated = True 
         

@@ -1,7 +1,11 @@
 import math
 import pygame
+from pygame import mixer
 
 
+mixer.init()
+meletup = pygame.mixer.Sound('sound/meletup.mp3')
+gameover = pygame.mixer.Sound('sound/gameover.mp3')
 class Pemain(pygame.sprite.Sprite):
     def __init__(self, x, y, image_path) -> None:
         super().__init__()
@@ -21,7 +25,7 @@ class Pemain(pygame.sprite.Sprite):
         self.elapsed_time = 0
         self.elapsed_time_list = []
         self.wpm = 0
-        
+    #deleted forgotten to delete gameOVer method
     def update(self, screen, enemy_group, char_typed, char_updated):
         if char_updated:
             if char_typed and self.nearest_enemy is None:
@@ -42,6 +46,7 @@ class Pemain(pygame.sprite.Sprite):
                     self.nearest_enemy.word = self.nearest_enemy.word[1:] #dia phm aku nk delete word tu ke?
                     self.score += 1
                     if self.nearest_enemy.word == '':
+                        meletup.play()
                         self.enemy_killed += 1
                         self.nearest_enemy = None
                         if len(enemy_group.sprites()) == 1: #last musuh blm mati lagi sbb update dia lepas pemain and dia akan mati sbb enemy.word == '' so kene cek klo tinggal 1 bukan 0
@@ -56,6 +61,7 @@ class Pemain(pygame.sprite.Sprite):
         
         if pygame.sprite.spritecollide(self, enemy_group, False):#klo dh dekat dgn player baru check mask collision
             if pygame.sprite.spritecollide(self, enemy_group, True, pygame.sprite.collide_mask):
+                gameover.play()
                 self.kill()
                 self.accuracy = (self.score / (self.score + self.miss)) * 100 if self.score + self.miss != 0 else 0
                 #average spw to wpm conversion sbb tu 60 kat depan
