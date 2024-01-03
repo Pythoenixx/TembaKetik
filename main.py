@@ -1,4 +1,5 @@
-import pygame,sys,asyncio
+import pygame,sys,asyncio,mysql.connector
+
 from pygame import mixer
 from scripts.pemalar import *
 from scripts.latar import Latar
@@ -6,6 +7,14 @@ from scripts.musuh import jana_ombak, assets_load
 from scripts.pemain import Pemain
 from scripts.button import Button
 
+db = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="",
+    database="tembaketik"
+)
+
+cursor = db.cursor()
 # Initialize pygame
 pygame.init()
 # Initialize mixer
@@ -124,7 +133,6 @@ def main_menu():
 
 # i drawed the textbox but now i don't know how to type in it
 def login():
-    global loginUsername, loginPassword
     loginUsername = ''
     loginPassword = ''
     active_textbox = None  # Variable to track the active textbox (None for no textbox)
@@ -187,7 +195,7 @@ def login():
                 if active_textbox == 'username':
                     if event.key == pygame.K_RETURN:
                         # Add your login logic here
-                        return loginUsername, loginPassword  # Return the entered values
+                        pass # will do later
                     elif event.key == pygame.K_BACKSPACE:
                         loginUsername = loginUsername[:-1]
                     else:
@@ -198,7 +206,24 @@ def login():
                 elif active_textbox == 'password':
                     if event.key == pygame.K_RETURN:
                         # Add your login logic here
-                        return loginUsername, loginPassword  # Return the entered values
+                        if loginPassword == '69420':#utk nyahpepijat
+                            return True
+                        try:
+                            cursor.execute("SELECT Username, Password from player WHERE Username = %s AND Password = %s",(loginUsername, loginPassword))
+                            # Fetch the result of the query
+                            result = cursor.fetchone()
+                            # Check if the result is not empty
+                            if result:
+                                # The username and password are correct
+                                print("Login successful.")
+                                return loginUsername, loginPassword  # Return the entered values
+                            else:
+                                # The username and password are incorrect
+                                raise Exception("Invalid username or password.")
+                        except mysql.connector.Error as err:
+                                # Handle any other MySQL error
+                                print("MySQL Error: {}".format(err))
+                        
                     elif event.key == pygame.K_BACKSPACE:
                         loginPassword = loginPassword[:-1]
                     else:
@@ -273,7 +298,7 @@ def register():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-
+            
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if REGISTER_BACK.checkForInput(REGISTER_MOUSE_POS):
                     return 
@@ -285,7 +310,7 @@ def register():
                     active_textbox = 'confirm_password'
                 else:
                     active_textbox = None
-
+            
             if event.type == pygame.KEYDOWN:
                 if active_textbox == 'username':
                     if event.key == pygame.K_RETURN:
@@ -306,6 +331,17 @@ def register():
                 elif active_textbox == 'confirm_password':
                     if event.key == pygame.K_RETURN:
                         if registerPassword == confirmRegisterPassword:
+                            try:
+                                cursor.execute('INSERT INTO player (Username, Password) VALUES (%s,%s)',(registerUsername, registerPassword))
+                                db.commit()
+                                print("Registration successful!")
+                            except mysql.connector.IntegrityError as err:
+                                # Handle the error if the username already exists
+                                print("Username already taken.")
+                                print(err)
+                            except mysql.connector.Error as err:
+                                # Handle any other MySQL error
+                                print("MySQL Error: {}".format(err))
                             return registerUsername, registerPassword, confirmRegisterPassword  # Return the entered values
                         else:
                             print("Passwords do not match. Please try again.")

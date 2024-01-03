@@ -66,6 +66,9 @@ class Pemain(pygame.sprite.Sprite):
                 self.accuracy = (self.score / (self.score + self.miss)) * 100 if self.score + self.miss != 0 else 0
                 #average spw to wpm conversion sbb tu 60 kat depan
                 self.wpm = round(60/(sum(self.elapsed_time_list) / len(self.elapsed_time_list))) if len(self.elapsed_time_list) != 0 else 0
+                
+                #cursor.execute("INSERT INTO tembaketik.score (username, score, accuracy, wpm) VALUES (%s, %s, %s, %s)", (self.username, self.score, self.accuracy, self.wpm))
+                #kene tangguh ni sbb kena insert value player dlu since dia parent utk most table
 
     # Define a function that takes a sprite and a list of sprites as parameters, and returns the nearest sprite in the list
     # if all enemy move at the same speed, this only need to run once for optimization
