@@ -4,7 +4,7 @@ from pygame import mixer
 from scripts.pemalar import *
 from scripts.latar import Latar
 from scripts.musuh import jana_ombak, assets_load
-from scripts.pemain import Pemain
+from scripts.pemain import Pemain, is_name_valid
 from scripts.button import Button
 
 db = mysql.connector.connect(
@@ -231,7 +231,6 @@ def login():
                     # Adjust the position of the input text based on the length of the text
                     password_input = font.render("Password: " + '*' * len(loginPassword), True, "Black")
                     password_rect = password_input.get_rect(center=(center_x - 75, 420))
-
         
         pygame.display.update()
 
@@ -320,19 +319,19 @@ def register():
                         registerUsername += event.unicode
                 elif active_textbox == 'password':
                     if event.key == pygame.K_RETURN:
-                        # Add logic for password submission if needed
-                        return registerUsername, registerPassword, confirmRegisterPassword  # Return the entered values #tpi values nya x digunakan pun?
+                        active_textbox = 'confirm_password'  # Switch to the next input box'
                     elif event.key == pygame.K_BACKSPACE:
                         registerPassword = registerPassword[:-1]
                     else:
                         registerPassword += event.unicode
                 elif active_textbox == 'confirm_password':
                     if event.key == pygame.K_RETURN:
-                        if registerPassword == confirmRegisterPassword:
+                        if registerPassword == confirmRegisterPassword and is_name_valid(registerUsername):
                             try:
                                 cursor.execute('INSERT INTO player (Username, Password) VALUES (%s,%s)',(registerUsername, registerPassword))
                                 db.commit()
                                 print("Registration successful!")
+                                return registerUsername, registerPassword, confirmRegisterPassword  # Return the entered values #values nya buat apa and pegi mne?
                             except mysql.connector.IntegrityError as err:
                                 # Handle the error if the username already exists
                                 print("Username already taken.")
@@ -340,10 +339,8 @@ def register():
                             except mysql.connector.Error as err:
                                 # Handle any other MySQL error
                                 print("MySQL Error: {}".format(err))
-                            return registerUsername, registerPassword, confirmRegisterPassword  # Return the entered values #values nya buat apa and pegi mne?
-                        #nnti betulkan yg ni
                         else:
-                            print("Passwords do not match. Please try again.")
+                            print("Not valid username or passwords do not match. Please try again.")
                     elif event.key == pygame.K_BACKSPACE:
                         confirmRegisterPassword = confirmRegisterPassword[:-1]
                     else:
