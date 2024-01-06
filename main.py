@@ -38,9 +38,7 @@ font = pygame.font.Font("font/font.ttf",20)
 center_x = SCREEN.get_width() // 2
 center_y = SCREEN.get_height() // 2
 
-pemain = Pemain(center_x, WN_TINGGI - 100, 'renew/PlayerShip/playership1.PNG')
-group_pemain = pygame.sprite.GroupSingle()
-group_pemain.add(pemain)
+
 
 latar = Latar(0, WN_TINGGI, 0, 0.2)
 
@@ -57,6 +55,7 @@ btnSound = pygame.mixer.Sound('sound/buttonclicksound.mp3')
 btnSound.set_volume(0.05)
 btnType = pygame.mixer.Sound('sound/keypressed.mp3')
 btnType.set_volume(0.1)
+
 def main_menu():
     is_logged_in = False
     LOGO = pygame.image.load('img/logo.png').convert_alpha()
@@ -112,7 +111,7 @@ def main_menu():
                     if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
                         btnSound.play()
                         pygame.mixer.music.stop()
-                        play()
+                        play(is_logged_in[0])
                     elif OPTIONS_BUTTON.checkForInput(MENU_MOUSE_POS):
                         btnSound.play()
                         options()
@@ -216,10 +215,12 @@ def login():
                             if result:
                                 # The username and password are correct
                                 print("Login successful.")
-                                return loginUsername, loginPassword  # Return the entered values
+                                cursor.execute("SELECT ID FROM player WHERE Username = %s", (loginUsername,))
+                                player_id = cursor.fetchone()[0]
+                                return player_id, loginUsername  # Return the entered values
                             else:
                                 # The username and password are incorrect
-                                raise Exception("Invalid username or password.")
+                                print("Invalid username or password.")
                         except mysql.connector.Error as err:
                                 # Handle any other MySQL error
                                 print("MySQL Error: {}".format(err))
@@ -234,7 +235,6 @@ def login():
 
         
         pygame.display.update()
-
 
 def register():
     global registerUsername, registerPassword, confirmRegisterPassword
@@ -289,7 +289,7 @@ def register():
 
         # Draw back button
         REGISTER_BACK = Button(image=None, pos=(center_x, 480),
-                               text_input="BACK", font=font, base_color="Black", hovering_color="Green")
+                                text_input="BACK", font=font, base_color="Black", hovering_color="Green")
 
         REGISTER_BACK.changeColor(REGISTER_MOUSE_POS)
         REGISTER_BACK.draw(SCREEN)
@@ -343,6 +343,7 @@ def register():
                                 # Handle any other MySQL error
                                 print("MySQL Error: {}".format(err))
                             return registerUsername, registerPassword, confirmRegisterPassword  # Return the entered values
+                        #nnti betulkan yg ni
                         else:
                             print("Passwords do not match. Please try again.")
                     elif event.key == pygame.K_BACKSPACE:
@@ -378,7 +379,12 @@ def options():
 
         pygame.display.update()
 
-def play():
+def play(player_id):
+    pemain = Pemain(player_id, center_x, WN_TINGGI - 100, 'renew/PlayerShip/playership1.PNG')
+    
+    group_pemain = pygame.sprite.GroupSingle()
+    group_pemain.add(pemain)
+    
     char_typed = ''
     char_updated = False
     
@@ -428,7 +434,7 @@ def play():
                 timer_setted = True
         
         group_pemain.draw(SCREEN) #try cari group sprite utk yg ada 1 sprite je
-        group_pemain.update(SCREEN, group_musuh, char_typed, char_updated)
+        group_pemain.update(SCREEN, group_musuh, char_typed, char_updated, cursor, db)
         char_updated = False
         
         group_musuh.draw(SCREEN)
