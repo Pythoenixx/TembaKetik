@@ -193,8 +193,7 @@ def login():
             if event.type == pygame.KEYDOWN:
                 if active_textbox == 'username':
                     if event.key == pygame.K_RETURN:
-                        # Add your login logic here
-                        pass # will do later
+                        active_textbox = 'password'  # Switch to the next input box
                     elif event.key == pygame.K_BACKSPACE:
                         loginUsername = loginUsername[:-1]
                     else:
@@ -237,7 +236,7 @@ def login():
         pygame.display.update()
 
 def register():
-    global registerUsername, registerPassword, confirmRegisterPassword
+    global registerUsername, registerPassword, confirmRegisterPassword #global ni utk apa?
     registerUsername = ""
     registerPassword = ""
     confirmRegisterPassword = ""
