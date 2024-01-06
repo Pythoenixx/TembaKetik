@@ -117,3 +117,17 @@ class Pemain(pygame.sprite.Sprite):
                 nearest_sprite = other_sprite
         # Return the nearest sprite
         return nearest_sprite
+
+def is_name_valid(username):
+    if len(username) == 0:
+        return False
+    else:
+        # Define the valid characters for a username
+        valid_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._"
+        # Loop through each character in the username
+        for char in username:
+            # If the character is not in the valid characters, return False
+            if char not in valid_chars:
+                return False
+        # If the loop finishes without returning False, return True
+        return True
