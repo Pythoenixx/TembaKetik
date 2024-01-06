@@ -313,8 +313,7 @@ def register():
             if event.type == pygame.KEYDOWN:
                 if active_textbox == 'username':
                     if event.key == pygame.K_RETURN:
-                        # Add logic for username submission if needed
-                        return registerUsername, registerPassword, confirmRegisterPassword  # Return the entered values
+                        active_textbox = 'password'  # Switch to the next input box'
                     elif event.key == pygame.K_BACKSPACE:
                         registerUsername = registerUsername[:-1]
                     else:
@@ -322,7 +321,7 @@ def register():
                 elif active_textbox == 'password':
                     if event.key == pygame.K_RETURN:
                         # Add logic for password submission if needed
-                        return registerUsername, registerPassword, confirmRegisterPassword  # Return the entered values
+                        return registerUsername, registerPassword, confirmRegisterPassword  # Return the entered values #tpi values nya x digunakan pun?
                     elif event.key == pygame.K_BACKSPACE:
                         registerPassword = registerPassword[:-1]
                     else:
@@ -341,7 +340,7 @@ def register():
                             except mysql.connector.Error as err:
                                 # Handle any other MySQL error
                                 print("MySQL Error: {}".format(err))
-                            return registerUsername, registerPassword, confirmRegisterPassword  # Return the entered values
+                            return registerUsername, registerPassword, confirmRegisterPassword  # Return the entered values #values nya buat apa and pegi mne?
                         #nnti betulkan yg ni
                         else:
                             print("Passwords do not match. Please try again.")
