@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 03, 2024 at 03:43 PM
+-- Generation Time: Jan 06, 2024 at 09:41 AM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.1.12
 
@@ -31,8 +31,16 @@ CREATE TABLE `accuracy` (
   `ID` int(11) NOT NULL,
   `miss_ID` int(11) DEFAULT NULL,
   `WPM_ID` int(11) DEFAULT NULL,
-  `percentage` decimal(3,2) DEFAULT NULL
+  `percentage` decimal(5,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `accuracy`
+--
+
+INSERT INTO `accuracy` (`ID`, `miss_ID`, `WPM_ID`, `percentage`) VALUES
+(1, 1, 1, '78.81'),
+(2, 2, 2, '93.94');
 
 -- --------------------------------------------------------
 
@@ -46,6 +54,14 @@ CREATE TABLE `missed` (
   `count` int(11) DEFAULT NULL,
   `words` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `missed`
+--
+
+INSERT INTO `missed` (`ID`, `player_ID`, `count`, `words`) VALUES
+(1, 1, 175, 'black,black,black,hair,hair,bleed,fast,point,immigrants,immigrants,immigrants,immigrants,immigrants,immigrants,immigrants,immigrants,immigrants,fact,piano,piano,piano,into,jelly,jelly,jelly,jelly,congratulations,congratulations,reconstruction,reconstruction,reconstruction,reconstruction,reconstruction,reconstruction,reconstruction,must,must,must,same,same,smile,smile,test,every,every,every,every,every,bleed,bleed,outsourcing,outsourcing,outsourcing,centuries,centuries,centuries,thriller,thriller,kind,kind,kind,kind,kind,salt,salt,salt,earth,model,model,fault,fault,fault,fault,fault,fault,sheet,auction,wyoming,wyoming,wyoming,wyoming,sweet,sweet,plate,plate,plate,plate,stone,stone,stone,stay,stay,stay,stay,refused,refused,refused,refused,refused,brown,brown,sleep,sleep,brown,brown,run,third,third,third,than,than,than,hope,hope,hope,even,piano,piano,piano,associations,associations,associations,associations,reservation,tuition,smoke,spend,gibraltar,fresh,fresh,first,area,area,area,catch,catch,front,determines,determines,determines,improvement,improvement'),
+(2, 1, 2, 'cry,total');
 
 -- --------------------------------------------------------
 
@@ -64,8 +80,7 @@ CREATE TABLE `player` (
 --
 
 INSERT INTO `player` (`ID`, `Username`, `Password`) VALUES
-(1, 'Pythoenix', 'yatagarasu'),
-(2, 'dummy', '123');
+(1, 'Pythoenix', 'yatagarasu');
 
 -- --------------------------------------------------------
 
@@ -80,6 +95,14 @@ CREATE TABLE `score` (
   `nilai` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `score`
+--
+
+INSERT INTO `score` (`miss_ID`, `accuracy_ID`, `WPM_ID`, `nilai`) VALUES
+(1, 1, 1, 24866),
+(2, 2, 2, 5955);
+
 -- --------------------------------------------------------
 
 --
@@ -92,6 +115,14 @@ CREATE TABLE `wpm` (
   `typed_word_count` int(11) DEFAULT NULL,
   `nilai` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `wpm`
+--
+
+INSERT INTO `wpm` (`ID`, `player_ID`, `typed_word_count`, `nilai`) VALUES
+(1, 1, 651, 61),
+(2, 1, 31, 73);
 
 --
 -- Indexes for dumped tables
@@ -116,7 +147,8 @@ ALTER TABLE `missed`
 -- Indexes for table `player`
 --
 ALTER TABLE `player`
-  ADD PRIMARY KEY (`ID`);
+  ADD PRIMARY KEY (`ID`),
+  ADD UNIQUE KEY `Username` (`Username`);
 
 --
 -- Indexes for table `score`
@@ -141,25 +173,25 @@ ALTER TABLE `wpm`
 -- AUTO_INCREMENT for table `accuracy`
 --
 ALTER TABLE `accuracy`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `missed`
 --
 ALTER TABLE `missed`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `player`
 --
 ALTER TABLE `player`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `wpm`
 --
 ALTER TABLE `wpm`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Constraints for dumped tables
