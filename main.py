@@ -136,18 +136,24 @@ def login():
     loginPassword = ''
     active_textbox = None  # Variable to track the active textbox (None for no textbox)
     
+    username_box = pygame.Rect(center_x + 25, 355, 200, 30)
+    password_box = pygame.Rect(center_x + 25, 405, 200, 30)
+    
     while True:
         LOGIN_MOUSE_POS = pygame.mouse.get_pos()
-
+        
         SCREEN.fill("gray")
         LOGIN_TEXT = font.render("Login Screen", True, "Black")
         LOGIN_RECT = LOGIN_TEXT.get_rect(center=(center_x, 260))
         SCREEN.blit(LOGIN_TEXT, LOGIN_RECT)
-
+        
+        usernamelbl = font.render("Username:", True, "Black")
+        usernamelbl_rect = usernamelbl.get_rect(center=(center_x - 75, 370))
+        SCREEN.blit(usernamelbl, usernamelbl_rect)
         # Draw username input
-        username_input = font.render("Username: " + loginUsername, True, "Black")
+        username_input = font.render(loginUsername, True, "Black")
         username_rect = username_input.get_rect(center=(center_x - 75, 370))
-        SCREEN.blit(username_input, username_rect)
+        SCREEN.blit(username_input, (username_box.x, username_box.y + 5))
 
         # Draw password input
         password_input = font.render("Password: " + '*' * len(loginPassword), True, "Black")
@@ -155,8 +161,6 @@ def login():
         SCREEN.blit(password_input, password_rect)
 
         # Draw input boxes with different colors based on selection
-        username_box = pygame.Rect(center_x + 25, 355, 200, 30)
-        password_box = pygame.Rect(center_x + 25, 405, 200, 30)
 
         if active_textbox == 'username':
             pygame.draw.rect(SCREEN, "Green", username_box, 2)  # Username input box with green border
@@ -200,7 +204,7 @@ def login():
                         loginUsername += event.unicode
                     # Adjust the position of the input text based on the length of the text
                     username_input = font.render("Username: " + loginUsername, True, "Black")
-                    username_rect = username_input.get_rect(center=(center_x - 75, 370))
+                    username_rect = username_input.get_rect(center=(center_x - 75, 370)) #ni mcm x di run je
                 elif active_textbox == 'password':
                     if event.key == pygame.K_RETURN:
                         # Add your login logic here
