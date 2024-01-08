@@ -136,8 +136,8 @@ def login():
     loginPassword = ''
     active_textbox = None  # Variable to track the active textbox (None for no textbox)
     
-    username_box = pygame.Rect(center_x - 50, 355, 200, 30)
-    password_box = pygame.Rect(center_x - 50, 405, 200, 30)
+    username_box = pygame.Rect(center_x - 50, 355, 280, 30)
+    password_box = pygame.Rect(center_x - 50, 405, 280, 30)
     
     while True:
         LOGIN_MOUSE_POS = pygame.mouse.get_pos()
@@ -201,7 +201,7 @@ def login():
                         active_textbox = 'password'  # Switch to the next input box
                     elif event.key == pygame.K_BACKSPACE:
                         loginUsername = loginUsername[:-1]
-                    else:
+                    elif len(loginUsername) <= 13:
                         loginUsername += event.unicode
                     # Adjust the position of the input text based on the length of the text
                     username_input = font.render("Username: " + loginUsername, True, "Black")
