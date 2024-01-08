@@ -202,7 +202,7 @@ def login():
                     elif event.key == pygame.K_BACKSPACE: 
                         loginUsername = loginUsername[:-1]
                     elif len(loginUsername) <= 13:
-                        loginUsername += event.unicode
+                        loginUsername += event.unicode if valid_char(event.unicode) else ''
                     keys = pygame.key.get_pressed()
                     if keys [pygame.K_LCTRL] and keys [pygame.K_BACKSPACE]:
                         loginUsername = ''
@@ -319,15 +319,21 @@ def register():
                         active_textbox = 'password'  # Switch to the next input box'
                     elif event.key == pygame.K_BACKSPACE:
                         registerUsername = registerUsername[:-1]
-                    else:
-                        registerUsername += event.unicode
+                    elif len(registerUsername) <= 13:
+                        registerUsername += event.unicode if valid_char(event.unicode) else ''
+                    keys = pygame.key.get_pressed()
+                    if keys [pygame.K_LCTRL] and keys [pygame.K_BACKSPACE]:
+                        registerUsername = ''
                 elif active_textbox == 'password':
                     if event.key == pygame.K_RETURN:
                         active_textbox = 'confirm_password'  # Switch to the next input box'
                     elif event.key == pygame.K_BACKSPACE:
                         registerPassword = registerPassword[:-1]
-                    else:
-                        registerPassword += event.unicode
+                    elif len(registerPassword) <= 13:
+                        registerPassword += event.unicode if valid_char(event.unicode) else ''
+                    keys = pygame.key.get_pressed()
+                    if keys [pygame.K_LCTRL] and keys [pygame.K_BACKSPACE]:
+                        registerPassword = ''
                 elif active_textbox == 'confirm_password':
                     if event.key == pygame.K_RETURN:
                         if all([registerUsername, registerPassword, confirmRegisterPassword]):
@@ -348,8 +354,11 @@ def register():
 
                     elif event.key == pygame.K_BACKSPACE:
                         confirmRegisterPassword = confirmRegisterPassword[:-1]
-                    else:
-                        confirmRegisterPassword += event.unicode
+                    elif len(confirmRegisterPassword) <= 13:
+                        confirmRegisterPassword += event.unicode if valid_char(event.unicode) else ''
+                    keys = pygame.key.get_pressed()
+                    if keys [pygame.K_LCTRL] and keys [pygame.K_BACKSPACE]:
+                        confirmRegisterPassword = ''
             pygame.display.update()
 def options():
     while True:
