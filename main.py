@@ -4,7 +4,7 @@ from pygame import mixer
 from scripts.pemalar import *
 from scripts.latar import Latar
 from scripts.musuh import jana_ombak, assets_load
-from scripts.pemain import Pemain
+from scripts.pemain import Pemain, is_name_valid
 from scripts.button import Button
 
 db = mysql.connector.connect(
@@ -38,9 +38,7 @@ font = pygame.font.Font("font/font.ttf",20)
 center_x = SCREEN.get_width() // 2
 center_y = SCREEN.get_height() // 2
 
-pemain = Pemain(center_x, WN_TINGGI - 100, 'renew/PlayerShip/playership1.PNG')
-group_pemain = pygame.sprite.GroupSingle()
-group_pemain.add(pemain)
+
 
 latar = Latar(0, WN_TINGGI, 0, 0.2)
 
@@ -57,6 +55,7 @@ btnSound = pygame.mixer.Sound('sound/buttonclicksound.mp3')
 btnSound.set_volume(0.05)
 btnType = pygame.mixer.Sound('sound/keypressed.mp3')
 btnType.set_volume(0.1)
+
 def main_menu():
     is_logged_in = False
     LOGO = pygame.image.load('img/logo.png').convert_alpha()
@@ -112,7 +111,7 @@ def main_menu():
                     if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
                         btnSound.play()
                         pygame.mixer.music.stop()
-                        play()
+                        play(is_logged_in[0])
                     elif OPTIONS_BUTTON.checkForInput(MENU_MOUSE_POS):
                         btnSound.play()
                         options()
@@ -194,8 +193,7 @@ def login():
             if event.type == pygame.KEYDOWN:
                 if active_textbox == 'username':
                     if event.key == pygame.K_RETURN:
-                        # Add your login logic here
-                        pass # will do later
+                        active_textbox = 'password'  # Switch to the next input box
                     elif event.key == pygame.K_BACKSPACE:
                         loginUsername = loginUsername[:-1]
                     else:
@@ -216,10 +214,12 @@ def login():
                             if result:
                                 # The username and password are correct
                                 print("Login successful.")
-                                return loginUsername, loginPassword  # Return the entered values
+                                cursor.execute("SELECT ID FROM player WHERE Username = %s", (loginUsername,))
+                                player_id = cursor.fetchone()[0]
+                                return player_id, loginUsername  # Return the entered values
                             else:
                                 # The username and password are incorrect
-                                raise Exception("Invalid username or password.")
+                                print("Invalid username or password.")
                         except mysql.connector.Error as err:
                                 # Handle any other MySQL error
                                 print("MySQL Error: {}".format(err))
@@ -231,13 +231,11 @@ def login():
                     # Adjust the position of the input text based on the length of the text
                     password_input = font.render("Password: " + '*' * len(loginPassword), True, "Black")
                     password_rect = password_input.get_rect(center=(center_x - 75, 420))
-
         
         pygame.display.update()
 
-
 def register():
-    global registerUsername, registerPassword, confirmRegisterPassword
+    global registerUsername, registerPassword, confirmRegisterPassword #global ni utk apa?
     registerUsername = ""
     registerPassword = ""
     confirmRegisterPassword = ""
@@ -289,7 +287,7 @@ def register():
 
         # Draw back button
         REGISTER_BACK = Button(image=None, pos=(center_x, 480),
-                               text_input="BACK", font=font, base_color="Black", hovering_color="Green")
+                                text_input="BACK", font=font, base_color="Black", hovering_color="Green")
 
         REGISTER_BACK.changeColor(REGISTER_MOUSE_POS)
         REGISTER_BACK.draw(SCREEN)
@@ -314,16 +312,14 @@ def register():
             if event.type == pygame.KEYDOWN:
                 if active_textbox == 'username':
                     if event.key == pygame.K_RETURN:
-                        # Add logic for username submission if needed
-                        return registerUsername, registerPassword, confirmRegisterPassword  # Return the entered values
+                        active_textbox = 'password'  # Switch to the next input box'
                     elif event.key == pygame.K_BACKSPACE:
                         registerUsername = registerUsername[:-1]
                     else:
                         registerUsername += event.unicode
                 elif active_textbox == 'password':
                     if event.key == pygame.K_RETURN:
-                        # Add logic for password submission if needed
-                        return registerUsername, registerPassword, confirmRegisterPassword  # Return the entered values
+                        active_textbox = 'confirm_password'  # Switch to the next input box'
                     elif event.key == pygame.K_BACKSPACE:
                         registerPassword = registerPassword[:-1]
                     else:
@@ -331,7 +327,7 @@ def register():
                 elif active_textbox == 'confirm_password':
                     if event.key == pygame.K_RETURN:
                         if all([registerUsername, registerPassword, confirmRegisterPassword]):
-                            if registerPassword == confirmRegisterPassword:
+                            if registerPassword == confirmRegisterPassword and is_name_valid(registerUsername):
                                     try:
                                         cursor.execute('INSERT INTO player (Username, Password) VALUES (%s,%s)', (registerUsername, registerPassword))
                                         db.commit()
@@ -345,6 +341,7 @@ def register():
                                 print("Passwords do not match. Please try again.")
                         else:
                             print("Please fill in all fields before registering.")
+
                     elif event.key == pygame.K_BACKSPACE:
                         confirmRegisterPassword = confirmRegisterPassword[:-1]
                     else:
@@ -376,7 +373,12 @@ def options():
 
         pygame.display.update()
 
-def play():
+def play(player_id):
+    pemain = Pemain(player_id, center_x, WN_TINGGI - 100, 'renew/PlayerShip/playership1.PNG')
+    
+    group_pemain = pygame.sprite.GroupSingle()
+    group_pemain.add(pemain)
+    
     char_typed = ''
     char_updated = False
     
@@ -426,7 +428,7 @@ def play():
                 timer_setted = True
         
         group_pemain.draw(SCREEN) #try cari group sprite utk yg ada 1 sprite je
-        group_pemain.update(SCREEN, group_musuh, char_typed, char_updated)
+        group_pemain.update(SCREEN, group_musuh, char_typed, char_updated, cursor, db)
         char_updated = False
         
         group_musuh.draw(SCREEN)

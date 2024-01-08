@@ -1,82 +1,35 @@
-import pygame as pg
-
-# Define some constants
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-FPS = 60
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-GREEN = (0, 128, 0)
-BROWN = (139, 69, 19)
-
-# Create a player sprite
-class Player(pg.sprite.Sprite):
-    def __init__(self, x, y):
-        super().__init__()
-        self.image = pg.Surface((50, 100))
-        self.image.fill(WHITE)
-        self.rect = self.image.get_rect(center=(x, y))
-        # The sprite will be added to this layer in the LayeredUpdates group
-        self._layer = self.rect.bottom
-
-    def update(self):
-        # Move the player with the arrow keys
-        keys = pg.key.get_pressed()
-        if keys[pg.K_LEFT]:
-            self.rect.x -= 5
-        if keys[pg.K_RIGHT]:
-            self.rect.x += 5
-        if keys[pg.K_UP]:
-            self.rect.y -= 5
-        if keys[pg.K_DOWN]:
-            self.rect.y += 5
-        # Keep the player within the screen bounds
-        self.rect.clamp_ip(screen_rect)
-        # Set the layer of the player sprite to its rect.bottom position
-        sprites.change_layer(self, self.rect.bottom)
-
-# Create a tree sprite
-class Tree(pg.sprite.Sprite):
-    def __init__(self, x, y):
-        super().__init__()
-        self.image = pg.Surface((100, 150))
-        self.image.fill(BLACK)
-        self.image.set_colorkey(BLACK)
-        # Draw a simple tree shape
-        pg.draw.rect(self.image, BROWN, (40, 100, 20, 50))
-        pg.draw.ellipse(self.image, GREEN, (0, 0, 100, 100))
-        self.rect = self.image.get_rect(center=(x, y))
-        # The sprite will be added to this layer in the LayeredUpdates group
-        self._layer = self.rect.bottom
-
-# Initialize pygame
-pg.init()
-screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-screen_rect = screen.get_rect()
-pg.display.set_caption("Layered Updates Example")
-clock = pg.time.Clock()
-
-# Create a LayeredUpdates group and add some sprites
-sprites = pg.sprite.LayeredUpdates()
-player = Player(400, 300)
-tree = Tree(400, 300)
-sprites.add(player)
-sprites.add(tree)
-
-# Main game loop
-running = True
-while running:
-    # Handle events
-    for event in pg.event.get():
-        if event.type == pg.QUIT:
-            running = False
-
-    # Update and draw sprites
-    sprites.update()
-    screen.fill(BLACK)
-    sprites.draw(screen)
-    pg.display.flip()
-    clock.tick(FPS)
-
-# Quit pygame
-pg.quit()
+import timeit
+#original function
+def valid_username1(username):
+    valid_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._"
+    for char in username:
+        if char not in valid_chars:
+            return False
+    return True
+# Using a set
+def valid_username2(username):
+    valid_chars = set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._")
+    for char in username:
+        if char not in valid_chars:
+            return False
+    return True
+# Using all
+def valid_username3(username):
+    valid_chars = set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._")
+    return all(char in valid_chars for char in username)
+# Using regex
+import re
+def valid_username4(username):
+    return re.match("^[a-zA-Z0-9._]+$", username) is not None
+# Test with a valid username
+username = "zany_123"
+print('using for loop:', timeit.timeit(lambda: valid_username1(username))) # 0.785
+print(timeit.timeit(lambda: valid_username2(username))) # 0.417
+print(timeit.timeit(lambda: valid_username3(username))) # 0.374
+print('using regex:', timeit.timeit(lambda: valid_username4(username))) # 0.216
+# Test with an invalid username
+username = "zany!123"
+print('using for loop:', timeit.timeit(lambda: valid_username1(username))) # 0.116
+print(timeit.timeit(lambda: valid_username2(username))) # 0.063
+print(timeit.timeit(lambda: valid_username3(username))) # 0.057
+print('using regex:', timeit.timeit(lambda: valid_username4(username))) # 0.216

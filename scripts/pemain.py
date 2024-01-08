@@ -1,5 +1,6 @@
 import math
 import pygame
+import mysql.connector
 from pygame import mixer
 
 
@@ -7,15 +8,16 @@ mixer.init()
 meletup = pygame.mixer.Sound('sound/meletup.mp3')
 gameover = pygame.mixer.Sound('sound/gameover.mp3')
 class Pemain(pygame.sprite.Sprite):
-    def __init__(self, x, y, image_path) -> None:
+    def __init__(self, player_id, x, y, image_path) -> None:
         super().__init__()
+        self.id = player_id
         self.image = pygame.image.load(image_path).convert_alpha()
         self.image = pygame.transform.scale(self.image, (69, 69))
         self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
         self.nearest_enemy = None
-        self.score = 0
+        self.typed_word_count = 0
         self.miss = 0
         self.miss_word = []
         self.accuracy = 0
@@ -25,8 +27,9 @@ class Pemain(pygame.sprite.Sprite):
         self.elapsed_time = 0
         self.elapsed_time_list = []
         self.wpm = 0
+        self.score = 0
     #deleted forgotten to delete gameOVer method
-    def update(self, screen, enemy_group, char_typed, char_updated):
+    def update(self, screen, enemy_group, char_typed, char_updated, cursor, db):
         if char_updated:
             if char_typed and self.nearest_enemy is None:
                 if self.start_time == 0 : #utk pastikan dia x start timer byk kali and just bila dia 0 je
@@ -44,7 +47,7 @@ class Pemain(pygame.sprite.Sprite):
                 #update enemy
                 if self.nearest_enemy.word[0] == char_typed[-1]: # cane ai tau??
                     self.nearest_enemy.word = self.nearest_enemy.word[1:] #dia phm aku nk delete word tu ke?
-                    self.score += 1
+                    self.typed_word_count += 1
                     if self.nearest_enemy.word == '':
                         meletup.play()
                         self.enemy_killed += 1
@@ -63,12 +66,35 @@ class Pemain(pygame.sprite.Sprite):
             if pygame.sprite.spritecollide(self, enemy_group, True, pygame.sprite.collide_mask):
                 gameover.play()
                 self.kill()
-                self.accuracy = (self.score / (self.score + self.miss)) * 100 if self.score + self.miss != 0 else 0
+                self.accuracy = (self.typed_word_count / (self.typed_word_count + self.miss)) * 100 if self.typed_word_count + self.miss != 0 else 0
                 #average spw to wpm conversion sbb tu 60 kat depan
                 self.wpm = round(60/(sum(self.elapsed_time_list) / len(self.elapsed_time_list))) if len(self.elapsed_time_list) != 0 else 0
-                
-                #cursor.execute("INSERT INTO tembaketik.score (username, score, accuracy, wpm) VALUES (%s, %s, %s, %s)", (self.username, self.score, self.accuracy, self.wpm))
-                #kene tangguh ni sbb kena insert value player dlu since dia parent utk most table
+                self.score = ((0.69 * self.wpm * self.accuracy) + (0.42 * self.typed_word_count * self.accuracy)) #this formula is revealed in my dream
+                #ofc not...(or is it??)
+                try:
+                    cursor.execute("INSERT INTO missed (player_ID, count, words) VALUES (%s, %s, %s)", (self.id, self.miss, ",".join(self.miss_word)))
+                    cursor.execute("INSERT INTO WPM (player_ID, typed_word_count, nilai) VALUES (%s, %s, %s)", (self.id, self.typed_word_count, self.wpm))
+                    db.commit()
+                    
+                    cursor.execute("SELECT MAX(ID) FROM missed")
+                    miss_ID = cursor.fetchone()[0]
+                    
+                    cursor.execute("SELECT MAX(ID) FROM WPM")
+                    wpm_ID = cursor.fetchone()[0]
+                    
+                    cursor.execute("INSERT INTO accuracy (miss_ID, WPM_ID, percentage) VALUES (%s, %s, %s)", (miss_ID, wpm_ID, self.accuracy))
+                    db.commit()
+                    
+                    cursor.execute("SELECT ID FROM accuracy WHERE miss_ID = %s AND WPM_ID = %s", (miss_ID, wpm_ID))
+                    accuracy_ID = cursor.fetchone()[0]
+                    
+                    cursor.execute("INSERT INTO score (miss_ID, accuracy_ID, WPM_ID, nilai) VALUES (%s, %s, %s, %s)", (miss_ID, accuracy_ID, wpm_ID, self.score))
+                    db.commit()
+                    
+                    print("Data inserted successfully.")
+                    
+                except mysql.connector.Error as err:
+                    print("MySQL Error: {}".format(err))
 
     # Define a function that takes a sprite and a list of sprites as parameters, and returns the nearest sprite in the list
     # if all enemy move at the same speed, this only need to run once for optimization
@@ -91,3 +117,17 @@ class Pemain(pygame.sprite.Sprite):
                 nearest_sprite = other_sprite
         # Return the nearest sprite
         return nearest_sprite
+
+def is_name_valid(username):
+    if len(username) == 0:
+        return False
+    else:
+        # Define the valid characters for a username
+        valid_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._"
+        # Loop through each character in the username
+        for char in username:
+            # If the character is not in the valid characters, return False
+            if char not in valid_chars:
+                return False
+        # If the loop finishes without returning False, return True
+        return True
