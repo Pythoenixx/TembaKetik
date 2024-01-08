@@ -17,6 +17,7 @@ db = mysql.connector.connect(
 cursor = db.cursor()
 # Initialize pygame
 pygame.init()
+
 # Initialize mixer
 mixer.init()
 # Create a window object
@@ -348,16 +349,52 @@ def register():
                         confirmRegisterPassword += event.unicode
             pygame.display.update()
 def options():
+    user_input = ""
+    active_textbox = None
+    #ni hanya untuk background sound sahaja
+    volume = initial_volume  # Initial volume level
+    
     while True:
         OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
 
         SCREEN.fill("white")
 
-        OPTIONS_TEXT = font.render("This is the OPTIONS screen.", True, "Black")
+        OPTIONS_TEXT = font.render("Settings.", True, "Black")
         OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(center_x, 260))
         SCREEN.blit(OPTIONS_TEXT, OPTIONS_RECT)
 
-        OPTIONS_BACK = Button(image=None, pos=(center_x, 460), 
+        # Display volume level
+        volume_text = font.render(f"Volume: {int(volume * 100)}%", True, "Black")
+        volume_rect = volume_text.get_rect(center=(center_x, 320))
+        SCREEN.blit(volume_text, volume_rect)
+
+        # Volume slider
+        volume_slider = pygame.Rect(center_x - 100, 350, 200, 20)
+        pygame.draw.rect(SCREEN, "Gray", volume_slider)
+        pygame.draw.rect(SCREEN, "Green", (volume_slider.x, volume_slider.y, volume * 200, 20))
+
+         # Label for Own Malay Words
+        own_words_label = font.render("Own Malay Words:", True, "Black")
+        own_words_rect = own_words_label.get_rect(center=(center_x, 385))
+        SCREEN.blit(own_words_label, own_words_rect)
+
+        # Text box for user input
+        text_box = pygame.Rect(center_x - 100, 400, 300, 150)
+        pygame.draw.rect(SCREEN, "White", text_box, 2)  # Draw a white rectangle for the text box border
+
+        # Render user's input on the screen
+        user_input_text = font.render(user_input, True, "Black")
+        user_input_rect = user_input_text.get_rect(center=(center_x, 450))
+        SCREEN.blit(user_input_text, user_input_rect)
+
+        # Draw input box with different colors based on selection
+        if active_textbox == 'user_input':
+            pygame.draw.rect(SCREEN, "Green", text_box, 2)  # User input box with green border
+        else:
+            pygame.draw.rect(SCREEN, "Black", text_box, 2)  # User input box with black border
+
+
+        OPTIONS_BACK = Button(image=None, pos=(center_x, 620), 
                             text_input="BACK", font=font, base_color="Black", hovering_color="Green")
 
         OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS)
@@ -370,6 +407,19 @@ def options():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
                     return
+                elif volume_slider.collidepoint(event.pos):
+                    volume = max(0, min((event.pos[0] - volume_slider.x) / 200, 1))# Adjust volume based on slider position
+                    pygame.mixer.music.set_volume(volume,)# Set the music volume
+                elif text_box.collidepoint(event.pos):
+                    #logik untuk add textbox tu
+                    return 
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    volume = max(0, volume - 0.1)# Decrease volume on left arrow key
+                    pygame.mixer.music.set_volume(volume)
+                elif event.key == pygame.K_RIGHT:
+                    volume = min(1, volume + 0.1)# Increase volume on right arrow key
+                    pygame.mixer.music.set_volume(volume)
 
         pygame.display.update()
 
