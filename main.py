@@ -136,8 +136,8 @@ def login():
     loginPassword = ''
     active_textbox = None  # Variable to track the active textbox (None for no textbox)
     
-    username_box = pygame.Rect(center_x + 25, 355, 200, 30)
-    password_box = pygame.Rect(center_x + 25, 405, 200, 30)
+    username_box = pygame.Rect(center_x - 50, 355, 200, 30)
+    password_box = pygame.Rect(center_x - 50, 405, 200, 30)
     
     while True:
         LOGIN_MOUSE_POS = pygame.mouse.get_pos()
@@ -147,18 +147,19 @@ def login():
         LOGIN_RECT = LOGIN_TEXT.get_rect(center=(center_x, 260))
         SCREEN.blit(LOGIN_TEXT, LOGIN_RECT)
         
-        usernamelbl = font.render("Username:", True, "Black")
-        usernamelbl_rect = usernamelbl.get_rect(center=(center_x - 75, 370))
-        SCREEN.blit(usernamelbl, usernamelbl_rect)
+        usernamelbl = font.render("Username: ", True, "Black")
+        usernamelbl_rect = usernamelbl.get_rect(center=(center_x - 135, 370))
+        SCREEN.blit(usernamelbl, (usernamelbl_rect))
         # Draw username input
         username_input = font.render(loginUsername, True, "Black")
-        username_rect = username_input.get_rect(center=(center_x - 75, 370))
-        SCREEN.blit(username_input, (username_box.x, username_box.y + 5))
-
+        SCREEN.blit(username_input, (username_box.x + 2, username_box.y + 5))
+        
+        passwordlbl = font.render("Password: ", True, "Black")
+        passwordlbl_rect = passwordlbl.get_rect(center=(center_x - 135, 420)) 
+        SCREEN.blit(passwordlbl, (passwordlbl_rect))
         # Draw password input
-        password_input = font.render("Password: " + '*' * len(loginPassword), True, "Black")
-        password_rect = password_input.get_rect(center=(center_x - 75, 420))
-        SCREEN.blit(password_input, password_rect)
+        password_input = font.render('*' * len(loginPassword), True, "Black")
+        SCREEN.blit(password_input, (password_box.x + 2, password_box.y + 5))
 
         # Draw input boxes with different colors based on selection
 
