@@ -331,28 +331,27 @@ def register():
                         registerPassword += event.unicode
                 elif active_textbox == 'confirm_password':
                     if event.key == pygame.K_RETURN:
-                        if registerPassword == confirmRegisterPassword and is_name_valid(registerUsername):
-                            try:
-                                cursor.execute('INSERT INTO player (Username, Password) VALUES (%s,%s)',(registerUsername, registerPassword))
-                                db.commit()
-                                print("Registration successful!")
-                                return registerUsername, registerPassword, confirmRegisterPassword  # Return the entered values #values nya buat apa and pegi mne?
-                            except mysql.connector.IntegrityError as err:
-                                # Handle the error if the username already exists
-                                print("Username already taken.")
-                                print(err)
-                            except mysql.connector.Error as err:
-                                # Handle any other MySQL error
-                                print("MySQL Error: {}".format(err))
+                        if all([registerUsername, registerPassword, confirmRegisterPassword]):
+                            if registerPassword == confirmRegisterPassword and is_name_valid(registerUsername):
+                                    try:
+                                        cursor.execute('INSERT INTO player (Username, Password) VALUES (%s,%s)', (registerUsername, registerPassword))
+                                        db.commit()
+                                        print("Registration successful!")
+                                    except mysql.connector.IntegrityError as err:
+                                        print("Username already taken.")
+                                        print(err)
+                                    except mysql.connector.Error as err:
+                                        print("MySQL Error: {}".format(err))
+                            else:
+                                print("Passwords do not match. Please try again.")
                         else:
-                            print("Not valid username or passwords do not match. Please try again.")
+                            print("Please fill in all fields before registering.")
+
                     elif event.key == pygame.K_BACKSPACE:
                         confirmRegisterPassword = confirmRegisterPassword[:-1]
                     else:
                         confirmRegisterPassword += event.unicode
-
-        pygame.display.update()
-
+            pygame.display.update()
 def options():
     while True:
         OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
