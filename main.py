@@ -4,7 +4,7 @@ from pygame import mixer
 from scripts.pemalar import *
 from scripts.latar import Latar
 from scripts.musuh import jana_ombak, assets_load
-from scripts.pemain import Pemain, is_name_valid
+from scripts.pemain import Pemain, valid_char
 from scripts.button import Button
 
 db = mysql.connector.connect(
@@ -199,13 +199,13 @@ def login():
                 if active_textbox == 'username':
                     if event.key == pygame.K_RETURN:
                         active_textbox = 'password'  # Switch to the next input box
-                    elif event.key == pygame.K_BACKSPACE:
+                    elif event.key == pygame.K_BACKSPACE: 
                         loginUsername = loginUsername[:-1]
                     elif len(loginUsername) <= 13:
                         loginUsername += event.unicode
-                    # Adjust the position of the input text based on the length of the text
-                    username_input = font.render("Username: " + loginUsername, True, "Black")
-                    username_rect = username_input.get_rect(center=(center_x - 75, 370)) #ni mcm x di run je
+                    keys = pygame.key.get_pressed()
+                    if keys [pygame.K_LCTRL] and keys [pygame.K_BACKSPACE]:
+                        loginUsername = ''
                 elif active_textbox == 'password':
                     if event.key == pygame.K_RETURN:
                         # Add your login logic here
@@ -228,14 +228,13 @@ def login():
                         except mysql.connector.Error as err:
                                 # Handle any other MySQL error
                                 print("MySQL Error: {}".format(err))
-                        
                     elif event.key == pygame.K_BACKSPACE:
                         loginPassword = loginPassword[:-1]
-                    else:
-                        loginPassword += event.unicode
-                    # Adjust the position of the input text based on the length of the text
-                    password_input = font.render("Password: " + '*' * len(loginPassword), True, "Black")
-                    password_rect = password_input.get_rect(center=(center_x - 75, 420))
+                    elif len(loginPassword) <= 13:
+                        loginPassword += event.unicode if valid_char(event.unicode) else ''
+                    keys = pygame.key.get_pressed()
+                    if keys [pygame.K_LCTRL] and keys [pygame.K_BACKSPACE]:
+                        loginPassword = ''
         
         pygame.display.update()
 
@@ -332,7 +331,7 @@ def register():
                 elif active_textbox == 'confirm_password':
                     if event.key == pygame.K_RETURN:
                         if all([registerUsername, registerPassword, confirmRegisterPassword]):
-                            if registerPassword == confirmRegisterPassword and is_name_valid(registerUsername):
+                            if registerPassword == confirmRegisterPassword and valid_char(registerUsername):
                                     try:
                                         cursor.execute('INSERT INTO player (Username, Password) VALUES (%s,%s)', (registerUsername, registerPassword))
                                         db.commit()
