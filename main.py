@@ -239,10 +239,12 @@ def login():
         pygame.display.update()
 
 def register():
-    global registerUsername, registerPassword, confirmRegisterPassword #global ni utk apa?
     registerUsername = ""
     registerPassword = ""
     confirmRegisterPassword = ""
+    username_box = pygame.Rect(center_x - 50, 315, 280, 30)
+    password_box = pygame.Rect(center_x - 50, 365, 280, 30)
+    confirm_password_box = pygame.Rect(center_x - 50, 415, 280, 30)
     active_textbox = None
 
     while True:
@@ -253,26 +255,26 @@ def register():
         REGISTER_TEXT = font.render("Register Screen", True, "Black")
         REGISTER_RECT = REGISTER_TEXT.get_rect(center=(center_x, 260))
         SCREEN.blit(REGISTER_TEXT, REGISTER_RECT)
-
+        
+        usernamelbl = font.render("Username: ", True, "Black")
+        SCREEN.blit(usernamelbl, (center_x - 245, 330))
         # Draw username input
-        username_input = font.render("Username: " + registerUsername, True, "Black")
-        username_rect = username_input.get_rect(center=(center_x - 75, 330))
-        SCREEN.blit(username_input, username_rect)
-
+        username_input = font.render(registerUsername, True, "Black")
+        SCREEN.blit(username_input, (username_box.x + 2, username_box.y + 5))
+        
+        passwordlbl = font.render("Password: ", True, "Black")
+        SCREEN.blit(passwordlbl, (center_x - 245, 380))
         # Draw password input
-        password_input = font.render("Password: " + '*' * len(registerPassword), True, "Black")
-        password_rect = password_input.get_rect(center=(center_x - 75, 380))
-        SCREEN.blit(password_input, password_rect)
-
+        password_input = font.render('*' * len(registerPassword), True, "Black")
+        SCREEN.blit(password_input, (password_box.x + 2, password_box.y + 5))
+        
+        confirm_passwordlbl = font.render("Confirm :\nPassword", True, "Black")
+        SCREEN.blit(confirm_passwordlbl, (center_x - 245, 430))
         # Draw confirm password input
-        confirm_password_input = font.render("ConfirmPass: " + '*' * len(confirmRegisterPassword), True, "Black")
-        confirm_password_rect = confirm_password_input.get_rect(center=(center_x - 80, 430))
-        SCREEN.blit(confirm_password_input, confirm_password_rect)
+        confirm_password_input = font.render('*' * len(confirmRegisterPassword), True, "Black")
+        SCREEN.blit(confirm_password_input, (confirm_password_box.x + 2, confirm_password_box.y + 5))
 
         # Draw input boxes with different colors based on selection
-        username_box = pygame.Rect(center_x + 25, 315, 200, 30)
-        password_box = pygame.Rect(center_x + 25, 365, 200, 30)
-        confirm_password_box = pygame.Rect(center_x + 25, 415, 200, 30)
 
         if active_textbox == 'username':
             pygame.draw.rect(SCREEN, "Green", username_box, 2)  # Username input box with green border
@@ -337,18 +339,21 @@ def register():
                 elif active_textbox == 'confirm_password':
                     if event.key == pygame.K_RETURN:
                         if all([registerUsername, registerPassword, confirmRegisterPassword]):
-                            if registerPassword == confirmRegisterPassword and valid_char(registerUsername):
-                                    try:
-                                        cursor.execute('INSERT INTO player (Username, Password) VALUES (%s,%s)', (registerUsername, registerPassword))
-                                        db.commit()
-                                        print("Registration successful!")
-                                    except mysql.connector.IntegrityError as err:
-                                        print("Username already taken.")
-                                        print(err)
-                                    except mysql.connector.Error as err:
-                                        print("MySQL Error: {}".format(err))
+                            if valid_char(registerUsername):
+                                if registerPassword == confirmRegisterPassword:
+                                        try:
+                                            cursor.execute('INSERT INTO player (Username, Password) VALUES (%s,%s)', (registerUsername, registerPassword))
+                                            db.commit()
+                                            print("Registration successful!")
+                                        except mysql.connector.IntegrityError as err:
+                                            print("Username already taken.")
+                                            print(err)
+                                        except mysql.connector.Error as err:
+                                            print("MySQL Error: {}".format(err))
+                                else:
+                                    print("Passwords do not match. Please try again.")
                             else:
-                                print("Passwords do not match. Please try again.")
+                                print("Invalid username. Please try again.")
                         else:
                             print("Please fill in all fields before registering.")
 
