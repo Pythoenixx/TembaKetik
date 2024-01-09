@@ -4,7 +4,7 @@ from pygame import mixer
 from scripts.pemalar import *
 from scripts.latar import Latar
 from scripts.musuh import jana_ombak, assets_load
-from scripts.pemain import Pemain, is_name_valid
+from scripts.pemain import Pemain, valid_char
 from scripts.button import Button
 
 db = mysql.connector.connect(
@@ -137,27 +137,32 @@ def login():
     loginPassword = ''
     active_textbox = None  # Variable to track the active textbox (None for no textbox)
     
+    username_box = pygame.Rect(center_x - 50, 355, 280, 30)
+    password_box = pygame.Rect(center_x - 50, 405, 280, 30)
+    
     while True:
         LOGIN_MOUSE_POS = pygame.mouse.get_pos()
-
+        
         SCREEN.fill("gray")
         LOGIN_TEXT = font.render("Login Screen", True, "Black")
         LOGIN_RECT = LOGIN_TEXT.get_rect(center=(center_x, 260))
         SCREEN.blit(LOGIN_TEXT, LOGIN_RECT)
-
+        
+        usernamelbl = font.render("Username: ", True, "Black")
+        usernamelbl_rect = usernamelbl.get_rect(center=(center_x - 135, 370))
+        SCREEN.blit(usernamelbl, (usernamelbl_rect))
         # Draw username input
-        username_input = font.render("Username: " + loginUsername, True, "Black")
-        username_rect = username_input.get_rect(center=(center_x - 75, 370))
-        SCREEN.blit(username_input, username_rect)
-
+        username_input = font.render(loginUsername, True, "Black")
+        SCREEN.blit(username_input, (username_box.x + 2, username_box.y + 5))
+        
+        passwordlbl = font.render("Password: ", True, "Black")
+        passwordlbl_rect = passwordlbl.get_rect(center=(center_x - 135, 420)) 
+        SCREEN.blit(passwordlbl, (passwordlbl_rect))
         # Draw password input
-        password_input = font.render("Password: " + '*' * len(loginPassword), True, "Black")
-        password_rect = password_input.get_rect(center=(center_x - 75, 420))
-        SCREEN.blit(password_input, password_rect)
+        password_input = font.render('*' * len(loginPassword), True, "Black")
+        SCREEN.blit(password_input, (password_box.x + 2, password_box.y + 5))
 
         # Draw input boxes with different colors based on selection
-        username_box = pygame.Rect(center_x + 25, 355, 200, 30)
-        password_box = pygame.Rect(center_x + 25, 405, 200, 30)
 
         if active_textbox == 'username':
             pygame.draw.rect(SCREEN, "Green", username_box, 2)  # Username input box with green border
@@ -195,13 +200,13 @@ def login():
                 if active_textbox == 'username':
                     if event.key == pygame.K_RETURN:
                         active_textbox = 'password'  # Switch to the next input box
-                    elif event.key == pygame.K_BACKSPACE:
+                    elif event.key == pygame.K_BACKSPACE: 
                         loginUsername = loginUsername[:-1]
-                    else:
-                        loginUsername += event.unicode
-                    # Adjust the position of the input text based on the length of the text
-                    username_input = font.render("Username: " + loginUsername, True, "Black")
-                    username_rect = username_input.get_rect(center=(center_x - 75, 370))
+                    elif len(loginUsername) <= 13:
+                        loginUsername += event.unicode if valid_char(event.unicode) else ''
+                    keys = pygame.key.get_pressed()
+                    if keys [pygame.K_LCTRL] and keys [pygame.K_BACKSPACE]:
+                        loginUsername = ''
                 elif active_textbox == 'password':
                     if event.key == pygame.K_RETURN:
                         # Add your login logic here
@@ -224,22 +229,23 @@ def login():
                         except mysql.connector.Error as err:
                                 # Handle any other MySQL error
                                 print("MySQL Error: {}".format(err))
-                        
                     elif event.key == pygame.K_BACKSPACE:
                         loginPassword = loginPassword[:-1]
-                    else:
-                        loginPassword += event.unicode
-                    # Adjust the position of the input text based on the length of the text
-                    password_input = font.render("Password: " + '*' * len(loginPassword), True, "Black")
-                    password_rect = password_input.get_rect(center=(center_x - 75, 420))
+                    elif len(loginPassword) <= 13:
+                        loginPassword += event.unicode if valid_char(event.unicode) else ''
+                    keys = pygame.key.get_pressed()
+                    if keys [pygame.K_LCTRL] and keys [pygame.K_BACKSPACE]:
+                        loginPassword = ''
         
         pygame.display.update()
 
 def register():
-    global registerUsername, registerPassword, confirmRegisterPassword #global ni utk apa?
     registerUsername = ""
     registerPassword = ""
     confirmRegisterPassword = ""
+    username_box = pygame.Rect(center_x - 50, 315, 280, 30)
+    password_box = pygame.Rect(center_x - 50, 365, 280, 30)
+    confirm_password_box = pygame.Rect(center_x - 50, 415, 280, 30)
     active_textbox = None
 
     while True:
@@ -250,26 +256,26 @@ def register():
         REGISTER_TEXT = font.render("Register Screen", True, "Black")
         REGISTER_RECT = REGISTER_TEXT.get_rect(center=(center_x, 260))
         SCREEN.blit(REGISTER_TEXT, REGISTER_RECT)
-
+        
+        usernamelbl = font.render("Username: ", True, "Black")
+        SCREEN.blit(usernamelbl, (center_x - 245, 330))
         # Draw username input
-        username_input = font.render("Username: " + registerUsername, True, "Black")
-        username_rect = username_input.get_rect(center=(center_x - 75, 330))
-        SCREEN.blit(username_input, username_rect)
-
+        username_input = font.render(registerUsername, True, "Black")
+        SCREEN.blit(username_input, (username_box.x + 2, username_box.y + 5))
+        
+        passwordlbl = font.render("Password: ", True, "Black")
+        SCREEN.blit(passwordlbl, (center_x - 245, 380))
         # Draw password input
-        password_input = font.render("Password: " + '*' * len(registerPassword), True, "Black")
-        password_rect = password_input.get_rect(center=(center_x - 75, 380))
-        SCREEN.blit(password_input, password_rect)
-
+        password_input = font.render('*' * len(registerPassword), True, "Black")
+        SCREEN.blit(password_input, (password_box.x + 2, password_box.y + 5))
+        
+        confirm_passwordlbl = font.render("Confirm :\nPassword", True, "Black")
+        SCREEN.blit(confirm_passwordlbl, (center_x - 245, 430))
         # Draw confirm password input
-        confirm_password_input = font.render("ConfirmPass: " + '*' * len(confirmRegisterPassword), True, "Black")
-        confirm_password_rect = confirm_password_input.get_rect(center=(center_x - 80, 430))
-        SCREEN.blit(confirm_password_input, confirm_password_rect)
+        confirm_password_input = font.render('*' * len(confirmRegisterPassword), True, "Black")
+        SCREEN.blit(confirm_password_input, (confirm_password_box.x + 2, confirm_password_box.y + 5))
 
         # Draw input boxes with different colors based on selection
-        username_box = pygame.Rect(center_x + 25, 315, 200, 30)
-        password_box = pygame.Rect(center_x + 25, 365, 200, 30)
-        confirm_password_box = pygame.Rect(center_x + 25, 415, 200, 30)
 
         if active_textbox == 'username':
             pygame.draw.rect(SCREEN, "Green", username_box, 2)  # Username input box with green border
@@ -316,37 +322,49 @@ def register():
                         active_textbox = 'password'  # Switch to the next input box'
                     elif event.key == pygame.K_BACKSPACE:
                         registerUsername = registerUsername[:-1]
-                    else:
-                        registerUsername += event.unicode
+                    elif len(registerUsername) <= 13:
+                        registerUsername += event.unicode if valid_char(event.unicode) else ''
+                    keys = pygame.key.get_pressed()
+                    if keys [pygame.K_LCTRL] and keys [pygame.K_BACKSPACE]:
+                        registerUsername = ''
                 elif active_textbox == 'password':
                     if event.key == pygame.K_RETURN:
                         active_textbox = 'confirm_password'  # Switch to the next input box'
                     elif event.key == pygame.K_BACKSPACE:
                         registerPassword = registerPassword[:-1]
-                    else:
-                        registerPassword += event.unicode
+                    elif len(registerPassword) <= 13:
+                        registerPassword += event.unicode if valid_char(event.unicode) else ''
+                    keys = pygame.key.get_pressed()
+                    if keys [pygame.K_LCTRL] and keys [pygame.K_BACKSPACE]:
+                        registerPassword = ''
                 elif active_textbox == 'confirm_password':
                     if event.key == pygame.K_RETURN:
                         if all([registerUsername, registerPassword, confirmRegisterPassword]):
-                            if registerPassword == confirmRegisterPassword and is_name_valid(registerUsername):
-                                    try:
-                                        cursor.execute('INSERT INTO player (Username, Password) VALUES (%s,%s)', (registerUsername, registerPassword))
-                                        db.commit()
-                                        print("Registration successful!")
-                                    except mysql.connector.IntegrityError as err:
-                                        print("Username already taken.")
-                                        print(err)
-                                    except mysql.connector.Error as err:
-                                        print("MySQL Error: {}".format(err))
+                            if valid_char(registerUsername):
+                                if registerPassword == confirmRegisterPassword:
+                                        try:
+                                            cursor.execute('INSERT INTO player (Username, Password) VALUES (%s,%s)', (registerUsername, registerPassword))
+                                            db.commit()
+                                            print("Registration successful!")
+                                        except mysql.connector.IntegrityError as err:
+                                            print("Username already taken.")
+                                            print(err)
+                                        except mysql.connector.Error as err:
+                                            print("MySQL Error: {}".format(err))
+                                else:
+                                    print("Passwords do not match. Please try again.")
                             else:
-                                print("Passwords do not match. Please try again.")
+                                print("Invalid username. Please try again.")
                         else:
                             print("Please fill in all fields before registering.")
 
                     elif event.key == pygame.K_BACKSPACE:
                         confirmRegisterPassword = confirmRegisterPassword[:-1]
-                    else:
-                        confirmRegisterPassword += event.unicode
+                    elif len(confirmRegisterPassword) <= 13:
+                        confirmRegisterPassword += event.unicode if valid_char(event.unicode) else ''
+                    keys = pygame.key.get_pressed()
+                    if keys [pygame.K_LCTRL] and keys [pygame.K_BACKSPACE]:
+                        confirmRegisterPassword = ''
             pygame.display.update()
 def options():
     user_input = ""

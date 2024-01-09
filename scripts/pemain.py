@@ -118,7 +118,7 @@ class Pemain(pygame.sprite.Sprite):
         # Return the nearest sprite
         return nearest_sprite
 
-def is_name_valid(username):
+def valid_char(username):
     if len(username) == 0:
         return False
     else:
