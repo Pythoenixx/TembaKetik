@@ -345,6 +345,7 @@ def register():
                                             cursor.execute('INSERT INTO player (Username, Password) VALUES (%s,%s)', (registerUsername, registerPassword))
                                             db.commit()
                                             print("Registration successful!")
+                                            return
                                         except mysql.connector.IntegrityError as err:
                                             print("Username already taken.")
                                             print(err)
@@ -433,12 +434,12 @@ def play(player_id):
         
         #biar x de trail
         SCREEN.fill((0, 0, 0))
-        latar.gerak(SCREEN)
+        latar.gerak(SCREEN, len(group_pemain.sprites()) >= 1)
         
-        text = font.render(char_typed, True, (255, 255, 255), (0, 0, 0))
-        SCREEN.blit(text, (0, 0))
+        # text = font.render(char_typed, True, (255, 255, 255), (0, 0, 0))
+        # SCREEN.blit(text, (0, 0))
         
-        if group_musuh.sprites() == []:
+        if group_musuh.sprites() == [] and len(group_pemain.sprites()) >= 1:
             text_ombak = font.render(f'WAVE:{bil_ombak} CLEARED', True, (255,255,255))
             SCREEN.blit(text_ombak, (100, center_y))
             if not timer_setted:
@@ -451,6 +452,8 @@ def play(player_id):
         
         group_musuh.draw(SCREEN)
         group_musuh.update(SCREEN, group_musuh)
+        
+        pemain.stats(SCREEN)
         
         pygame.display.flip()
         clock.tick(FPS)

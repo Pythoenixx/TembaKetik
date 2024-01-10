@@ -11,6 +11,7 @@ class Pemain(pygame.sprite.Sprite):
     def __init__(self, player_id, x, y, image_path) -> None:
         super().__init__()
         self.id = player_id
+        self.hidup = True
         self.image = pygame.image.load(image_path).convert_alpha()
         self.image = pygame.transform.scale(self.image, (69, 69))
         self.mask = pygame.mask.from_surface(self.image)
@@ -66,10 +67,11 @@ class Pemain(pygame.sprite.Sprite):
             if pygame.sprite.spritecollide(self, enemy_group, True, pygame.sprite.collide_mask):
                 gameover.play()
                 self.kill()
+                self.hidup = False
                 self.accuracy = (self.typed_word_count / (self.typed_word_count + self.miss)) * 100 if self.typed_word_count + self.miss != 0 else 0
                 #average spw to wpm conversion sbb tu 60 kat depan
                 self.wpm = round(60/(sum(self.elapsed_time_list) / len(self.elapsed_time_list))) if len(self.elapsed_time_list) != 0 else 0
-                self.score = ((0.69 * self.wpm * self.accuracy) + (0.42 * self.typed_word_count * self.accuracy)) #this formula is revealed in my dream
+                self.score = int((0.69 * self.wpm * self.accuracy) + (0.42 * self.typed_word_count * self.accuracy)) #this formula is revealed in my dream
                 #ofc not...(or is it??)
                 try:
                     cursor.execute("INSERT INTO missed (player_ID, count, words) VALUES (%s, %s, %s)", (self.id, self.miss, ",".join(self.miss_word)))
@@ -95,6 +97,7 @@ class Pemain(pygame.sprite.Sprite):
                     
                 except mysql.connector.Error as err:
                     print("MySQL Error: {}".format(err))
+        
 
     # Define a function that takes a sprite and a list of sprites as parameters, and returns the nearest sprite in the list
     # if all enemy move at the same speed, this only need to run once for optimization
@@ -117,6 +120,19 @@ class Pemain(pygame.sprite.Sprite):
                 nearest_sprite = other_sprite
         # Return the nearest sprite
         return nearest_sprite
+    
+    def stats(self, screen):
+        if not self.hidup:
+            font = pygame.font.Font(None, 30)
+            text = font.render(f"Accuracy: {self.accuracy:.2f}%", True, (255, 255, 255))
+            screen.blit(text, (10, 10))
+            text = font.render(f"WPM: {self.wpm}", True, (255, 255, 255))
+            screen.blit(text, (10, 40))
+            text = font.render(f"Score: {self.score}", True, (255, 255, 255))
+            screen.blit(text, (10, 70))
+            transparent_surface = pygame.Surface (screen.get_size(), pygame.SRCALPHA) # Create a transparent surface
+            transparent_surface.fill ((0, 0, 0, 128)) # Fill the surface with a semi-transparent black color
+            screen.blit(transparent_surface, (0, 0)) # Blit the transparent surface to the screen)
 
 def valid_char(username):
     if len(username) == 0:
