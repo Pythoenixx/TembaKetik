@@ -122,17 +122,43 @@ class Pemain(pygame.sprite.Sprite):
         return nearest_sprite
     
     def stats(self, screen):
-        if not self.hidup:
-            font = pygame.font.Font(None, 30)
-            text = font.render(f"Accuracy: {self.accuracy:.2f}%", True, (255, 255, 255))
-            screen.blit(text, (10, 10))
-            text = font.render(f"WPM: {self.wpm}", True, (255, 255, 255))
-            screen.blit(text, (10, 40))
-            text = font.render(f"Score: {self.score}", True, (255, 255, 255))
-            screen.blit(text, (10, 70))
-            transparent_surface = pygame.Surface (screen.get_size(), pygame.SRCALPHA) # Create a transparent surface
-            transparent_surface.fill ((0, 0, 0, 128)) # Fill the surface with a semi-transparent black color
-            screen.blit(transparent_surface, (0, 0)) # Blit the transparent surface to the screen)
+        center_x = screen.get_width() // 2
+        center_y = screen.get_height() // 2
+        
+        lbl_color = 'cyan'
+        data_color = 'gold'
+        #lbl coords
+        wpm_coords = (10, 10)
+        accuracy_coords = (center_x, 10)
+        miss_coords = (10, 125)
+        score_coords = (center_x, 125)
+        
+        font = pygame.font.Font('font/font.ttf', 17)
+        data_font = pygame.font.Font('font/font.ttf', 30)
+        
+        transparent_surface = pygame.Surface (screen.get_size(), pygame.SRCALPHA) # Create a transparent surface
+        transparent_surface.fill ((0, 0, 0, 169)) # Fill the surface with a semi-transparent black color
+        screen.blit(transparent_surface, (0, 0)) # Blit the transparent surface to the screen)
+        
+        text = font.render(f"WPM", True, lbl_color)
+        screen.blit(text, wpm_coords)
+        text = data_font.render(f"{self.wpm}", True, data_color)
+        screen.blit(text, (wpm_coords[0], wpm_coords[1] + 40))
+        
+        text = font.render(f"Accuracy", True, lbl_color)
+        screen.blit(text, accuracy_coords)
+        text = data_font.render(f"{self.accuracy:.2f}%", True, data_color)
+        screen.blit(text, (accuracy_coords[0], accuracy_coords[1] + 40))
+        
+        text = font.render(f"Miss", True, lbl_color)
+        screen.blit(text, miss_coords)
+        text = data_font.render(f"{self.miss}", True, data_color)
+        screen.blit(text, (miss_coords[0], miss_coords[1] + 40))
+        
+        text = font.render(f"Score", True, lbl_color)
+        screen.blit(text, score_coords)
+        text = data_font.render(f"{self.score}", True, data_color)
+        screen.blit(text, (score_coords[0], score_coords[1] + 40))
 
 def valid_char(username):
     if len(username) == 0:

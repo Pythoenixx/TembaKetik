@@ -56,6 +56,9 @@ btnSound.set_volume(0.05)
 btnType = pygame.mixer.Sound('sound/keypressed.mp3')
 btnType.set_volume(0.1)
 
+BTN_BG = pygame.image.load('img/buttonBG.png').convert_alpha()
+BTN_BG = pygame.transform.scale(BTN_BG, (300, 100))
+
 def main_menu():
     is_logged_in = False
     LOGO = pygame.image.load('img/logo.png').convert_alpha()
@@ -68,9 +71,6 @@ def main_menu():
     
     BG = pygame.image.load('img/angkasa1.png').convert_alpha()
     BG = pygame.transform.scale(BG, (WN_LEBAR, WN_TINGGI))
-    
-    BTN_BG = pygame.image.load('img/buttonBG.png').convert_alpha()
-    BTN_BG = pygame.transform.scale(BTN_BG, (300, 100))
     
     LOGIN_BUTTON = Button(image=BTN_BG, pos=(center_x, 400), 
                         text_input="LOGIN", font=font, base_color="#d7fcd4", hovering_color="Gold")
@@ -412,6 +412,7 @@ def play(player_id):
     while running:
         # Get a list of events
         events = pygame.event.get()
+        PLAY_MOUSE_POS = pygame.mouse.get_pos()
         # Loop through the events
         for event in events:
             if event.type == WAVE_EVENT:
@@ -453,12 +454,21 @@ def play(player_id):
         group_musuh.draw(SCREEN)
         group_musuh.update(SCREEN, group_musuh)
         
-        pemain.stats(SCREEN)
+        if not pemain.hidup:
+            pemain.stats(SCREEN)
+            BACK_BTN = Button(image=None, pos=(center_x, 660), 
+                            text_input="BACK TO MAIN MENU", font=font, base_color="#d7fcd4", hovering_color="Gold")
+            BACK_BTN.changeColor(pygame.mouse.get_pos())
+            BACK_BTN.draw(SCREEN)
+            for event in events:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if BACK_BTN.checkForInput(PLAY_MOUSE_POS):
+                        main_menu()
         
         pygame.display.flip()
         clock.tick(FPS)
         pygame.display.set_caption(f'TembaKetik FPS: {clock.get_fps() :.1f}')# f' ' tu utk tukar jdi f-string (mcm string data type)
-        print('pemain wpm:',pemain.wpm)
+        print('mouse coords:', pygame.mouse.get_pos())
 
 main_menu()
 
