@@ -107,7 +107,7 @@ def main_menu():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            if pygame.mouse.get_pressed()[0] == True:
                 if is_logged_in:
                     if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
                         btnSound.play()
@@ -185,7 +185,7 @@ def login():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            if pygame.mouse.get_pressed()[0] == True:
                 if LOGIN_BACK.checkForInput(LOGIN_MOUSE_POS):
                     return  # Go back to the main menu
                 # Check if the mouse click is inside the username input box
@@ -304,7 +304,7 @@ def register():
                 pygame.quit()
                 sys.exit()
             
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            if pygame.mouse.get_pressed()[0] == True:
                 if REGISTER_BACK.checkForInput(REGISTER_MOUSE_POS):
                     return 
                 if username_box.collidepoint(event.pos):
@@ -369,7 +369,7 @@ def register():
 def options():
     #ni hanya untuk background sound sahaja
     volume = initial_volume  # Initial volume level
-    current_language = 0
+    current_language = 'English'
     
     while True:
         OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
@@ -390,9 +390,9 @@ def options():
         pygame.draw.rect(SCREEN, "Gray", volume_slider)
         pygame.draw.rect(SCREEN, "Green", (volume_slider.x, volume_slider.y, volume * 200, 20))
         # Language button
-        LANGUAGE_BUTTON = "Malay" if current_language == 0 else "English"
+        LANGUAGE_BUTTON = "Malay" if current_language == 'English' else "English"
         LANGUAGE_BUTTON = Button(image=None, pos=(center_x, 500),
-                                text_input=f"Change Language: {"Disini"}", font=font, base_color="Black", hovering_color="Green")
+                                text_input=f"Change Language: {current_language}", font=font, base_color="Black", hovering_color="Green")
         LANGUAGE_BUTTON.changeColor(OPTIONS_MOUSE_POS)
         LANGUAGE_BUTTON.draw(SCREEN)
 
@@ -405,22 +405,21 @@ def options():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.type == pygame.MOUSEBUTTONDOWN: #Adjusting the volume using scroll
+                if event.button == 4:  # Scroll Up
+                    volume = min(1, volume + 0.1)  # Increase volume
+                    pygame.mixer.music.set_volume(volume)
+                elif event.button == 5:  # Scroll Down
+                    volume = max(0, volume - 0.1)  # Decrease volume
+                    pygame.mixer.music.set_volume(volume)
+            if pygame.mouse.get_pressed()[0] == True: #change mousebutton to this to use left click only for selecting
                 if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
                     return
                 elif LANGUAGE_BUTTON.checkForInput(OPTIONS_MOUSE_POS):
-                    current_language = 1 - current_language
+                    current_language = "Malay" if current_language == 'English' else "English"
                 elif volume_slider.collidepoint(event.pos):
                     volume = max(0, min((event.pos[0] - volume_slider.x) / 200, 1))# Adjust volume based on slider position
                     pygame.mixer.music.set_volume(volume,)# Set the music volume
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
-                    volume = max(0, volume - 0.1)# Decrease volume on left arrow key
-                    pygame.mixer.music.set_volume(volume)
-                elif event.key == pygame.K_RIGHT:
-                    volume = min(1, volume + 0.1)# Increase volume on right arrow key
-                    pygame.mixer.music.set_volume(volume)
-
         pygame.display.update()
 
 def play(player_id):
