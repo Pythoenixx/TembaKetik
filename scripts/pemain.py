@@ -95,6 +95,10 @@ class Pemain(pygame.sprite.Sprite):
                     
                     print("Data inserted successfully.")
                     
+                    cursor.execute("SELECT score.nilai FROM score JOIN missed ON score.miss_ID = missed.ID JOIN player ON missed.player_ID = player.ID WHERE player.ID = %s", (self.id,))
+                    self.score_list = cursor.fetchall()
+                    self.score_list = [score[0] for score in self.score_list] #fetchall tu akan bagi tuple of tuples so kene first element setiap tuple and masukkan balik dlm variable supaya sume jadi list element
+                    
                 except mysql.connector.Error as err:
                     print("MySQL Error: {}".format(err))
         
@@ -122,11 +126,19 @@ class Pemain(pygame.sprite.Sprite):
         return nearest_sprite
     
     def stats(self, screen):
+        width = screen.get_width()
+        height = screen.get_height()
+        
         center_x = screen.get_width() // 2
         center_y = screen.get_height() // 2
         
         lbl_color = 'cyan'
         data_color = 'gold'
+        
+        white = (255, 255, 255)
+        red = (255, 0, 0)
+        green = (0, 255, 0)
+        cyan = 'cyan'
         #lbl coords
         wpm_coords = (10, 10)
         accuracy_coords = (center_x, 10)
@@ -159,6 +171,51 @@ class Pemain(pygame.sprite.Sprite):
         screen.blit(text, score_coords)
         text = data_font.render(f"{self.score}", True, data_color)
         screen.blit(text, (score_coords[0], score_coords[1] + 40))
+        
+        # Generate some random data points
+        number_of_points = len(self.score_list) # Number of points
+        data = self.score_list # Y values
+        ceiling_data = 10 * round(max(data)/10)
+        print(data) # Print the data for reference
+
+        # Plot the data points and connect them with lines
+        point_radius = 5
+        line_width = 2
+
+        # Set up margins and axes
+        margin = 75
+        x_axis = (margin, height - margin, width - margin, height - margin)
+        y_axis = (margin, height - margin, margin, margin)
+
+        tick_size = 5
+        tick_font = pygame.font.SysFont("Arial", 15)
+        bil_penanda_aras = 4
+        hx = margin + 10 * (width - 2 * margin) / 10
+        hy = height - margin
+        for i in range(bil_penanda_aras + 1): #sbb start dari 0 so kene 11 bkn 10
+            # Draw vertical ticks and labels
+            vx = margin
+            vy = height - margin - i * (height - 2 * margin) / bil_penanda_aras
+            label_value = int(i * ceiling_data / bil_penanda_aras)
+            tick_label = tick_font.render(str(label_value), True, 'lime')
+            screen.blit(tick_label, (vx - 30, vy - 5))
+            pygame.draw.line(screen, 'orange', (margin, vy), (hx, vy))
+
+        pygame.draw.line(screen, 'orange', (margin, height - margin), (hx, hy))
+
+        for i in range(number_of_points):
+            # Convert the data point to screen coordinates
+            x = margin + i * (width - 2 * margin) / (number_of_points - 1)
+            y = height - margin - data[i] * (height - 2 * margin) / ceiling_data
+            # Draw the point as a blue circle
+            pygame.draw.circle(screen, cyan, (x, y), point_radius)
+            # Draw the line segment as a red line
+            if i > 0:
+                # Get the previous point's coordinates
+                prev_x = margin + (i - 1) * (width - 2 * margin) / (number_of_points - 1)
+                prev_y = height - margin - data[i - 1] * (height - 2 * margin) / ceiling_data
+                # Draw the line from the previous point to the current point
+                pygame.draw.line(screen, red, (prev_x, prev_y), (x, y), line_width)
 
 def valid_char(username):
     if len(username) == 0:
