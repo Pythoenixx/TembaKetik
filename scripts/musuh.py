@@ -15,12 +15,6 @@ short_words = [word for word in most_used_words if len(word) <= 5]
 long_words = [word for word in most_used_words if len(word) >= 6]
 rare_long_words = [word for word in least_used_words if len(word) >= 7]
 
-bil_tiny_kamikaze = 0
-bil_kamikaze = 3
-bil_gunner = 0
-
-bil_ombak = 0
-
 class Musuh(pygame.sprite.Sprite):
     def __init__(self, x, y, image, sasaran_rect, text_offset, word) -> None:
         super().__init__()
@@ -90,20 +84,18 @@ def jana_musuh(enemy_class, bilangan, musuh_group,assets_loaded, pemain_rect):
         musuh = enemy_class(x, y, assets_loaded[0], pemain_rect, assets_loaded[1])
         musuh_group.add(musuh)
 
-def jana_ombak(musuh_group, assets, pemain_rect):
-    global bil_ombak,bil_tiny_kamikaze,bil_kamikaze,bil_gunner#maybe blh try buat func yg akan increase diff so x yh nk guna global var
+def jana_ombak(bil_ombak, musuh_group, bil_musuh, assets, pemain_rect):
     #maybe blh buat class asing for this type of func
     
-    jana_musuh(Tiny_Kamikaze,bil_tiny_kamikaze, musuh_group, assets['Tiny_Kamikaze'], pemain_rect)
-    jana_musuh(Kamikaze,bil_kamikaze, musuh_group, assets['Kamikaze'], pemain_rect)
-    jana_musuh(Gunner,bil_gunner, musuh_group, assets['Gunner'], pemain_rect)
+    jana_musuh(Tiny_Kamikaze, bil_musuh['Tiny_Kamikaze'], musuh_group, assets['Tiny_Kamikaze'], pemain_rect)
+    jana_musuh(Kamikaze, bil_musuh['Kamikaze'], musuh_group, assets['Kamikaze'], pemain_rect)
+    jana_musuh(Gunner, bil_musuh['Gunner'], musuh_group, assets['Gunner'], pemain_rect)
     
     bil_ombak += 1
-    bil_kamikaze = bil_ombak + 3
-    bil_tiny_kamikaze = bil_ombak 
-    bil_gunner += 1 if bil_ombak % 3 == 0 else 0
     
-    
+    bil_musuh['Kamikaze'] = bil_ombak + 3
+    bil_musuh['Tiny_Kamikaze'] = bil_ombak 
+    bil_musuh['Gunner'] += 1 if bil_ombak % 3 == 0 else 0
     
     return musuh_group,bil_ombak
 

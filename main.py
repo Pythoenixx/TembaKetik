@@ -25,8 +25,6 @@ icon = pygame.image.load('img/kapal_angkasa.PNG')
 pygame.display.set_icon(icon)
 SCREEN = pygame.display.set_mode((WN_LEBAR, WN_TINGGI))
 
-clock = pygame.time.Clock()
-
 assets = {
     'Tiny_Kamikaze' : assets_load('renew/tiniykamikazeship/tinykamikazeship1.PNG',60),
     'Kamikaze' : assets_load('renew/kamikazeship/kamikazeship1.PNG',40),
@@ -38,10 +36,6 @@ font = pygame.font.Font("font/font.ttf",20)
 # Get the center of the screen
 center_x = SCREEN.get_width() // 2
 center_y = SCREEN.get_height() // 2
-
-
-
-latar = Latar(0, WN_TINGGI, 0, 0.2)
 
 # loading the background music
 mixer.music.load('sound/backgroundsound.mp3')
@@ -57,6 +51,9 @@ btnSound.set_volume(0.05)
 btnType = pygame.mixer.Sound('sound/keypressed.mp3')
 btnType.set_volume(0.1)
 
+BTN_BG = pygame.image.load('img/buttonBG.png').convert_alpha()
+BTN_BG = pygame.transform.scale(BTN_BG, (300, 100))
+
 def main_menu():
     is_logged_in = False
     LOGO = pygame.image.load('img/logo.png').convert_alpha()
@@ -69,9 +66,6 @@ def main_menu():
     
     BG = pygame.image.load('img/angkasa1.png').convert_alpha()
     BG = pygame.transform.scale(BG, (WN_LEBAR, WN_TINGGI))
-    
-    BTN_BG = pygame.image.load('img/buttonBG.png').convert_alpha()
-    BTN_BG = pygame.transform.scale(BTN_BG, (300, 100))
     
     LOGIN_BUTTON = Button(image=BTN_BG, pos=(center_x, 400), 
                         text_input="LOGIN", font=font, base_color="#d7fcd4", hovering_color="Gold")
@@ -346,6 +340,7 @@ def register():
                                             cursor.execute('INSERT INTO player (Username, Password) VALUES (%s,%s)', (registerUsername, registerPassword))
                                             db.commit()
                                             print("Registration successful!")
+                                            return
                                         except mysql.connector.IntegrityError as err:
                                             print("Username already taken.")
                                             print(err)
@@ -455,7 +450,18 @@ def options():
 
 
 def play(player_id):
+    clock = pygame.time.Clock()
+    
+    bil_ombak = 0
+    
+    bil_musuh = {
+        'Tiny_Kamikaze' : 0,
+        'Kamikaze' : 3,
+        'Gunner' : 0,
+    }
+    
     pemain = Pemain(player_id, center_x, WN_TINGGI - 100, 'renew/PlayerShip/playership1.PNG')
+    latar = Latar(0, WN_TINGGI, 0, 0.2)
     
     group_pemain = pygame.sprite.GroupSingle()
     group_pemain.add(pemain)
@@ -464,7 +470,7 @@ def play(player_id):
     char_updated = False
     
     group_musuh = pygame.sprite.LayeredUpdates()
-    group_musuh,bil_ombak = jana_ombak(group_musuh, assets, pemain.rect)
+    group_musuh,bil_ombak = jana_ombak(bil_ombak, group_musuh, bil_musuh, assets, pemain.rect)
     text_ombak = font.render(str(bil_ombak), True, (255,255,255), (0, 0, 0))
     # Create a custom timer event
     WAVE_EVENT= pygame.USEREVENT + 1
@@ -474,10 +480,11 @@ def play(player_id):
     while running:
         # Get a list of events
         events = pygame.event.get()
+        PLAY_MOUSE_POS = pygame.mouse.get_pos()
         # Loop through the events
         for event in events:
             if event.type == WAVE_EVENT:
-                group_musuh,bil_ombak = jana_ombak(group_musuh, assets, pemain.rect)
+                group_musuh,bil_ombak = jana_ombak(bil_ombak, group_musuh, bil_musuh, assets, pemain.rect)
                 pygame.time.set_timer(WAVE_EVENT, 0)# Reset the timer to 0 to stop it
                 timer_setted = False
             # Check if the user has clicked the close button
@@ -485,6 +492,7 @@ def play(player_id):
                 # Exit the loop and quit the program
                 running = False
                 pygame.quit()
+                db.close()
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_BACKSPACE:
@@ -496,12 +504,12 @@ def play(player_id):
         
         #biar x de trail
         SCREEN.fill((0, 0, 0))
-        latar.gerak(SCREEN)
+        latar.gerak(SCREEN, len(group_pemain.sprites()) >= 1)
         
-        text = font.render(char_typed, True, (255, 255, 255), (0, 0, 0))
-        SCREEN.blit(text, (0, 0))
+        # text = font.render(char_typed, True, (255, 255, 255), (0, 0, 0))
+        # SCREEN.blit(text, (0, 0))
         
-        if group_musuh.sprites() == []:
+        if group_musuh.sprites() == [] and len(group_pemain.sprites()) >= 1:
             text_ombak = font.render(f'WAVE:{bil_ombak} CLEARED', True, (255,255,255))
             SCREEN.blit(text_ombak, (100, center_y))
             if not timer_setted:
@@ -515,10 +523,21 @@ def play(player_id):
         group_musuh.draw(SCREEN)
         group_musuh.update(SCREEN, group_musuh)
         
+        if not pemain.hidup:
+            pemain.stats(SCREEN)
+            BACK_BTN = Button(image=None, pos=(center_x, 775), 
+                            text_input="BACK TO MAIN MENU", font=font, base_color="#d7fcd4", hovering_color="Gold")
+            BACK_BTN.changeColor(pygame.mouse.get_pos())
+            BACK_BTN.draw(SCREEN)
+            for event in events:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if BACK_BTN.checkForInput(PLAY_MOUSE_POS):
+                        return
+        
         pygame.display.flip()
         clock.tick(FPS)
         pygame.display.set_caption(f'TembaKetik FPS: {clock.get_fps() :.1f}')# f' ' tu utk tukar jdi f-string (mcm string data type)
-        print('pemain wpm:',pemain.wpm)
+        print('mouse coords:', pygame.mouse.get_pos())
 
 main_menu()
 
