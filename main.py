@@ -20,6 +20,8 @@ pygame.init()
 
 # Initialize mixer
 mixer.init()
+
+
 # Create a window object
 icon = pygame.image.load('img/kapal_angkasa.PNG')
 pygame.display.set_icon(icon)
@@ -361,12 +363,16 @@ def register():
                     if keys [pygame.K_LCTRL] and keys [pygame.K_BACKSPACE]:
                         confirmRegisterPassword = ''
             pygame.display.update()
+
+sound_effect_volume = 0.5
+music_volume = initial_volume
+
 def options():
-    sound_effect_volume = 0.5  # Initial effect volume level
-    music_volume = initial_volume  # Initial music volume level
+    global sound_effect_volume, music_volume  # Declare global variables
+
     current_language = 'English'
     active_slider = None  # Variable to keep track of the active slider
-    
+
     while True:
         OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
 
@@ -398,10 +404,10 @@ def options():
 
         # Language button
         LANGUAGE_BUTTON = "Malay" if current_language == 'English' else "English"
-        LANGUAGE_BUTTON = Button(image=None, pos=(center_x, 550),
+        language_button = Button(image=None, pos=(center_x, 550),
                                 text_input=f"Change Language: {current_language}", font=font, base_color="Black", hovering_color="Green")
-        LANGUAGE_BUTTON.changeColor(OPTIONS_MOUSE_POS)
-        LANGUAGE_BUTTON.draw(SCREEN)
+        language_button.changeColor(OPTIONS_MOUSE_POS)
+        language_button.draw(SCREEN)
 
         OPTIONS_BACK = Button(image=None, pos=(center_x, 620),
                              text_input="BACK", font=font, base_color="Black", hovering_color="Green")
@@ -421,26 +427,26 @@ def options():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 4:  # Scroll Up
                     if active_slider == "SoundEffect":
-                        sound_effect_volume = min(1, sound_effect_volume + 0.1)  # Increase sound effect volume
+                        sound_effect_volume = min(1, sound_effect_volume + 0.1)
                         btnType.set_volume(sound_effect_volume)  # Set typing sound volume
                         btnSound.set_volume(sound_effect_volume)  # Set button click sound volume
                     elif active_slider == "Music":
-                        music_volume = min(1, music_volume + 0.1)  # Increase music volume
+                        music_volume = min(1, music_volume + 0.1)
                         pygame.mixer.music.set_volume(music_volume)  # Set music volume
                 elif event.button == 5:  # Scroll Down
                     if active_slider == "SoundEffect":
-                        sound_effect_volume = max(0, sound_effect_volume - 0.1)  # Decrease sound effect volume
+                        sound_effect_volume = max(0, sound_effect_volume - 0.1)
                         btnType.set_volume(sound_effect_volume)  # Set typing sound volume
                         btnSound.set_volume(sound_effect_volume)  # Set button click sound volume
                     elif active_slider == "Music":
-                        music_volume = max(0, music_volume - 0.1)  # Decrease music volume
+                        music_volume = max(0, music_volume - 0.1)
                         pygame.mixer.music.set_volume(music_volume)  # Set music volume
 
                 elif sound_effect_slider.collidepoint(event.pos):
                     active_slider = "SoundEffect"
                 elif music_slider.collidepoint(event.pos):
                     active_slider = "Music"
-                elif LANGUAGE_BUTTON.checkForInput(OPTIONS_MOUSE_POS):
+                elif language_button.checkForInput(OPTIONS_MOUSE_POS):
                     current_language = "Malay" if current_language == 'English' else "English"
                 elif OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
                     return
