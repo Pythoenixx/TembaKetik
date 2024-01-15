@@ -71,7 +71,7 @@ class Pemain(pygame.sprite.Sprite):
                 self.accuracy = (self.typed_word_count / (self.typed_word_count + self.miss)) * 100 if self.typed_word_count + self.miss != 0 else 0
                 #average spw to wpm conversion sbb tu 60 kat depan
                 self.wpm = round(60/(sum(self.elapsed_time_list) / len(self.elapsed_time_list))) if len(self.elapsed_time_list) != 0 else 0
-                self.score = int((0.69 * self.wpm * self.accuracy) + (0.42 * self.typed_word_count * self.accuracy)) #this formula is revealed in my dream
+                self.score = int((6.9 * self.wpm) + (4.2 * self.typed_word_count) + (5 * self.accuracy)) #this formula is revealed in my dream
                 #ofc not...(or is it??)
                 try:
                     cursor.execute("INSERT INTO missed (player_ID, count, words) VALUES (%s, %s, %s)", (self.id, self.miss, ",".join(self.miss_word)))
@@ -183,14 +183,13 @@ class Pemain(pygame.sprite.Sprite):
         tick_font = pygame.font.SysFont("Arial", 15)
         bil_penanda_aras = 4
         hx = hor_margin + 10 * (width - 2 * hor_margin) / 10
-        hy = height - ver_margin
         for i in range(bil_penanda_aras + 1): #sbb start dari 0 tu kene tambah 1
             # Draw vertical ticks and labels
             vx = hor_margin
             vy = (height - ver_margin - i * (height - 2 * ver_margin) / bil_penanda_aras) + 69
             label_value = int(i * ceiling_data / bil_penanda_aras)
-            tick_label = tick_font.render(str(label_value), True, graph_color)
-            screen.blit(tick_label, (vx - 30, vy - 5))
+            tick_label = tick_font.render(str(label_value), True, 'white')
+            screen.blit(tick_label, (vx - 45, vy - 5))
             pygame.draw.line(screen, graph_color, (hor_margin, vy), (hx, vy))
 
         for i in range(number_of_points):
