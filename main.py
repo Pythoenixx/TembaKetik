@@ -367,9 +367,10 @@ def register():
                         confirmRegisterPassword = ''
             pygame.display.update()
 def options():
-    sound_effect_muted = False # Initial effect volume level
-    volume = initial_volume  # Initial music volume level
+    sound_effect_volume = 0.5  # Initial effect volume level
+    music_volume = initial_volume  # Initial music volume level
     current_language = 'English'
+    active_slider = None  # Variable to keep track of the active slider
     
     while True:
         OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
@@ -385,29 +386,20 @@ def options():
         sound_effect_rect = sound_effect_text.get_rect(center=(center_x - 80, 320))
         SCREEN.blit(sound_effect_text, sound_effect_rect)
 
-        # SOUND EFFECT mute checkbox
-        sound_effect_checkbox_rect = pygame.Rect(center_x + 60, 310, 20, 20)
-        pygame.draw.rect(SCREEN, "Black", sound_effect_checkbox_rect, 2)
-        if sound_effect_muted:
-            pygame.draw.line(SCREEN, "Black", (center_x + 65, 315), (center_x + 75, 325), 2)
-            pygame.draw.line(SCREEN, "Black", (center_x + 75, 315), (center_x + 65, 325), 2)
-        
-        #-----------------------------------------------------------------------------------------------------#
-        # instead of using slider for the sound effect, i make a mute like button (checkbox) for sound effect #
-        # do note that it only mute for TypeSound and ButtonClickSound since its in the main.py(1)            #
-        # (2)the explosion sound effect and game over music is in the pemain.py                               #
-        # this is to avoid setting the level of both music and sound effect both being control by scrolling   #
-        #-----------------------------------------------------------------------------------------------------#
-        
+        # SOUND EFFECT slider
+        sound_effect_slider = pygame.Rect(center_x - 100, 350, 200, 20)
+        pygame.draw.rect(SCREEN, "Gray", sound_effect_slider)
+        pygame.draw.rect(SCREEN, "Green", (sound_effect_slider.x, sound_effect_slider.y, sound_effect_volume * 200, 20))
+
         # Display MUSIC level
-        music_text = font.render(f"Music: {int(volume * 100)}%", True, "Black")
+        music_text = font.render(f"Music: {int(music_volume * 100)}%", True, "Black")
         music_rect = music_text.get_rect(center=(center_x, 400))
         SCREEN.blit(music_text, music_rect)
 
         # MUSIC slider
         music_slider = pygame.Rect(center_x - 100, 430, 200, 20)
         pygame.draw.rect(SCREEN, "Gray", music_slider)
-        pygame.draw.rect(SCREEN, "Green", (music_slider.x, music_slider.y, volume * 200, 20))
+        pygame.draw.rect(SCREEN, "Green", (music_slider.x, music_slider.y, music_volume * 200, 20))
 
         # Language button
         LANGUAGE_BUTTON = "Malay" if current_language == 'English' else "English"
@@ -416,42 +408,51 @@ def options():
         LANGUAGE_BUTTON.changeColor(OPTIONS_MOUSE_POS)
         LANGUAGE_BUTTON.draw(SCREEN)
 
-        OPTIONS_BACK = Button(image=None, pos=(center_x, 620), 
-                            text_input="BACK", font=font, base_color="Black", hovering_color="Green")
+        OPTIONS_BACK = Button(image=None, pos=(center_x, 620),
+                             text_input="BACK", font=font, base_color="Black", hovering_color="Green")
         OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS)
         OPTIONS_BACK.draw(SCREEN)
+
+        # Draw active slider indicator
+        if active_slider == "SoundEffect":
+            pygame.draw.rect(SCREEN, "Red", sound_effect_slider, 2)
+        elif active_slider == "Music":
+            pygame.draw.rect(SCREEN, "Red", music_slider, 2)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            if event.type == pygame.MOUSEBUTTONDOWN: #Adjusting the volume using scroll
+            if pygame.mouse.get_pressed()[0] == True:
                 if event.button == 4:  # Scroll Up
-                    volume = min(1, volume + 0.1)  # Increase volume
-                    pygame.mixer.music.set_volume(volume)
+                    if active_slider == "SoundEffect":
+                        sound_effect_volume = min(1, sound_effect_volume + 0.1)  # Increase sound effect volume
+                        btnType.set_volume(sound_effect_volume)  # Set typing sound volume
+                        btnSound.set_volume(sound_effect_volume)  # Set button click sound volume
+                    elif active_slider == "Music":
+                        music_volume = min(1, music_volume + 0.1)  # Increase music volume
+                        pygame.mixer.music.set_volume(music_volume)  # Set music volume
                 elif event.button == 5:  # Scroll Down
-                    volume = max(0, volume - 0.1)  # Decrease volume
-                    pygame.mixer.music.set_volume(volume)
-                elif sound_effect_checkbox_rect.collidepoint(event.pos):
-                    sound_effect_muted = not sound_effect_muted
-                    if sound_effect_muted:
-                        btnType.set_volume(0)  # Mute typing sound
-                        btnSound.set_volume(0)  # Mute button click sound
-                    else:
-                        sound_effect_volume = 0.5  # Set to default volume (adjust as needed)
-                        btnType.set_volume(sound_effect_volume)  # Unmute typing sound
-                        btnSound.set_volume(sound_effect_volume)  # Unmute button click sound
-           
-            if pygame.mouse.get_pressed()[0] == True: #change mousebutton to this to use left click only for selecting
-                if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
-                    return
+                    if active_slider == "SoundEffect":
+                        sound_effect_volume = max(0, sound_effect_volume - 0.1)  # Decrease sound effect volume
+                        btnType.set_volume(sound_effect_volume)  # Set typing sound volume
+                        btnSound.set_volume(sound_effect_volume)  # Set button click sound volume
+                    elif active_slider == "Music":
+                        music_volume = max(0, music_volume - 0.1)  # Decrease music volume
+                        pygame.mixer.music.set_volume(music_volume)  # Set music volume
+
+                elif sound_effect_slider.collidepoint(event.pos):
+                    active_slider = "SoundEffect"
+                elif music_slider.collidepoint(event.pos):
+                    active_slider = "Music"
                 elif LANGUAGE_BUTTON.checkForInput(OPTIONS_MOUSE_POS):
                     current_language = "Malay" if current_language == 'English' else "English"
-                elif music_slider.collidepoint(event.pos):
-                    volume = max(0, min((event.pos[0] - music_slider.x) / 200, 1))# Adjust volume based on slider position
-                    pygame.mixer.music.set_volume(volume,)# Set the music volume
-       
+                elif OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
+                    return
+
         pygame.display.update()
+
+
 
 def play(player_id):
     pemain = Pemain(player_id, center_x, WN_TINGGI - 100, 'renew/PlayerShip/playership1.PNG')
