@@ -11,6 +11,7 @@ class Pemain(pygame.sprite.Sprite):
     def __init__(self, player_id, x, y, image_path) -> None:
         super().__init__()
         self.id = player_id
+        self.hidup = True
         self.image = pygame.image.load(image_path).convert_alpha()
         self.image = pygame.transform.scale(self.image, (69, 69))
         self.mask = pygame.mask.from_surface(self.image)
@@ -66,10 +67,11 @@ class Pemain(pygame.sprite.Sprite):
             if pygame.sprite.spritecollide(self, enemy_group, True, pygame.sprite.collide_mask):
                 gameover.play()
                 self.kill()
+                self.hidup = False
                 self.accuracy = (self.typed_word_count / (self.typed_word_count + self.miss)) * 100 if self.typed_word_count + self.miss != 0 else 0
                 #average spw to wpm conversion sbb tu 60 kat depan
                 self.wpm = round(60/(sum(self.elapsed_time_list) / len(self.elapsed_time_list))) if len(self.elapsed_time_list) != 0 else 0
-                self.score = ((0.69 * self.wpm * self.accuracy) + (0.42 * self.typed_word_count * self.accuracy)) #this formula is revealed in my dream
+                self.score = int((0.69 * self.wpm * self.accuracy) + (0.42 * self.typed_word_count * self.accuracy)) #this formula is revealed in my dream
                 #ofc not...(or is it??)
                 try:
                     cursor.execute("INSERT INTO missed (player_ID, count, words) VALUES (%s, %s, %s)", (self.id, self.miss, ",".join(self.miss_word)))
@@ -93,8 +95,13 @@ class Pemain(pygame.sprite.Sprite):
                     
                     print("Data inserted successfully.")
                     
+                    cursor.execute("SELECT score.nilai FROM score JOIN missed ON score.miss_ID = missed.ID JOIN player ON missed.player_ID = player.ID WHERE player.ID = %s", (self.id,))
+                    self.score_list = cursor.fetchall()
+                    self.score_list = [score[0] for score in self.score_list] #fetchall tu akan bagi tuple of tuples so kene first element setiap tuple and masukkan balik dlm variable supaya sume jadi list element
+                    
                 except mysql.connector.Error as err:
                     print("MySQL Error: {}".format(err))
+        
 
     # Define a function that takes a sprite and a list of sprites as parameters, and returns the nearest sprite in the list
     # if all enemy move at the same speed, this only need to run once for optimization
@@ -117,6 +124,88 @@ class Pemain(pygame.sprite.Sprite):
                 nearest_sprite = other_sprite
         # Return the nearest sprite
         return nearest_sprite
+    
+    def stats(self, screen):
+        width = screen.get_width()
+        height = screen.get_height()
+        
+        center_x = screen.get_width() // 2
+        
+        lbl_color = 'cyan'
+        data_color = 'gold'
+        graph_color = 'grey'
+        #lbl coords
+        wpm_coords = (10, 10)
+        accuracy_coords = (center_x, 10)
+        miss_coords = (10, 125)
+        score_coords = (center_x, 125)
+        
+        font = pygame.font.Font('font/font.ttf', 17)
+        data_font = pygame.font.Font('font/font.ttf', 30)
+        
+        transparent_surface = pygame.Surface (screen.get_size(), pygame.SRCALPHA) # Create a transparent surface
+        transparent_surface.fill ((0, 0, 0, 169)) # Fill the surface with a semi-transparent black color
+        screen.blit(transparent_surface, (0, 0)) # Blit the transparent surface to the screen)
+        
+        text = font.render(f"WPM", True, lbl_color)
+        screen.blit(text, wpm_coords)
+        text = data_font.render(f"{self.wpm}", True, data_color)
+        screen.blit(text, (wpm_coords[0], wpm_coords[1] + 40))
+        
+        text = font.render(f"Accuracy", True, lbl_color)
+        screen.blit(text, accuracy_coords)
+        text = data_font.render(f"{self.accuracy:.2f}%", True, data_color)
+        screen.blit(text, (accuracy_coords[0], accuracy_coords[1] + 40))
+        
+        text = font.render(f"Miss", True, lbl_color)
+        screen.blit(text, miss_coords)
+        text = data_font.render(f"{self.miss}", True, data_color)
+        screen.blit(text, (miss_coords[0], miss_coords[1] + 40))
+        
+        text = font.render(f"Score", True, lbl_color)
+        screen.blit(text, score_coords)
+        text = data_font.render(f"{self.score}", True, data_color)
+        screen.blit(text, (score_coords[0], score_coords[1] + 40))
+        
+        # Generate some random data points
+        number_of_points = len(self.score_list) # Number of points
+        data = self.score_list # Y values
+        ceiling_data = 10 * round(max(data)/10)
+
+        # Plot the data points and connect them with lines
+        point_radius = 5
+        line_width = 2
+
+        # Set up margins and axes
+        ver_margin = 180
+        hor_margin = 50
+        
+        tick_font = pygame.font.SysFont("Arial", 15)
+        bil_penanda_aras = 4
+        hx = hor_margin + 10 * (width - 2 * hor_margin) / 10
+        hy = height - ver_margin
+        for i in range(bil_penanda_aras + 1): #sbb start dari 0 tu kene tambah 1
+            # Draw vertical ticks and labels
+            vx = hor_margin
+            vy = (height - ver_margin - i * (height - 2 * ver_margin) / bil_penanda_aras) + 69
+            label_value = int(i * ceiling_data / bil_penanda_aras)
+            tick_label = tick_font.render(str(label_value), True, graph_color)
+            screen.blit(tick_label, (vx - 30, vy - 5))
+            pygame.draw.line(screen, graph_color, (hor_margin, vy), (hx, vy))
+
+        for i in range(number_of_points):
+            # Convert the data point to screen coordinates
+            x = hor_margin + i * (width - 2 * hor_margin) / (number_of_points - 1 if number_of_points > 1 else number_of_points)
+            y = (height - ver_margin - data[i] * (height - 2 * ver_margin) / ceiling_data) + 69
+            # Draw the point as a blue circle
+            pygame.draw.circle(screen, data_color, (x, y), point_radius)
+            # Draw the line segment as a red line
+            if i > 0:
+                # Get the previous point's coordinates
+                prev_x = hor_margin + (i - 1) * (width - 2 * hor_margin) / (number_of_points - 1 if number_of_points > 1 else number_of_points)
+                prev_y = (height - ver_margin - data[i - 1] * (height - 2 * ver_margin) / ceiling_data) + 69
+                # Draw the line from the previous point to the current point
+                pygame.draw.line(screen, lbl_color, (prev_x, prev_y), (x, y), line_width)
 
 def valid_char(username):
     if len(username) == 0:

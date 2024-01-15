@@ -12,10 +12,10 @@ class Latar:
         self.gmbr = pygame.transform.scale(self.gmbr,(WN_LEBAR*PIC_ZOOM,WN_TINGGI*PIC_ZOOM))
         
     
-    def gerak(self,screen):
+    def gerak(self, screen, player_alive):
         screen.blit(self.gmbr, self.gmbr.get_rect(midbottom=(self.x,round(self.y))))
-        
-        self.y += self.veloY
+        if player_alive:
+            self.y += self.veloY
         # Check if the image goes off the bottom of the screen
         if self.y > (self.gmbr.get_height()):
         # Wrap the image around to the top of the screen
