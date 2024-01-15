@@ -462,7 +462,7 @@ def play(player_id):
         
         if not pemain.hidup:
             pemain.stats(SCREEN)
-            BACK_BTN = Button(image=None, pos=(center_x, 660), 
+            BACK_BTN = Button(image=None, pos=(center_x, 775), 
                             text_input="BACK TO MAIN MENU", font=font, base_color="#d7fcd4", hovering_color="Gold")
             BACK_BTN.changeColor(pygame.mouse.get_pos())
             BACK_BTN.draw(SCREEN)

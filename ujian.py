@@ -49,14 +49,14 @@ pygame.draw.line(screen, 'orange', (margin, height - margin), (hx, hy))
 
 for i in range(n):
     # Convert the data point to screen coordinates
-    x = margin + i * (width - 2 * margin) / (n - 1)
+    x = margin + i * (width - 2 * margin) / (n)
     y = height - margin - data[i] * (height - 2 * margin) / ceiling_data
     # Draw the point as a blue circle
     pygame.draw.circle(screen, cyan, (x, y), point_radius)
     # Draw the line segment as a red line
     if i > 0:
         # Get the previous point's coordinates
-        prev_x = margin + (i - 1) * (width - 2 * margin) / (n - 1)
+        prev_x = margin + (i - 1) * (width - 2 * margin) / (n)
         prev_y = height - margin - data[i - 1] * (height - 2 * margin) / ceiling_data
         # Draw the line from the previous point to the current point
         pygame.draw.line(screen, red, (prev_x, prev_y), (x, y), line_width)

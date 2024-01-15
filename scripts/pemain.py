@@ -130,15 +130,10 @@ class Pemain(pygame.sprite.Sprite):
         height = screen.get_height()
         
         center_x = screen.get_width() // 2
-        center_y = screen.get_height() // 2
         
         lbl_color = 'cyan'
         data_color = 'gold'
-        
-        white = (255, 255, 255)
-        red = (255, 0, 0)
-        green = (0, 255, 0)
-        cyan = 'cyan'
+        graph_color = 'grey'
         #lbl coords
         wpm_coords = (10, 10)
         accuracy_coords = (center_x, 10)
@@ -176,46 +171,41 @@ class Pemain(pygame.sprite.Sprite):
         number_of_points = len(self.score_list) # Number of points
         data = self.score_list # Y values
         ceiling_data = 10 * round(max(data)/10)
-        print(data) # Print the data for reference
 
         # Plot the data points and connect them with lines
         point_radius = 5
         line_width = 2
 
         # Set up margins and axes
-        margin = 75
-        x_axis = (margin, height - margin, width - margin, height - margin)
-        y_axis = (margin, height - margin, margin, margin)
-
-        tick_size = 5
+        ver_margin = 180
+        hor_margin = 50
+        
         tick_font = pygame.font.SysFont("Arial", 15)
         bil_penanda_aras = 4
-        hx = margin + 10 * (width - 2 * margin) / 10
-        hy = height - margin
-        for i in range(bil_penanda_aras + 1): #sbb start dari 0 so kene 11 bkn 10
+        hx = hor_margin + 10 * (width - 2 * hor_margin) / 10
+        hy = height - ver_margin
+        for i in range(bil_penanda_aras + 1): #sbb start dari 0 tu kene tambah 1
             # Draw vertical ticks and labels
-            vx = margin
-            vy = height - margin - i * (height - 2 * margin) / bil_penanda_aras
+            vx = hor_margin
+            vy = (height - ver_margin - i * (height - 2 * ver_margin) / bil_penanda_aras) + 69
             label_value = int(i * ceiling_data / bil_penanda_aras)
-            tick_label = tick_font.render(str(label_value), True, 'lime')
+            tick_label = tick_font.render(str(label_value), True, graph_color)
             screen.blit(tick_label, (vx - 30, vy - 5))
-            pygame.draw.line(screen, 'orange', (margin, vy), (hx, vy))
-
-        pygame.draw.line(screen, 'orange', (margin, height - margin), (hx, hy))
+            pygame.draw.line(screen, graph_color, (hor_margin, vy), (hx, vy))
 
         for i in range(number_of_points):
             # Convert the data point to screen coordinates
-            x = margin + i * (width - 2 * margin) / (number_of_points - 1)
-            y = height - margin - data[i] * (height - 2 * margin) / ceiling_data
+            x = hor_margin + i * (width - 2 * hor_margin) / (number_of_points - 1 if number_of_points > 1 else number_of_points)
+            y = (height - ver_margin - data[i] * (height - 2 * ver_margin) / ceiling_data) + 69
             # Draw the point as a blue circle
-            pygame.draw.circle(screen, cyan, (x, y), point_radius)
+            pygame.draw.circle(screen, data_color, (x, y), point_radius)
             # Draw the line segment as a red line
             if i > 0:
                 # Get the previous point's coordinates
-                prev_x = margin + (i - 1) * (width - 2 * margin) / (number_of_points - 1)
-                prev_y = height - margin - data[i - 1] * (height - 2 * margin) / ceiling_data
+                prev_x = hor_margin + (i - 1) * (width - 2 * hor_margin) / (number_of_points - 1 if number_of_points > 1 else number_of_points)
+                prev_y = (height - ver_margin - data[i - 1] * (height - 2 * ver_margin) / ceiling_data) + 69
                 # Draw the line from the previous point to the current point
-                pygame.draw.line(screen, red, (prev_x, prev_y), (x, y), line_width)
+                pygame.draw.line(screen, lbl_color, (prev_x, prev_y), (x, y), line_width)
 
 def valid_char(username):
     if len(username) == 0:
