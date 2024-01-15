@@ -76,7 +76,7 @@ def main_menu():
     PLAY_BUTTON = Button(image=BTN_BG, pos=(center_x, 560), 
                             text_input="PLAY", font=font, base_color="#d7fcd4", hovering_color="Gold")
     OPTIONS_BUTTON = Button(image=BTN_BG, pos=(center_x, 640), 
-                            text_input="STATS", font=font, base_color="#d7fcd4", hovering_color="GOLD")
+                            text_input="Setting", font=font, base_color="#d7fcd4", hovering_color="GOLD")
     QUIT_BUTTON = Button(image=BTN_BG, pos=(center_x, 720), 
                             text_input="QUIT", font=font, base_color="#d7fcd4", hovering_color="GOLD")
     
@@ -378,7 +378,7 @@ def options():
 
         # Display SOUND EFFECT level
         sound_effect_text = font.render("Sound Effect:", True, "Black")
-        sound_effect_rect = sound_effect_text.get_rect(center=(center_x - 80, 320))
+        sound_effect_rect = sound_effect_text.get_rect(center=(center_x - 25, 320))
         SCREEN.blit(sound_effect_text, sound_effect_rect)
 
         # SOUND EFFECT slider
@@ -418,7 +418,7 @@ def options():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            if pygame.mouse.get_pressed()[0] == True:
+            if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 4:  # Scroll Up
                     if active_slider == "SoundEffect":
                         sound_effect_volume = min(1, sound_effect_volume + 0.1)  # Increase sound effect volume
@@ -446,8 +446,6 @@ def options():
                     return
 
         pygame.display.update()
-
-
 
 def play(player_id):
     clock = pygame.time.Clock()
