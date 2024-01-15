@@ -56,6 +56,9 @@ btnType.set_volume(0.1)
 BTN_BG = pygame.image.load('img/buttonBG.png').convert_alpha()
 BTN_BG = pygame.transform.scale(BTN_BG, (300, 100))
 
+BTN_S = pygame.image.load('img/setting.png').convert_alpha()
+BTN_S = pygame.transform.scale(BTN_S, (80, 50))
+
 def main_menu():
     is_logged_in = False
     LOGO = pygame.image.load('img/logo.png').convert_alpha()
@@ -77,9 +80,9 @@ def main_menu():
     
     PLAY_BUTTON = Button(image=BTN_BG, pos=(center_x, 560), 
                             text_input="PLAY", font=font, base_color="#d7fcd4", hovering_color="Gold")
-    OPTIONS_BUTTON = Button(image=BTN_BG, pos=(center_x, 640), 
-                            text_input="Setting", font=font, base_color="#d7fcd4", hovering_color="GOLD")
-    QUIT_BUTTON = Button(image=BTN_BG, pos=(center_x, 720), 
+    OPTIONS_BUTTON = Button(image=BTN_S, pos=(30, 25), 
+                            text_input="", font=font, base_color="#d7fcd4", hovering_color="GOLD")
+    QUIT_BUTTON = Button(image=BTN_BG, pos=(center_x, 640), 
                             text_input="QUIT", font=font, base_color="#d7fcd4", hovering_color="GOLD")
     
     while True:
