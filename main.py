@@ -57,7 +57,7 @@ BTN_BG = pygame.image.load('img/buttonBG.png').convert_alpha()
 BTN_BG = pygame.transform.scale(BTN_BG, (300, 100))
 
 BTN_S = pygame.image.load('img/setting.png').convert_alpha()
-BTN_S = pygame.transform.scale(BTN_S, (80, 60))
+BTN_S = pygame.transform.scale(BTN_S, (85, 55))
 
 def main_menu():
     is_logged_in = False
@@ -81,7 +81,7 @@ def main_menu():
     PLAY_BUTTON = Button(image=BTN_BG, pos=(center_x, 560), 
                             text_input="PLAY", font=font, base_color="#d7fcd4", hovering_color="Gold")
     OPTIONS_BUTTON = Button(image=BTN_S, pos=(30, 25), 
-                            text_input="", font=font, base_color="#d7fcd4", hovering_color="GOLD")
+                            text_input="", font=font, base_color="#828582", hovering_color="GOLD")
     QUIT_BUTTON = Button(image=BTN_BG, pos=(center_x, 640), 
                             text_input="QUIT", font=font, base_color="#d7fcd4", hovering_color="GOLD")
     
@@ -444,7 +444,6 @@ def options():
                     elif active_slider == "Music":
                         music_volume = max(0, music_volume - 0.1)
                         pygame.mixer.music.set_volume(music_volume)  # Set music volume
-
                 elif sound_effect_slider.collidepoint(event.pos):
                     active_slider = "SoundEffect"
                 elif music_slider.collidepoint(event.pos):
@@ -453,6 +452,14 @@ def options():
                     current_language = "Malay" if current_language == 'English' else "English"
                 elif OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
                     return
+            elif event.type == pygame.MOUSEMOTION and event.buttons[0] == 1:  # Left mouse button is pressed
+                if active_slider == "SoundEffect":
+                    sound_effect_volume = max(0, min(1, (event.pos[0] - sound_effect_slider.x) / 200))
+                    btnType.set_volume(sound_effect_volume)  # Set typing sound volume
+                    btnSound.set_volume(sound_effect_volume)  # Set button click sound volume
+                elif active_slider == "Music":
+                    music_volume = max(0, min(1, (event.pos[0] - music_slider.x) / 200))
+                    pygame.mixer.music.set_volume(music_volume)  # Set music volume
 
         pygame.display.update()
 
