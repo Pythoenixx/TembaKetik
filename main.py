@@ -57,7 +57,7 @@ BTN_BG = pygame.image.load('img/buttonBG.png').convert_alpha()
 BTN_BG = pygame.transform.scale(BTN_BG, (300, 100))
 
 BTN_S = pygame.image.load('img/setting.png').convert_alpha()
-BTN_S = pygame.transform.scale(BTN_S, (80, 50))
+BTN_S = pygame.transform.scale(BTN_S, (80, 60))
 
 def main_menu():
     is_logged_in = False
