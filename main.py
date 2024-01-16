@@ -139,6 +139,9 @@ def login():
     username_box = pygame.Rect(center_x - 50, 355, 280, 30)
     password_box = pygame.Rect(center_x - 50, 405, 280, 30)
     
+    LOGIN_BACK = Button(image=None, pos=(center_x, 775),
+                            text_input="BACK", font=font, base_color="Black", hovering_color="Green")
+    
     while True:
         LOGIN_MOUSE_POS = pygame.mouse.get_pos()
         
@@ -174,8 +177,6 @@ def login():
             pygame.draw.rect(SCREEN, "Black", password_box, 2)  # Password input box with black border
 
         # Draw back button
-        LOGIN_BACK = Button(image=None, pos=(center_x, 500),
-                            text_input="BACK", font=font, base_color="Black", hovering_color="Green")
 
         LOGIN_BACK.changeColor(LOGIN_MOUSE_POS)
         LOGIN_BACK.draw(SCREEN)
@@ -246,7 +247,9 @@ def register():
     password_box = pygame.Rect(center_x - 50, 365, 280, 30)
     confirm_password_box = pygame.Rect(center_x - 50, 415, 280, 30)
     active_textbox = None
-
+    
+    REGISTER_BACK = Button(image=None, pos=(center_x, 775),
+                                text_input="BACK", font=font, base_color="Black", hovering_color="Green")
     while True:
         REGISTER_MOUSE_POS = pygame.mouse.get_pos()
 
@@ -292,8 +295,7 @@ def register():
             pygame.draw.rect(SCREEN, "Black", confirm_password_box, 2)  # Confirm Password input box with black border
 
         # Draw back button
-        REGISTER_BACK = Button(image=None, pos=(center_x, 480),
-                                text_input="BACK", font=font, base_color="Black", hovering_color="Green")
+        
 
         REGISTER_BACK.changeColor(REGISTER_MOUSE_POS)
         REGISTER_BACK.draw(SCREEN)
