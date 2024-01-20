@@ -53,11 +53,17 @@ btnSound.set_volume(0.05)
 btnType = pygame.mixer.Sound('sound/keypressed.mp3')
 btnType.set_volume(0.1)
 
+BG = pygame.image.load('img/angkasa1.png').convert_alpha()
+BG = pygame.transform.scale(BG, (WN_LEBAR, WN_TINGGI))
+
 BTN_BG = pygame.image.load('img/buttonBG.png').convert_alpha()
 BTN_BG = pygame.transform.scale(BTN_BG, (300, 100))
 
 BTN_S = pygame.image.load('img/setting.png').convert_alpha()
 BTN_S = pygame.transform.scale(BTN_S, (85, 55))
+
+LEARDERBOARD_BG = pygame.image.load('img/leaderboard_logo.png').convert_alpha()
+LEARDERBOARD_BG = pygame.transform.scale(LEARDERBOARD_BG, (80, 50))
 
 def main_menu():
     is_logged_in = False
@@ -68,9 +74,6 @@ def main_menu():
     TITLE_FONT = pygame.font.Font('font/font.ttf', 40)
     MENU_TEXT = TITLE_FONT.render("TembaKetik", True, "#b68f40")
     MENU_RECT = MENU_TEXT.get_rect(center=(center_x, 250))
-    
-    BG = pygame.image.load('img/angkasa1.png').convert_alpha()
-    BG = pygame.transform.scale(BG, (WN_LEBAR, WN_TINGGI))
     
     LOGIN_BUTTON = Button(image=BTN_BG, pos=(center_x, 400), 
                         text_input="LOGIN", font=font, base_color="#d7fcd4", hovering_color="Gold")
@@ -84,6 +87,8 @@ def main_menu():
                             text_input="", font=font, base_color="#828582", hovering_color="GOLD")
     QUIT_BUTTON = Button(image=BTN_BG, pos=(center_x, 640), 
                             text_input="QUIT", font=font, base_color="#d7fcd4", hovering_color="GOLD")
+    LEADERBOARD_BUTTON = Button(image=LEARDERBOARD_BG, pos=(center_x + 210, 26), 
+                            text_input="", font=font, base_color="#d7fcd4", hovering_color="GOLD")
     
     while True:
         SCREEN.blit(BG, (0, 0))
@@ -94,7 +99,7 @@ def main_menu():
 
         SCREEN.blit(MENU_TEXT, MENU_RECT)
         if is_logged_in:
-            for button in [PLAY_BUTTON, OPTIONS_BUTTON, QUIT_BUTTON]:
+            for button in [PLAY_BUTTON, OPTIONS_BUTTON, QUIT_BUTTON, LEADERBOARD_BUTTON]:
                 button.changeColor(MENU_MOUSE_POS)
                 button.draw(SCREEN)
         else:
@@ -119,6 +124,9 @@ def main_menu():
                         btnSound.play()
                         pygame.quit()
                         sys.exit()
+                    elif LEADERBOARD_BUTTON.checkForInput(MENU_MOUSE_POS):
+                        btnSound.play()
+                        leaderboard()
                 else:
                     if LOGIN_BUTTON.checkForInput(MENU_MOUSE_POS):
                         btnSound.play()
@@ -138,6 +146,9 @@ def login():
     
     username_box = pygame.Rect(center_x - 50, 355, 280, 30)
     password_box = pygame.Rect(center_x - 50, 405, 280, 30)
+    
+    LOGIN_BACK = Button(image=None, pos=(center_x, 775),
+                            text_input="BACK", font=font, base_color="Black", hovering_color="Green")
     
     while True:
         LOGIN_MOUSE_POS = pygame.mouse.get_pos()
@@ -174,8 +185,6 @@ def login():
             pygame.draw.rect(SCREEN, "Black", password_box, 2)  # Password input box with black border
 
         # Draw back button
-        LOGIN_BACK = Button(image=None, pos=(center_x, 500),
-                            text_input="BACK", font=font, base_color="Black", hovering_color="Green")
 
         LOGIN_BACK.changeColor(LOGIN_MOUSE_POS)
         LOGIN_BACK.draw(SCREEN)
@@ -246,7 +255,9 @@ def register():
     password_box = pygame.Rect(center_x - 50, 365, 280, 30)
     confirm_password_box = pygame.Rect(center_x - 50, 415, 280, 30)
     active_textbox = None
-
+    
+    REGISTER_BACK = Button(image=None, pos=(center_x, 775),
+                                text_input="BACK", font=font, base_color="Black", hovering_color="Green")
     while True:
         REGISTER_MOUSE_POS = pygame.mouse.get_pos()
 
@@ -292,8 +303,7 @@ def register():
             pygame.draw.rect(SCREEN, "Black", confirm_password_box, 2)  # Confirm Password input box with black border
 
         # Draw back button
-        REGISTER_BACK = Button(image=None, pos=(center_x, 480),
-                                text_input="BACK", font=font, base_color="Black", hovering_color="Green")
+        
 
         REGISTER_BACK.changeColor(REGISTER_MOUSE_POS)
         REGISTER_BACK.draw(SCREEN)
@@ -462,6 +472,57 @@ def options():
                     pygame.mixer.music.set_volume(music_volume)  # Set music volume
 
         pygame.display.update()
+        
+def leaderboard():
+    small_font = pygame.font.Font("font/font.ttf",10)
+    leaderboard_list = []
+    cursor.execute("SELECT DISTINCT player.ID FROM score LEFT JOIN accuracy ON score.accuracy_ID = accuracy.ID LEFT JOIN missed ON accuracy.miss_ID = missed.ID LEFT JOIN wpm ON score.WPM_ID = wpm.ID LEFT JOIN player ON wpm.player_ID = player.ID")
+    playersID_list = cursor.fetchall() #list player yg pernah bermain sahaja
+    print(playersID_list)
+    playersID_list = [player[0] for player in playersID_list]
+    print(playersID_list)
+    
+    for i in playersID_list:
+        cursor.execute("SELECT player.Username, wpm.typed_word_count, missed.count, wpm.nilai, accuracy.percentage, MAX(score.nilai) FROM score LEFT JOIN accuracy ON score.accuracy_ID = accuracy.ID LEFT JOIN missed ON accuracy.miss_ID = missed.ID LEFT JOIN wpm ON score.WPM_ID = wpm.ID LEFT JOIN player ON wpm.player_ID = player.ID WHERE player.ID = %s", (i, ))
+        leaderboard_list.append(cursor.fetchone())
+        print(leaderboard_list)
+        
+    leaderboard_list.sort(key=lambda x: x[-1], reverse=True)
+    print(leaderboard_list)
+    
+    BACK = Button(image=None, pos=(center_x, 775),
+                            text_input="BACK", font=font, base_color="#d7fcd4", hovering_color="Gold")
+    while True:
+        MOUSE_POS = pygame.mouse.get_pos()
+        
+        SCREEN.blit(BG, (0, 0))
+        transparent_surface = pygame.Surface (SCREEN.get_size(), pygame.SRCALPHA) # Create a transparent surface
+        transparent_surface.fill ((0, 0, 0, 169)) # Fill the surface with a semi-transparent black color
+        SCREEN.blit(transparent_surface, (0, 0)) # Blit the transparent surface to the screen)
+        
+        leaderboard_lbl = font.render("Leaderboard", True, "White")
+        SCREEN.blit(leaderboard_lbl, leaderboard_lbl.get_rect(center=(center_x, 20)))
+        
+        leaderboard_lbl = small_font.render("(Username - Highest Score)", True, "White")
+        SCREEN.blit(leaderboard_lbl, leaderboard_lbl.get_rect(center=(center_x, 40)))
+        
+        for i, row in enumerate(leaderboard_list):
+            username, typed_word_count, miss, wpm, percentage, highest_score = row
+            text = font.render(f"{i+1}. {username} - {highest_score}", True, "White")
+            SCREEN.blit(text, (center_x - text.get_width() // 2, 100 + i * 50))
+        
+        BACK.changeColor(MOUSE_POS)
+        BACK.draw(SCREEN)
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if BACK.checkForInput(MOUSE_POS):
+                    return
+        
+        pygame.display.update()
 
 def play(player_id):
     clock = pygame.time.Clock()
@@ -531,7 +592,7 @@ def play(player_id):
                 timer_setted = True
         
         group_pemain.draw(SCREEN) #try cari group sprite utk yg ada 1 sprite je
-        group_pemain.update(SCREEN, group_musuh, char_typed, char_updated, cursor, db)
+        group_pemain.update(SCREEN, group_musuh, char_typed, char_updated, cursor, db, sound_effect_volume, music_volume)
         char_updated = False
         
         group_musuh.draw(SCREEN)
