@@ -467,6 +467,7 @@ def options():
         pygame.display.update()
         
 def leaderboard():
+    small_font = pygame.font.Font("font/font.ttf",10)
     leaderboard_list = []
     cursor.execute("SELECT DISTINCT player.ID FROM score LEFT JOIN accuracy ON score.accuracy_ID = accuracy.ID LEFT JOIN missed ON accuracy.miss_ID = missed.ID LEFT JOIN wpm ON score.WPM_ID = wpm.ID LEFT JOIN player ON wpm.player_ID = player.ID")
     playersID_list = cursor.fetchall() #list player yg pernah bermain sahaja
@@ -492,9 +493,15 @@ def leaderboard():
         transparent_surface.fill ((0, 0, 0, 169)) # Fill the surface with a semi-transparent black color
         SCREEN.blit(transparent_surface, (0, 0)) # Blit the transparent surface to the screen)
         
+        leaderboard_lbl = font.render("Leaderboard", True, "White")
+        SCREEN.blit(leaderboard_lbl, leaderboard_lbl.get_rect(center=(center_x, 20)))
+        
+        leaderboard_lbl = small_font.render("(Username - Highest Score)", True, "White")
+        SCREEN.blit(leaderboard_lbl, leaderboard_lbl.get_rect(center=(center_x, 40)))
+        
         for i, row in enumerate(leaderboard_list):
-            username, typed_word_count, count, nilai, percentage, nilai_max = row
-            text = font.render(f"{i+1}. {username} - {nilai_max}", True, "White")
+            username, typed_word_count, miss, wpm, percentage, highest_score = row
+            text = font.render(f"{i+1}. {username} - {highest_score}", True, "White")
             SCREEN.blit(text, (center_x - text.get_width() // 2, 100 + i * 50))
         
         BACK.changeColor(MOUSE_POS)
