@@ -585,7 +585,7 @@ def play(player_id):
                 timer_setted = True
         
         group_pemain.draw(SCREEN) #try cari group sprite utk yg ada 1 sprite je
-        group_pemain.update(SCREEN, group_musuh, char_typed, char_updated, cursor, db)
+        group_pemain.update(SCREEN, group_musuh, char_typed, char_updated, cursor, db, sound_effect_volume, music_volume)
         char_updated = False
         
         group_musuh.draw(SCREEN)

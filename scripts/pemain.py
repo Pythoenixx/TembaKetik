@@ -30,7 +30,7 @@ class Pemain(pygame.sprite.Sprite):
         self.wpm = 0
         self.score = 0
     #deleted forgotten to delete gameOVer method
-    def update(self, screen, enemy_group, char_typed, char_updated, cursor, db):
+    def update(self, screen, enemy_group, char_typed, char_updated, cursor, db, sound_effect_volume, music_volume):
         if char_updated:
             if char_typed and self.nearest_enemy is None:
                 if self.start_time == 0 : #utk pastikan dia x start timer byk kali and just bila dia 0 je
@@ -50,6 +50,7 @@ class Pemain(pygame.sprite.Sprite):
                     self.nearest_enemy.word = self.nearest_enemy.word[1:] #dia phm aku nk delete word tu ke?
                     self.typed_word_count += 1
                     if self.nearest_enemy.word == '':
+                        meletup.set_volume(sound_effect_volume)
                         meletup.play()
                         self.enemy_killed += 1
                         self.nearest_enemy = None
@@ -65,6 +66,7 @@ class Pemain(pygame.sprite.Sprite):
         
         if pygame.sprite.spritecollide(self, enemy_group, False):#klo dh dekat dgn player baru check mask collision
             if pygame.sprite.spritecollide(self, enemy_group, True, pygame.sprite.collide_mask):
+                gameover.set_volume(music_volume)
                 gameover.play()
                 self.kill()
                 self.hidup = False
