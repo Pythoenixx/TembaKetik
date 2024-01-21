@@ -4,8 +4,7 @@ import os
 def assets_load(image_path,scale):
     image = pygame.image.load(image_path)
     image = pygame.transform.scale(image, (scale, scale)) #value ni kene sama dgn kat class Musuh
-    bottomleft = cari_kiri_bawah(image)
-    return (image,bottomleft)
+    return image
 
 def cari_kiri_bawah(image):
     #x leh guna rect.bottomleft sbb dia akan amik kira background img so terpaksa buat func sendiri
@@ -32,7 +31,6 @@ def animation_from_folder(folder, scale):
         image = pygame.image.load(file_path)
         image = pygame.transform.scale(image, (scale, scale))
         animations.append(image)
-    print(animations)
     return animations
 
 #window
@@ -44,8 +42,9 @@ FPS = 60
 PIC_ZOOM = 5
 
 assets = {
-    'Tiny_Kamikaze' : assets_load('renew/tiniykamikazeship/tinykamikazeship1.PNG',60),
-    'Kamikaze' : assets_load('renew/kamikazeship/kamikazeship1.PNG',40),
-    'Gunner' : assets_load('renew/gunnership/gunnership1.PNG',69),
-    'ExplosionAni' : animation_from_folder('renew/explosion',69),
+    'Tiny_Kamikaze' : (animation_from_folder('renew/tiniykamikazeship', 60), cari_kiri_bawah(assets_load('renew/tiniykamikazeship/tinykamikazeship1.PNG',60))),
+    'Kamikaze' : (animation_from_folder('renew/kamikazeship', 40), cari_kiri_bawah(assets_load('renew/kamikazeship/kamikazeship1.PNG',40))),
+    'Gunner' : (animation_from_folder('renew/gunnership', 69), cari_kiri_bawah(assets_load('renew/gunnership/gunnership1.PNG',69))),
+    'ExplosionAni' : animation_from_folder('renew/explosion', 69),
+    'PlayerShip' : animation_from_folder('renew/playership', 69),
 }
