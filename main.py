@@ -528,7 +528,7 @@ def play(player_id):
         'Gunner' : 0,
     }
     
-    pemain = Pemain(player_id, center_x, WN_TINGGI - 100, 'renew/PlayerShip/playership1.PNG')
+    pemain = Pemain(player_id, center_x, WN_TINGGI - 100, assets['PlayerShip'])
     latar = Latar(0, WN_TINGGI, 0, 0.2)
     
     group_pemain = pygame.sprite.GroupSingle()
