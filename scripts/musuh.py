@@ -1,6 +1,5 @@
 import pygame, random
-from scripts.pemalar import WN_LEBAR,WN_TINGGI
-import os
+from scripts.pemalar import WN_LEBAR,WN_TINGGI, assets
 
 # Open the file and read the words
 with open("txt/1000words.txt", "r") as f:
@@ -17,7 +16,7 @@ long_words = [word for word in most_used_words if len(word) >= 6]
 rare_long_words = [word for word in least_used_words if len(word) >= 7]
 
 class Musuh(pygame.sprite.Sprite):
-    def __init__(self, x, y, image, sasaran_rect, text_offset, word, explosion) -> None:
+    def __init__(self, x, y, image, sasaran_rect, text_offset, word) -> None:
         super().__init__()
         self.image = image
         self.mask = pygame.mask.from_surface(self.image)
@@ -33,9 +32,10 @@ class Musuh(pygame.sprite.Sprite):
         self.text_offset = text_offset
         self.targeted = False
         self._layer = 0
-        self.explosion_ani = explosion
-        self.explosion_index = 0
         self.dying = False
+        
+        self.explosion_ani = assets['ExplosionAni']
+        self.explosion_index = 0
         
     def update(self, screen, group_musuh):
         # Update the position of the rect
@@ -69,37 +69,37 @@ class Musuh(pygame.sprite.Sprite):
             
 
 class Tiny_Kamikaze(Musuh):
-    def __init__(self, x, y, image, sasaran_rect, text_offset, explosion) -> None:
+    def __init__(self, x, y, image, sasaran_rect, text_offset) -> None:
         word = random_word(most_used_words, least_used_words, 90)[0]
-        super().__init__(x, y, image, sasaran_rect, text_offset, word, explosion)
+        super().__init__(x, y, image, sasaran_rect, text_offset, word)
         
 class Kamikaze(Musuh):
-    def __init__(self, x, y, image, sasaran_rect, text_offset, explosion) -> None:
+    def __init__(self, x, y, image, sasaran_rect, text_offset) -> None:
         word = random.choice(short_words)
-        super().__init__(x, y, image, sasaran_rect, text_offset, word, explosion)
+        super().__init__(x, y, image, sasaran_rect, text_offset, word)
         self.speed *= 0.8
 
 class Gunner(Musuh):
-    def __init__(self, x, y, image, sasaran_rect, text_offset, explosion) -> None:
+    def __init__(self, x, y, image, sasaran_rect, text_offset) -> None:
         word = random.choice(rare_long_words)
-        super().__init__(x, y, image, sasaran_rect, text_offset, word, explosion)
+        super().__init__(x, y, image, sasaran_rect, text_offset, word)
         self.speed *= 0.69
 
-def jana_musuh(enemy_class, bilangan, musuh_group, assets_loaded, explosion, pemain_rect):
+def jana_musuh(enemy_class, bilangan, musuh_group, assets_loaded, pemain_rect):
     for _ in range(bilangan):
         # Generate random coordinates
         x = random.randint(0, WN_LEBAR)
         y = random.randint(-100, 0)
         
-        musuh = enemy_class(x, y, assets_loaded[0], pemain_rect, assets_loaded[1], explosion)
+        musuh = enemy_class(x, y, assets_loaded[0], pemain_rect, assets_loaded[1])
         musuh_group.add(musuh)
 
-def jana_ombak(bil_ombak, musuh_group, bil_musuh, assets, pemain_rect):
+def jana_ombak(bil_ombak, musuh_group, bil_musuh, pemain_rect):
     #maybe blh buat class asing for this type of func
     
-    jana_musuh(Tiny_Kamikaze, bil_musuh['Tiny_Kamikaze'], musuh_group, assets['Tiny_Kamikaze'], assets['ExplosionAni'], pemain_rect)
-    jana_musuh(Kamikaze, bil_musuh['Kamikaze'], musuh_group, assets['Kamikaze'], assets['ExplosionAni'], pemain_rect)
-    jana_musuh(Gunner, bil_musuh['Gunner'], musuh_group, assets['Gunner'], assets['ExplosionAni'], pemain_rect)
+    jana_musuh(Tiny_Kamikaze, bil_musuh['Tiny_Kamikaze'], musuh_group, assets['Tiny_Kamikaze'], pemain_rect)
+    jana_musuh(Kamikaze, bil_musuh['Kamikaze'], musuh_group, assets['Kamikaze'], pemain_rect)
+    jana_musuh(Gunner, bil_musuh['Gunner'], musuh_group, assets['Gunner'], pemain_rect)
     
     bil_ombak += 1
     
@@ -108,22 +108,6 @@ def jana_ombak(bil_ombak, musuh_group, bil_musuh, assets, pemain_rect):
     bil_musuh['Gunner'] += 1 if bil_ombak % 3 == 0 else 0
     
     return musuh_group,bil_ombak
-
-def assets_load(image_path,scale):
-    image = pygame.image.load(image_path)
-    image = pygame.transform.scale(image, (scale, scale)) #value ni kene sama dgn kat class Musuh
-    bottomleft = cari_kiri_bawah(image)
-    return (image,bottomleft)
-
-def animation_from_folder(folder, scale):
-    animations = []
-    for file_name in os.listdir(folder):
-        file_path = os.path.join(folder, file_name)
-        image = pygame.image.load(file_path)
-        image = pygame.transform.scale(image, (scale, scale))
-        animations.append(image)
-    print(animations)
-    return animations
 
 # Define a function that takes two lists of words and a percentage as parameters, and returns a random word from the lists based on the percentage
 def random_word(most_used, least_used, percentage):
@@ -134,20 +118,3 @@ def random_word(most_used, least_used, percentage):
     # Return the word
     return word
 
-def cari_kiri_bawah(image):
-    #x leh guna rect.bottomleft sbb dia akan amik kira background img so terpaksa buat func sendiri
-    mask = pygame.mask.from_surface(image)
-    outline_points = mask.outline()
-    # Sort the list by y-values in descending order
-    outline_points.sort (key=lambda c: c [1], reverse=True) #c[1] == y coord so sort highest y to lowest (y kene highest sbb y coord dlm pygame hala bwh)
-
-    # Find the minimum x-value among the coordinates with the highest y-value
-    min_x = min(c[0] for c in outline_points if c [1] == outline_points [0][1]) 
-    #c[0] == x coord, so untuk setiap x, klo ada y dia sama dgn highest y, dia akan masukkan dlm tuple (x yg ada highest y kdg ada byk)
-    
-    # Return the coordinate that has both the highest y-value and the minimum x-value
-    bottom_left = next(c for c in outline_points if c [0] == min_x and c [1] == outline_points [0][1])#next() akan dptkan first value of iterator
-    #since dh dpt value x lowest,y highest, skrg dh blh loop setiap point tu utk cari coords yg same dgn x lowest,y highest
-    
-    
-    return bottom_left

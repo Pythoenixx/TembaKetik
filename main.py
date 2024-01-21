@@ -3,7 +3,7 @@ import pygame,sys,asyncio,mysql.connector
 from pygame import mixer
 from scripts.pemalar import *
 from scripts.latar import Latar
-from scripts.musuh import jana_ombak, assets_load, animation_from_folder
+from scripts.musuh import jana_ombak
 from scripts.pemain import Pemain, valid_char
 from scripts.button import Button
 
@@ -26,13 +26,6 @@ mixer.init()
 icon = pygame.image.load('img/kapal_angkasa.PNG')
 pygame.display.set_icon(icon)
 SCREEN = pygame.display.set_mode((WN_LEBAR, WN_TINGGI))
-
-assets = {
-    'Tiny_Kamikaze' : assets_load('renew/tiniykamikazeship/tinykamikazeship1.PNG',60),
-    'Kamikaze' : assets_load('renew/kamikazeship/kamikazeship1.PNG',40),
-    'Gunner' : assets_load('renew/gunnership/gunnership1.PNG',69),
-    'ExplosionAni' : animation_from_folder('renew/explosion',69),
-}
 
 font = pygame.font.Font("font/font.ttf",20)
 
@@ -545,8 +538,8 @@ def play(player_id):
     char_updated = False
     
     group_musuh = pygame.sprite.LayeredUpdates()
-    group_musuh,bil_ombak = jana_ombak(bil_ombak, group_musuh, bil_musuh, assets, pemain.rect)
-    text_ombak = font.render(str(bil_ombak), True, (255,255,255), (0, 0, 0))
+    group_musuh,bil_ombak = jana_ombak(bil_ombak, group_musuh, bil_musuh, pemain.rect)
+    text_ombak = font.render(str(bil_ombak), True, (255,255,255), (0, 0, 0))#can remove?
     # Create a custom timer event
     WAVE_EVENT= pygame.USEREVENT + 1
     timer_setted = False
@@ -559,7 +552,7 @@ def play(player_id):
         # Loop through the events
         for event in events:
             if event.type == WAVE_EVENT:
-                group_musuh,bil_ombak = jana_ombak(bil_ombak, group_musuh, bil_musuh, assets, pemain.rect)
+                group_musuh,bil_ombak = jana_ombak(bil_ombak, group_musuh, bil_musuh, pemain.rect)
                 pygame.time.set_timer(WAVE_EVENT, 0)# Reset the timer to 0 to stop it
                 timer_setted = False
             # Check if the user has clicked the close button
