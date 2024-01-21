@@ -113,7 +113,7 @@ class Pemain(pygame.sprite.Sprite):
         nearest_sprite = None
         # Loop through the sprites in the list
         for other_sprite in sprite_list:
-            if other_sprite.word[0] != char_typed[-1]:
+            if other_sprite.word == '' or other_sprite.word[0] != char_typed[-1]:
                 continue
             # Calculate the distance between the centers of the two sprites
             dx = other_sprite.rect.centerx - sprite.rect.centerx

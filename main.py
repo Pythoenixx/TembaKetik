@@ -3,7 +3,7 @@ import pygame,sys,asyncio,mysql.connector
 from pygame import mixer
 from scripts.pemalar import *
 from scripts.latar import Latar
-from scripts.musuh import jana_ombak, assets_load
+from scripts.musuh import jana_ombak, assets_load, animation_from_folder
 from scripts.pemain import Pemain, valid_char
 from scripts.button import Button
 
@@ -31,6 +31,7 @@ assets = {
     'Tiny_Kamikaze' : assets_load('renew/tiniykamikazeship/tinykamikazeship1.PNG',60),
     'Kamikaze' : assets_load('renew/kamikazeship/kamikazeship1.PNG',40),
     'Gunner' : assets_load('renew/gunnership/gunnership1.PNG',69),
+    'ExplosionAni' : animation_from_folder('renew/explosion',69),
 }
 
 font = pygame.font.Font("font/font.ttf",20)
@@ -43,6 +44,8 @@ center_y = SCREEN.get_height() // 2
 mixer.music.load('sound/backgroundsound.mp3')
 # Set the initial volume
 initial_volume = 0.1
+sound_effect_volume = 0.5
+music_volume = initial_volume
 pygame.mixer.music.set_volume(initial_volume)
 
 # play the music
@@ -377,9 +380,6 @@ def register():
                         confirmRegisterPassword = ''
             pygame.display.update()
 
-sound_effect_volume = 0.5
-music_volume = initial_volume
-
 def options():
     global sound_effect_volume, music_volume  # Declare global variables
 
@@ -470,7 +470,7 @@ def options():
                 elif active_slider == "Music":
                     music_volume = max(0, min(1, (event.pos[0] - music_slider.x) / 200))
                     pygame.mixer.music.set_volume(music_volume)  # Set music volume
-
+                    
         pygame.display.update()
         
 def leaderboard():
