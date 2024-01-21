@@ -8,12 +8,13 @@ mixer.init()
 meletup = pygame.mixer.Sound('sound/meletup.mp3')
 gameover = pygame.mixer.Sound('sound/gameover.mp3')
 class Pemain(pygame.sprite.Sprite):
-    def __init__(self, player_id, x, y, image_path) -> None:
+    def __init__(self, player_id, x, y, animation) -> None:
         super().__init__()
         self.id = player_id
         self.hidup = True
-        self.image = pygame.image.load(image_path).convert_alpha()
-        self.image = pygame.transform.scale(self.image, (69, 69))
+        self.image_i = 0
+        self.animation = animation
+        self.image = animation[self.image_i]
         self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
@@ -31,6 +32,12 @@ class Pemain(pygame.sprite.Sprite):
         self.score = 0
     #deleted forgotten to delete gameOVer method
     def update(self, screen, enemy_group, char_typed, char_updated, cursor, db, sound_effect_volume, music_volume):
+        #animation
+        self.image_i += 0.1
+        if self.image_i >= len(self.animation):
+            self.image_i = 0
+        self.image = self.animation[int(self.image_i)]
+        
         if char_updated:
             if char_typed and self.nearest_enemy is None:
                 if self.start_time == 0 : #utk pastikan dia x start timer byk kali and just bila dia 0 je

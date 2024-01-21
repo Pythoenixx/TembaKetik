@@ -16,9 +16,11 @@ long_words = [word for word in most_used_words if len(word) >= 6]
 rare_long_words = [word for word in least_used_words if len(word) >= 7]
 
 class Musuh(pygame.sprite.Sprite):
-    def __init__(self, x, y, image, sasaran_rect, text_offset, word) -> None:
+    def __init__(self, x, y, animation, sasaran_rect, text_offset, word) -> None:
         super().__init__()
-        self.image = image
+        self.animation = animation
+        self.image_i = 0
+        self.image = self.animation[self.image_i]
         self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect(center = (x, y))
         self.gerakanX,self.gerakanY = self.rect.x,self.rect.y #kene buat lagi satu variables coords sbb coords yg kat rect pygame x blh jdi float so akan ada rounding error
@@ -35,11 +37,18 @@ class Musuh(pygame.sprite.Sprite):
         self.dying = False
         
         self.explosion_ani = assets['ExplosionAni']
-        self.explosion_index = 0
+        self.explosion_i = 0
         
     def update(self, screen, group_musuh):
         # Update the position of the rect
         if not self.dying:
+            #animation
+            self.image_i += 0.1
+            if self.image_i >= len(self.animation):
+                self.image_i = 0
+            self.image = self.animation[int(self.image_i)]
+            
+            # Update the position of the rect based on the direction and speed
             self.gerakanX +=  (self.speed * self.direction.x)
             self.gerakanY +=  (self.speed * self.direction.y)
             
@@ -61,9 +70,9 @@ class Musuh(pygame.sprite.Sprite):
     def destruct(self, screen):
         if self.word == '' or self.gerakanY > WN_TINGGI + 69:
             self.dying = True
-            if self.explosion_index < len(self.explosion_ani):
-                screen.blit(self.explosion_ani[i := int(self.explosion_index)], self.explosion_ani[i].get_rect(center = self.rect.center))
-                self.explosion_index += 0.25
+            if self.explosion_i < len(self.explosion_ani):
+                screen.blit(self.explosion_ani[i := int(self.explosion_i)], self.explosion_ani[i].get_rect(center = self.rect.center))
+                self.explosion_i += 0.25
             else:
                 self.kill()
             
