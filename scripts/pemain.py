@@ -39,6 +39,8 @@ class Pemain(pygame.sprite.Sprite):
             self.image_i = 0
         self.image = self.animation[int(self.image_i)]
         
+        self.rect = self.image.get_rect(center = (self.x, self.y)) #solve the issue of the sudden change in coords when rotating the image at some angle. It works sort of like a default rect coords when no rotated rect coords is given
+        
         if char_updated:
             if char_typed and self.nearest_enemy is None:
                 if self.start_time == 0 : #utk pastikan dia x start timer byk kali and just bila dia 0 je
