@@ -11,13 +11,14 @@ class Pemain(pygame.sprite.Sprite):
     def __init__(self, player_id, x, y, animation) -> None:
         super().__init__()
         self.id = player_id
+        self.x = x
+        self.y = y
         self.hidup = True
         self.image_i = 0
         self.animation = animation
         self.image = animation[self.image_i]
         self.mask = pygame.mask.from_surface(self.image)
-        self.rect = self.image.get_rect()
-        self.rect.center = (x, y)
+        self.rect = self.image.get_rect(center = (x, y))
         self.nearest_enemy = None
         self.typed_word_count = 0
         self.miss = 0
@@ -47,9 +48,16 @@ class Pemain(pygame.sprite.Sprite):
                     self.miss += 1
         
         if self.nearest_enemy is not None:
+            #rotate self to enemy
+            jrk_x = self.nearest_enemy.rect.centerx - self.rect.centerx
+            jrk_y = -(self.nearest_enemy.rect.centery - self.rect.centery)
+            sudut = math.degrees(math.atan2(jrk_y, jrk_x))
+            self.image = pygame.transform.rotate(self.image, sudut - 90)
+            self.rect = self.image.get_rect(center = (self.x, self.y)) #this make it rotate at its center for some reason #maybe cos when the image rotate, it create new image and new image has its own rect size but since new rect size is not created, it still use the old rect and its coords so it makes other images cant grow past this old rect coord point(which is at topleft) but it still allow other corner to grow
             #highlight enemy
             self.nearest_enemy.text_color = 'Gold'
             pygame.draw.rect(screen, 'Gold', self.nearest_enemy.rect, 1)
+            pygame.draw.rect(screen, 'cyan', self.rect, 1)
             self.nearest_enemy.targeted = True
             if char_updated:
                 #update enemy

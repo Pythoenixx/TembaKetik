@@ -584,7 +584,7 @@ def play(player_id):
                 pygame.time.set_timer(WAVE_EVENT, 3000)#start 3s timer
                 timer_setted = True
         
-        group_pemain.draw(SCREEN) #try cari group sprite utk yg ada 1 sprite je
+        group_pemain.draw(SCREEN)
         group_pemain.update(SCREEN, group_musuh, char_typed, char_updated, cursor, db, sound_effect_volume, music_volume)
         char_updated = False
         

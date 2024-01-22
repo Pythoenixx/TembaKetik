@@ -25,7 +25,7 @@ class Musuh(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center = (x, y))
         self.gerakanX,self.gerakanY = self.rect.x,self.rect.y #kene buat lagi satu variables coords sbb coords yg kat rect pygame x blh jdi float so akan ada rounding error
         self.direction = pygame.math.Vector2(sasaran_rect.center) - pygame.math.Vector2(self.rect.center)
-        self.direction = self.direction.normalize() # unit vector
+        self.direction = self.direction.normalize() # unit vector (kene normalize kan sbb klo magnitude panjang/tinggi sgt ig)
         self.word = word
         self.ori_word = self.word
         self.speed = 0.69
