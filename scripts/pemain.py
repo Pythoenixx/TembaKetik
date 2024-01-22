@@ -59,7 +59,6 @@ class Pemain(pygame.sprite.Sprite):
             #highlight enemy
             self.nearest_enemy.text_color = 'Gold'
             pygame.draw.rect(screen, 'Gold', self.nearest_enemy.rect, 1)
-            pygame.draw.rect(screen, 'cyan', self.rect, 1)
             self.nearest_enemy.targeted = True
             if char_updated:
                 #update enemy
