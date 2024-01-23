@@ -5,6 +5,7 @@ from pygame import mixer
 from scripts.pemalar import PLAYER_ASSETS, WN_LEBAR, WN_TINGGI
 
 gameover = pygame.mixer.Sound('sound/gameover.mp3')
+mati = pygame.mixer.Sound('sound/die.mp3')
 class Pemain(pygame.sprite.Sprite):
     def __init__(self, player_id, x, y, animation, group_bullets) -> None:
         super().__init__()
@@ -83,6 +84,7 @@ class Pemain(pygame.sprite.Sprite):
         if pygame.sprite.spritecollide(self, enemy_group, False):#klo dh dekat dgn player baru check mask collision
             if pygame.sprite.spritecollide(self, enemy_group, True, pygame.sprite.collide_mask):
                 gameover.set_volume(music_volume)
+                mati.play()
                 gameover.play()
                 self.kill()
                 self.hidup = False

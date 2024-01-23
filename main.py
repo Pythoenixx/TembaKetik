@@ -605,6 +605,7 @@ def play(player_id):
             for event in events:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if BACK_BTN.checkForInput(PLAY_MOUSE_POS):
+                        mixer.music.play()
                         return
         
         pygame.display.flip()
