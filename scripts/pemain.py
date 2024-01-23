@@ -238,8 +238,6 @@ class Bullet(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
         self.sasaran = sasaran
         self.gerakanX,self.gerakanY = self.rect.x,self.rect.y #kene buat lagi satu variables coords sbb coords yg kat rect pygame x blh jdi float so akan ada rounding error
-        self.direction = pygame.math.Vector2(sasaran.rect.center) - pygame.math.Vector2(self.rect.center)
-        self.direction = self.direction.normalize() # unit vector (kene normalize kan sbb klo magnitude panjang/tinggi sgt ig)
         self.speed = 25
     
     def update(self, group_musuh):
@@ -255,6 +253,9 @@ class Bullet(pygame.sprite.Sprite):
         self.sudut = math.degrees(math.atan2(self.jrk_y, self.jrk_x))
         self.image = pygame.transform.rotate(self.image, self.sudut - 90)
         self.rect = self.image.get_rect(center = (self.x, self.y))
+        
+        self.direction = pygame.math.Vector2(self.sasaran.rect.center) - pygame.math.Vector2(self.rect.center)
+        self.direction = self.direction.normalize() # unit vector (kene normalize kan sbb klo magnitude panjang/tinggi sgt ig)
         
         # Update the position of the rect based on the direction and speed
         self.gerakanX +=  (self.speed * self.direction.x)
