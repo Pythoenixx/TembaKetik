@@ -528,7 +528,9 @@ def play(player_id):
         'Gunner' : 0,
     }
     
-    pemain = Pemain(player_id, center_x, WN_TINGGI - 100, assets['PlayerShip'])
+    group_bullets = pygame.sprite.Group()
+    
+    pemain = Pemain(player_id, center_x, WN_TINGGI - 100, PLAYER_ASSETS['PlayerShip'], group_bullets)
     latar = Latar(0, WN_TINGGI, 0, 0.2)
     
     group_pemain = pygame.sprite.GroupSingle()
@@ -538,7 +540,7 @@ def play(player_id):
     char_updated = False
     
     group_musuh = pygame.sprite.LayeredUpdates()
-    group_musuh,bil_ombak = jana_ombak(bil_ombak, group_musuh, bil_musuh, pemain.rect)
+    group_musuh,bil_ombak = jana_ombak(bil_ombak, group_musuh, bil_musuh, pemain.rect, sound_effect_volume)
     text_ombak = font.render(str(bil_ombak), True, (255,255,255), (0, 0, 0))#can remove?
     # Create a custom timer event
     WAVE_EVENT= pygame.USEREVENT + 1
@@ -552,7 +554,7 @@ def play(player_id):
         # Loop through the events
         for event in events:
             if event.type == WAVE_EVENT:
-                group_musuh,bil_ombak = jana_ombak(bil_ombak, group_musuh, bil_musuh, pemain.rect)
+                group_musuh,bil_ombak = jana_ombak(bil_ombak, group_musuh, bil_musuh, pemain.rect, sound_effect_volume)
                 pygame.time.set_timer(WAVE_EVENT, 0)# Reset the timer to 0 to stop it
                 timer_setted = False
             # Check if the user has clicked the close button
@@ -583,9 +585,12 @@ def play(player_id):
             if not timer_setted:
                 pygame.time.set_timer(WAVE_EVENT, 3000)#start 3s timer
                 timer_setted = True
+                
+        group_bullets.draw(SCREEN)
+        group_bullets.update(group_musuh)
         
         group_pemain.draw(SCREEN)
-        group_pemain.update(SCREEN, group_musuh, char_typed, char_updated, cursor, db, sound_effect_volume, music_volume)
+        group_pemain.update(SCREEN, group_musuh, char_typed, char_updated, cursor, db, music_volume)
         char_updated = False
         
         group_musuh.draw(SCREEN)
