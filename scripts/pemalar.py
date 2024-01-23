@@ -42,8 +42,8 @@ FPS = 60
 PIC_ZOOM = 5
 
 PLAYER_ASSETS = {
-    'PlayerShip' : animation_from_folder('renew/playership', 69),
-    'Bullet' : animation_from_folder('renew/ammo_projectile', 30),
+    'PlayerShip' : animation_from_folder('renew/playership', 69),#manusia
+    'Bullet' : animation_from_folder('renew/ammo_projectile', 30),#dia pakai blaster
 }
 
 ENEMY_ASSETS = {
