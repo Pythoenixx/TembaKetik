@@ -41,10 +41,16 @@ FPS = 60
 
 PIC_ZOOM = 5
 
-assets = {
+PLAYER_ASSETS = {
+    'PlayerShip' : animation_from_folder('renew/playership', 69),
+    'Bullet' : animation_from_folder('renew/ammo_projectile', 30),
+}
+
+ENEMY_ASSETS = {
     'Tiny_Kamikaze' : (animation_from_folder('renew/tiniykamikazeship', 60), cari_kiri_bawah(assets_load('renew/tiniykamikazeship/tinykamikazeship1.PNG',60))),
     'Kamikaze' : (animation_from_folder('renew/kamikazeship', 40), cari_kiri_bawah(assets_load('renew/kamikazeship/kamikazeship1.PNG',40))),
     'Gunner' : (animation_from_folder('renew/gunnership', 69), cari_kiri_bawah(assets_load('renew/gunnership/gunnership1.PNG',69))),
     'ExplosionAni' : animation_from_folder('renew/explosion', 69),
-    'PlayerShip' : animation_from_folder('renew/playership', 69),
 }
+
+

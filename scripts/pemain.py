@@ -2,22 +2,22 @@ import math
 import pygame
 import mysql.connector
 from pygame import mixer
+from scripts.pemalar import PLAYER_ASSETS, WN_LEBAR, WN_TINGGI
 
-
-mixer.init()
-meletup = pygame.mixer.Sound('sound/meletup.mp3')
 gameover = pygame.mixer.Sound('sound/gameover.mp3')
 class Pemain(pygame.sprite.Sprite):
-    def __init__(self, player_id, x, y, animation) -> None:
+    def __init__(self, player_id, x, y, animation, group_bullets) -> None:
         super().__init__()
         self.id = player_id
+        self.x = x
+        self.y = y
         self.hidup = True
         self.image_i = 0
         self.animation = animation
         self.image = animation[self.image_i]
         self.mask = pygame.mask.from_surface(self.image)
-        self.rect = self.image.get_rect()
-        self.rect.center = (x, y)
+        self.rect = self.image.get_rect(center = (x, y))
+        self.group_bullets = group_bullets
         self.nearest_enemy = None
         self.typed_word_count = 0
         self.miss = 0
@@ -31,12 +31,14 @@ class Pemain(pygame.sprite.Sprite):
         self.wpm = 0
         self.score = 0
     #deleted forgotten to delete gameOVer method
-    def update(self, screen, enemy_group, char_typed, char_updated, cursor, db, sound_effect_volume, music_volume):
+    def update(self, screen, enemy_group, char_typed, char_updated, cursor, db, music_volume):
         #animation
         self.image_i += 0.1
         if self.image_i >= len(self.animation):
             self.image_i = 0
         self.image = self.animation[int(self.image_i)]
+        
+        self.rect = self.image.get_rect(center = (self.x, self.y)) #solve the issue of the sudden change in coords when rotating the image at some angle. It works sort of like a default rect coords when no rotated rect coords is given
         
         if char_updated:
             if char_typed and self.nearest_enemy is None:
@@ -47,6 +49,12 @@ class Pemain(pygame.sprite.Sprite):
                     self.miss += 1
         
         if self.nearest_enemy is not None:
+            #rotate self to enemy
+            jrk_x = self.nearest_enemy.rect.centerx - self.rect.centerx
+            jrk_y = -(self.nearest_enemy.rect.centery - self.rect.centery)
+            sudut = math.degrees(math.atan2(jrk_y, jrk_x))
+            self.image = pygame.transform.rotate(self.image, sudut - 90)
+            self.rect = self.image.get_rect(center = (self.x, self.y)) #this make it rotate at its center for some reason #maybe cos when the image rotate, it create new image and new image has its own rect size but since new rect size is not created, it still use the old rect and its coords so it makes other images cant grow past this old rect coord point(which is at topleft) but it still allow other corner to grow
             #highlight enemy
             self.nearest_enemy.text_color = 'Gold'
             pygame.draw.rect(screen, 'Gold', self.nearest_enemy.rect, 1)
@@ -54,11 +62,12 @@ class Pemain(pygame.sprite.Sprite):
             if char_updated:
                 #update enemy
                 if self.nearest_enemy.word[0] == char_typed[-1]: # cane ai tau??
+                    tembak = Bullet(self.x, self.y, self.nearest_enemy)#buat mcm ztype, musuh akan explode bila sume bullet sampai kat dia
+                    self.group_bullets.add(tembak)
+                    
                     self.nearest_enemy.word = self.nearest_enemy.word[1:] #dia phm aku nk delete word tu ke?
                     self.typed_word_count += 1
                     if self.nearest_enemy.word == '':
-                        meletup.set_volume(sound_effect_volume)
-                        meletup.play()
                         self.enemy_killed += 1
                         self.nearest_enemy = None
                         if len(enemy_group.sprites()) == 1: #last musuh blm mati lagi sbb update dia lepas pemain and dia akan mati sbb enemy.word == '' so kene cek klo tinggal 1 bukan 0
@@ -215,6 +224,55 @@ class Pemain(pygame.sprite.Sprite):
                 # Draw the line from the previous point to the current point
                 pygame.draw.line(screen, lbl_color, (prev_x, prev_y), (x, y), line_width)
 
+class Bullet(pygame.sprite.Sprite):
+    def __init__(self, x, y, sasaran) -> None:
+        super().__init__()
+        self.x = x
+        self.y = y
+        self.animation = PLAYER_ASSETS['Bullet']
+        self.image_i = 0
+        self.image = self.animation[self.image_i]
+        self.rect = self.image.get_rect(center = (x, y))
+        self.mask = pygame.mask.from_surface(self.image)
+        self.sasaran = sasaran
+        self.gerakanX,self.gerakanY = self.rect.x,self.rect.y #kene buat lagi satu variables coords sbb coords yg kat rect pygame x blh jdi float so akan ada rounding error
+        self.direction = pygame.math.Vector2(sasaran.rect.center) - pygame.math.Vector2(self.rect.center)
+        self.direction = self.direction.normalize() # unit vector (kene normalize kan sbb klo magnitude panjang/tinggi sgt ig)
+        self.speed = 25
+    
+    def update(self, group_musuh):
+        #animation
+        self.image_i += 0.1
+        if self.image_i >= len(self.animation):
+            self.image_i = 0
+        self.image = self.animation[int(self.image_i)]
+        
+        #rotate self to enemy
+        self.jrk_x = self.sasaran.rect.centerx - self.rect.centerx
+        self.jrk_y = -(self.sasaran.rect.centery - self.rect.centery)
+        self.sudut = math.degrees(math.atan2(self.jrk_y, self.jrk_x))
+        self.image = pygame.transform.rotate(self.image, self.sudut - 90)
+        self.rect = self.image.get_rect(center = (self.x, self.y))
+        
+        # Update the position of the rect based on the direction and speed
+        self.gerakanX +=  (self.speed * self.direction.x)
+        self.gerakanY +=  (self.speed * self.direction.y)
+        
+        self.rect.x = self.gerakanX
+        self.rect.y = self.gerakanY
+        
+        #klo keluar dari skrin bunuh diri
+        if self.rect.x > WN_LEBAR or self.rect.x < 0 or self.rect.y > WN_TINGGI or self.rect.y < 0:
+            self.kill()
+        
+        collision_list = pygame.sprite.spritecollide(self, group_musuh, False, pygame.sprite.collide_mask)
+        if collision_list:
+            if self.sasaran in collision_list:
+                self.kill()
+                self.sasaran.max_bullet_hit -= 1
+                if self.sasaran.max_bullet_hit <= 0:
+                    self.sasaran.dying = True
+        
 def valid_char(username):
     if len(username) == 0:
         return False
