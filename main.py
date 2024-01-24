@@ -381,9 +381,8 @@ def options():
 
     while True:
         OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
-
-        SCREEN.fill("white")
-
+        SCREEN.blit(BG, (0, 0))
+        
         OPTIONS_TEXT = font.render("Settings.", True, "Black")
         OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(center_x, 260))
         SCREEN.blit(OPTIONS_TEXT, OPTIONS_RECT)
