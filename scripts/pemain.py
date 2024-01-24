@@ -268,6 +268,9 @@ class Bullet(pygame.sprite.Sprite):
         #klo keluar dari skrin bunuh diri
         if self.rect.x > WN_LEBAR or self.rect.x < 0 or self.rect.y > WN_TINGGI or self.rect.y < 0:
             self.kill()
+            self.sasaran.max_bullet_hit -= 1
+            if self.sasaran.max_bullet_hit <= 0:
+                self.sasaran.dying = True
         
         collision_list = pygame.sprite.spritecollide(self, group_musuh, False, pygame.sprite.collide_mask)
         if collision_list:
