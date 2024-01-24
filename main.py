@@ -35,6 +35,11 @@ center_y = SCREEN.get_height() // 2
 
 # loading the background music
 mixer.music.load('sound/backgroundsound.mp3')
+
+#default language
+languages = ['English', 'Malay', 'Both']
+current_language = 0
+
 # Set the initial volume
 initial_volume = 0.1
 sound_effect_volume = 0.5
@@ -191,6 +196,7 @@ def login():
                 sys.exit()
             if pygame.mouse.get_pressed()[0] == True:
                 if LOGIN_BACK.checkForInput(LOGIN_MOUSE_POS):
+                    btnSound.play()
                     return  # Go back to the main menu
                 # Check if the mouse click is inside the username input box
                 if username_box.collidepoint(event.pos):
@@ -311,6 +317,7 @@ def register():
             
             if pygame.mouse.get_pressed()[0] == True:
                 if REGISTER_BACK.checkForInput(REGISTER_MOUSE_POS):
+                    btnSound.play()
                     return 
                 if username_box.collidepoint(event.pos):
                     active_textbox = 'username'
@@ -374,9 +381,8 @@ def register():
             pygame.display.update()
 
 def options():
-    global sound_effect_volume, music_volume  # Declare global variables
+    global sound_effect_volume, music_volume, languages, current_language  # Declare global variables #declare? more like take the global variable i think
 
-    current_language = 'English'
     active_slider = None  # Variable to keep track of the active slider
 
     while True:
@@ -408,9 +414,9 @@ def options():
         pygame.draw.rect(SCREEN, "Green", (music_slider.x, music_slider.y, music_volume * 200, 20))
 
         # Language button
-        LANGUAGE_BUTTON = "Malay" if current_language == 'English' else "English"
+        LANGUAGE_LBL = languages[current_language]
         language_button = Button(image=None, pos=(center_x, 550),
-                                text_input=f"Change Language: {current_language}", font=font, base_color="Black", hovering_color="Green")
+                                text_input=f"Change Language: {languages[current_language]}", font=font, base_color="Black", hovering_color="Green")
         language_button.changeColor(OPTIONS_MOUSE_POS)
         language_button.draw(SCREEN)
 
@@ -451,8 +457,11 @@ def options():
                 elif music_slider.collidepoint(event.pos):
                     active_slider = "Music"
                 elif language_button.checkForInput(OPTIONS_MOUSE_POS):
-                    current_language = "Malay" if current_language == 'English' else "English"
+                    btnSound.play()
+                    current_language += 1
+                    current_language %= len(languages)
                 elif OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
+                    btnSound.play()
                     return
             elif event.type == pygame.MOUSEMOTION and event.buttons[0] == 1:  # Left mouse button is pressed
                 if active_slider == "SoundEffect":
@@ -515,6 +524,7 @@ def leaderboard():
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if BACK.checkForInput(MOUSE_POS):
+                    btnSound.play()
                     return
         
         pygame.display.update()
@@ -564,16 +574,21 @@ def pause():
                     return
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if RESUME_BTN.checkForInput(MOUSE_POS):
+                    btnSound.play()
                     return
                 if OPTIONS_BTN.checkForInput(MOUSE_POS):
+                    btnSound.play()
                     options()
                     return
                 if HELP_BTN.checkForInput(MOUSE_POS):
+                    btnSound.play()
                     help()
                 if MAIN_MENU_BTN.checkForInput(MOUSE_POS):
+                    btnSound.play()
                     to_main_menu = True
                     return to_main_menu
                 if QUIT_BTN.checkForInput(MOUSE_POS):
+                    btnSound.play()
                     pygame.quit()
                     sys.exit()
                 
@@ -602,7 +617,7 @@ def play(player_id):
     char_updated = False
     
     group_musuh = pygame.sprite.LayeredUpdates()
-    group_musuh,bil_ombak = jana_ombak(bil_ombak, group_musuh, bil_musuh, pemain.rect, sound_effect_volume)
+    group_musuh,bil_ombak = jana_ombak(bil_ombak, group_musuh, bil_musuh, pemain.rect, sound_effect_volume, languages[current_language])
     text_ombak = font.render(str(bil_ombak), True, (255,255,255), (0, 0, 0))#can remove?
     # Create a custom timer event
     WAVE_EVENT= pygame.USEREVENT + 1
@@ -616,7 +631,7 @@ def play(player_id):
         # Loop through the events
         for event in events:
             if event.type == WAVE_EVENT:
-                group_musuh,bil_ombak = jana_ombak(bil_ombak, group_musuh, bil_musuh, pemain.rect, sound_effect_volume)
+                group_musuh,bil_ombak = jana_ombak(bil_ombak, group_musuh, bil_musuh, pemain.rect, sound_effect_volume, languages[current_language])
                 pygame.time.set_timer(WAVE_EVENT, 0)# Reset the timer to 0 to stop it
                 timer_setted = False
             # Check if the user has clicked the close button
@@ -631,8 +646,6 @@ def play(player_id):
                     to_main_menu = pause()
                     if to_main_menu:
                         return
-                if event.key == pygame.K_BACKSPACE:
-                    char_typed = char_typed[:-1]  #amik smua value selain akhir sekali dlm list tu
                 else:
                     btnType.play()
                     char_typed += event.unicode #utk amik keyboard text input
@@ -671,6 +684,7 @@ def play(player_id):
             for event in events:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if BACK_BTN.checkForInput(PLAY_MOUSE_POS):
+                        btnSound.play()
                         mixer.music.play()
                         return
         
