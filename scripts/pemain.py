@@ -6,6 +6,7 @@ from scripts.pemalar import PLAYER_ASSETS, WN_LEBAR, WN_TINGGI
 
 gameover = pygame.mixer.Sound('sound/gameover.mp3')
 mati = pygame.mixer.Sound('sound/die.mp3')
+bullet_impact = pygame.mixer.Sound('sound/bulletImpact.mp3')
 class Pemain(pygame.sprite.Sprite):
     def __init__(self, player_id, x, y, animation, group_bullets) -> None:
         super().__init__()
@@ -32,7 +33,7 @@ class Pemain(pygame.sprite.Sprite):
         self.wpm = 0
         self.score = 0
     #deleted forgotten to delete gameOVer method
-    def update(self, screen, enemy_group, char_typed, char_updated, cursor, db, music_volume):
+    def update(self, screen, enemy_group, char_typed, char_updated, cursor, db, sound_effect_volume):
         #animation
         self.image_i += 0.1
         if self.image_i >= len(self.animation):
@@ -83,8 +84,8 @@ class Pemain(pygame.sprite.Sprite):
         
         if pygame.sprite.spritecollide(self, enemy_group, False):#klo dh dekat dgn player baru check mask collision
             if pygame.sprite.spritecollide(self, enemy_group, True, pygame.sprite.collide_mask):
-                mati.set_volume(music_volume)
-                gameover.set_volume(music_volume * 69)
+                mati.set_volume(sound_effect_volume)
+                gameover.set_volume(sound_effect_volume * 69)
                 mati.play()
                 gameover.play()
                 self.kill()
@@ -241,7 +242,7 @@ class Bullet(pygame.sprite.Sprite):
         self.gerakanX,self.gerakanY = self.rect.x,self.rect.y #kene buat lagi satu variables coords sbb coords yg kat rect pygame x blh jdi float so akan ada rounding error
         self.speed = 25
     
-    def update(self, group_musuh):
+    def update(self, group_musuh, sfx_vol):
         #animation
         self.image_i += 0.1
         if self.image_i >= len(self.animation):
@@ -276,6 +277,8 @@ class Bullet(pygame.sprite.Sprite):
         if collision_list:
             if self.sasaran in collision_list:
                 self.kill()
+                bullet_impact.set_volume(sfx_vol)
+                bullet_impact.play()
                 self.sasaran.max_bullet_hit -= 1
                 if self.sasaran.max_bullet_hit <= 0:
                     self.sasaran.dying = True
