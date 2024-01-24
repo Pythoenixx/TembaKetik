@@ -191,6 +191,7 @@ def login():
                 sys.exit()
             if pygame.mouse.get_pressed()[0] == True:
                 if LOGIN_BACK.checkForInput(LOGIN_MOUSE_POS):
+                    btnSound.play()
                     return  # Go back to the main menu
                 # Check if the mouse click is inside the username input box
                 if username_box.collidepoint(event.pos):
@@ -311,6 +312,7 @@ def register():
             
             if pygame.mouse.get_pressed()[0] == True:
                 if REGISTER_BACK.checkForInput(REGISTER_MOUSE_POS):
+                    btnSound.play()
                     return 
                 if username_box.collidepoint(event.pos):
                     active_textbox = 'username'
@@ -452,8 +454,10 @@ def options():
                 elif music_slider.collidepoint(event.pos):
                     active_slider = "Music"
                 elif language_button.checkForInput(OPTIONS_MOUSE_POS):
+                    btnSound.play()
                     current_language = "Malay" if current_language == 'English' else "English"
                 elif OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
+                    btnSound.play()
                     return
             elif event.type == pygame.MOUSEMOTION and event.buttons[0] == 1:  # Left mouse button is pressed
                 if active_slider == "SoundEffect":
@@ -516,6 +520,7 @@ def leaderboard():
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if BACK.checkForInput(MOUSE_POS):
+                    btnSound.play()
                     return
         
         pygame.display.update()
@@ -565,16 +570,21 @@ def pause():
                     return
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if RESUME_BTN.checkForInput(MOUSE_POS):
+                    btnSound.play()
                     return
                 if OPTIONS_BTN.checkForInput(MOUSE_POS):
+                    btnSound.play()
                     options()
                     return
                 if HELP_BTN.checkForInput(MOUSE_POS):
+                    btnSound.play()
                     help()
                 if MAIN_MENU_BTN.checkForInput(MOUSE_POS):
+                    btnSound.play()
                     to_main_menu = True
                     return to_main_menu
                 if QUIT_BTN.checkForInput(MOUSE_POS):
+                    btnSound.play()
                     pygame.quit()
                     sys.exit()
                 
@@ -670,6 +680,7 @@ def play(player_id):
             for event in events:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if BACK_BTN.checkForInput(PLAY_MOUSE_POS):
+                        btnSound.play()
                         mixer.music.play()
                         return
         
