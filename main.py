@@ -23,7 +23,7 @@ mixer.init()
 
 
 # Create a window object
-icon = pygame.image.load('img/kapal_angkasa.PNG')
+icon = pygame.image.load('img/logo.PNG')
 pygame.display.set_icon(icon)
 SCREEN = pygame.display.set_mode((WN_LEBAR, WN_TINGGI))
 
@@ -49,7 +49,7 @@ btnSound.set_volume(0.05)
 btnType = pygame.mixer.Sound('sound/keypressed.mp3')
 btnType.set_volume(0.1)
 
-BG = pygame.image.load('img/angkasa1.png').convert_alpha()
+BG = pygame.image.load('img/bg.png').convert_alpha()
 BG = pygame.transform.scale(BG, (WN_LEBAR, WN_TINGGI))
 
 BTN_BG = pygame.image.load('img/buttonBG.png').convert_alpha()
@@ -500,7 +500,7 @@ def leaderboard():
         SCREEN.blit(leaderboard_lbl, leaderboard_lbl.get_rect(center=(center_x, 40)))
         
         for i, row in enumerate(leaderboard_list):
-            username, typed_word_count, miss, wpm, percentage, highest_score = row
+            username, typed_word_count, miss, wpm, percentage, highest_score = row#future update
             text = font.render(f"{i+1}. {username} - {highest_score}", True, "White")
             SCREEN.blit(text, (center_x - text.get_width() // 2, 100 + i * 50))
         
@@ -523,14 +523,14 @@ def play(player_id):
     bil_ombak = 0
     
     bil_musuh = {
-        'Tiny_Kamikaze' : 0,
-        'Kamikaze' : 3,
-        'Gunner' : 0,
+        'Zombetta' : 0,
+        'Basic' : 3,
+        'Gargantuan' : 0,
     }
     
     group_bullets = pygame.sprite.Group()
     
-    pemain = Pemain(player_id, center_x, WN_TINGGI - 100, PLAYER_ASSETS['PlayerShip'], group_bullets)
+    pemain = Pemain(player_id, center_x, WN_TINGGI - 100, PLAYER_ASSETS['Player'], group_bullets)
     latar = Latar(0, WN_TINGGI, 0, 0.2)
     
     group_pemain = pygame.sprite.GroupSingle()
