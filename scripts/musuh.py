@@ -74,7 +74,7 @@ class Musuh(pygame.sprite.Sprite):
             screen.blit(self.text, self.text_rect)
             #if keluar dari screen then bunuh diri
             if self.gerakanY > WN_TINGGI + 69:
-                self.dying = True
+                self.kill()
         else:
             if self.explosion_i < len(self.explosion_ani):
                 screen.blit(self.explosion_ani[i := int(self.explosion_i)], self.explosion_ani[i].get_rect(center = self.rect.center))
@@ -89,18 +89,18 @@ class Musuh(pygame.sprite.Sprite):
                 self.kill()
 
 
-class Tiny_Kamikaze(Musuh):
+class Zombetta(Musuh):
     def __init__(self, x, y, image, sasaran_rect, text_offset, sfx_vol) -> None:
         word = random_word(most_used_words, least_used_words, 90)[0]
         super().__init__(x, y, image, sasaran_rect, text_offset, word, sfx_vol)
         
-class Kamikaze(Musuh):
+class Basic(Musuh):
     def __init__(self, x, y, image, sasaran_rect, text_offset, sfx_vol) -> None:
         word = random.choice(short_words)
         super().__init__(x, y, image, sasaran_rect, text_offset, word, sfx_vol)
         self.speed *= 0.8
 
-class Gunner(Musuh):
+class Gargantuan(Musuh):
     def __init__(self, x, y, image, sasaran_rect, text_offset, sfx_vol) -> None:
         word = random.choice(rare_long_words)
         super().__init__(x, y, image, sasaran_rect, text_offset, word, sfx_vol)
@@ -118,15 +118,15 @@ def jana_musuh(enemy_class, bilangan, musuh_group, assets_loaded, pemain_rect, s
 def jana_ombak(bil_ombak, musuh_group, bil_musuh, pemain_rect, sfx_vol):
     #maybe blh buat class asing for this type of func
     
-    jana_musuh(Tiny_Kamikaze, bil_musuh['Tiny_Kamikaze'], musuh_group, ENEMY_ASSETS['Tiny_Kamikaze'], pemain_rect, sfx_vol)
-    jana_musuh(Kamikaze, bil_musuh['Kamikaze'], musuh_group, ENEMY_ASSETS['Kamikaze'], pemain_rect, sfx_vol)
-    jana_musuh(Gunner, bil_musuh['Gunner'], musuh_group, ENEMY_ASSETS['Gunner'], pemain_rect, sfx_vol)
+    jana_musuh(Zombetta, bil_musuh['Zombetta'], musuh_group, ENEMY_ASSETS['Zombetta'], pemain_rect, sfx_vol)
+    jana_musuh(Basic, bil_musuh['Basic'], musuh_group, ENEMY_ASSETS['Basic'], pemain_rect, sfx_vol)
+    jana_musuh(Gargantuan, bil_musuh['Gargantuan'], musuh_group, ENEMY_ASSETS['Gargantuan'], pemain_rect, sfx_vol)
     
     bil_ombak += 1
     
-    bil_musuh['Kamikaze'] = bil_ombak + 3
-    bil_musuh['Tiny_Kamikaze'] = bil_ombak 
-    bil_musuh['Gunner'] += 1 if bil_ombak % 3 == 0 else 0
+    bil_musuh['Zombetta'] = bil_ombak 
+    bil_musuh['Basic'] = bil_ombak + 3
+    bil_musuh['Gargantuan'] += 1 if bil_ombak % 3 == 0 else 0
     
     return musuh_group,bil_ombak
 

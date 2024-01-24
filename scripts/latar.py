@@ -8,7 +8,7 @@ class Latar:
         self.veloX = veloX
         self.veloY = veloY
         
-        self.gmbr = pygame.image.load('img/angkasa1.png').convert_alpha()
+        self.gmbr = pygame.image.load('img/bg.png').convert_alpha()
         self.gmbr = pygame.transform.scale(self.gmbr,(WN_LEBAR*PIC_ZOOM,WN_TINGGI*PIC_ZOOM))
         
     

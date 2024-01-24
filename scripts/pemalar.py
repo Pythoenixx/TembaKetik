@@ -42,15 +42,15 @@ FPS = 60
 PIC_ZOOM = 5
 
 PLAYER_ASSETS = {
-    'PlayerShip' : animation_from_folder('renew/playership', 80),#manusia
-    'Bullet' : animation_from_folder('renew/ammo_projectile', 30),#dia pakai blaster
+    'Player' : animation_from_folder('img/Player', 80),#manusia
+    'Bullet' : animation_from_folder('img/Bullet', 30),#dia pakai blaster
 }
 
 ENEMY_ASSETS = {
-    'Tiny_Kamikaze' : (animation_from_folder('renew/tiniykamikazeship', 60), cari_kiri_bawah(assets_load('renew/tiniykamikazeship/tinykamikazeship1.PNG',60))),
-    'Kamikaze' : (animation_from_folder('renew/kamikazeship', 40), cari_kiri_bawah(assets_load('renew/kamikazeship/kamikazeship1.PNG',40))),
-    'Gunner' : (animation_from_folder('renew/gunnership', 69), cari_kiri_bawah(assets_load('renew/gunnership/gunnership1.PNG',69))),
-    'ExplosionAni' : animation_from_folder('renew/explosion', 50),
+    'Zombetta' : (animation_from_folder('img/Zombetta', 60), cari_kiri_bawah(assets_load('img/Zombetta/zombetta1.png',60))),
+    'Basic' : (animation_from_folder('img/Basic', 40), cari_kiri_bawah(assets_load('img/Basic/basic1.png',40))),
+    'Gargantuan' : (animation_from_folder('img/Gargantuan', 69), cari_kiri_bawah(assets_load('img/Gargantuan/gargantuan1.png',69))),
+    'ExplosionAni' : animation_from_folder('img/Explosion', 50),
 }
 
 
