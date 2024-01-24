@@ -10,11 +10,20 @@ with open("txt/10000words.txt", "r") as f:
     least_used_words = f.read().split()
 
 with open("txt/malaywords.txt", "r") as f:
-    malay_words = f.read().split() 
+    malay_words = f.read().split()
+
+with open("txt/moremalaywords.txt", "r") as f:
+    more_malay_words = f.read().split()
 
 short_words = [word for word in most_used_words if len(word) <= 5]
-long_words = [word for word in most_used_words if len(word) >= 6]
+long_words = [word for word in most_used_words if len(word) >= 6]#xde guna lagi
 rare_long_words = [word for word in least_used_words if len(word) >= 7]
+
+perkataan_pendek = [word for word in malay_words if len(word) <= 5]
+perkataan_panjang = [word for word in more_malay_words if len(word) >= 7]
+
+both_short = short_words + perkataan_pendek
+both_long = long_words + perkataan_panjang
 
 mixer.init()
 meletup = pygame.mixer.Sound('sound/meletup.mp3')
@@ -90,37 +99,47 @@ class Musuh(pygame.sprite.Sprite):
 
 
 class Zombetta(Musuh):
-    def __init__(self, x, y, image, sasaran_rect, text_offset, sfx_vol) -> None:
-        word = random_word(most_used_words, least_used_words, 90)[0]
+    def __init__(self, x, y, image, sasaran_rect, text_offset, sfx_vol, language) -> None:
+        word = random_word(most_used_words, more_malay_words, 69)[0]
         super().__init__(x, y, image, sasaran_rect, text_offset, word, sfx_vol)
         
 class Basic(Musuh):
-    def __init__(self, x, y, image, sasaran_rect, text_offset, sfx_vol) -> None:
-        word = random.choice(short_words)
+    def __init__(self, x, y, image, sasaran_rect, text_offset, sfx_vol, language) -> None:
+        if language == 'English':
+            word = random.choice(short_words)
+        elif language == 'Malay':
+            word = random.choice(perkataan_pendek)
+        else:
+            word = random.choice(both_short)
         super().__init__(x, y, image, sasaran_rect, text_offset, word, sfx_vol)
         self.speed *= 0.8
 
 class Gargantuan(Musuh):
-    def __init__(self, x, y, image, sasaran_rect, text_offset, sfx_vol) -> None:
-        word = random.choice(rare_long_words)
+    def __init__(self, x, y, image, sasaran_rect, text_offset, sfx_vol, language) -> None:
+        if language == 'English':
+            word = random.choice(rare_long_words)
+        elif language == 'Malay':
+            word = random.choice(perkataan_panjang)
+        else:
+            word = random.choice(both_long)
         super().__init__(x, y, image, sasaran_rect, text_offset, word, sfx_vol)
         self.speed *= 0.69
 
-def jana_musuh(enemy_class, bilangan, musuh_group, assets_loaded, pemain_rect, sfx_vol):
+def jana_musuh(enemy_class, bilangan, musuh_group, assets_loaded, pemain_rect, sfx_vol, language):
     for _ in range(bilangan):
         # Generate random coordinates
         x = random.randint(0, WN_LEBAR)
         y = random.randint(-100, 0)
         
-        musuh = enemy_class(x, y, assets_loaded[0], pemain_rect, assets_loaded[1], sfx_vol)
+        musuh = enemy_class(x, y, assets_loaded[0], pemain_rect, assets_loaded[1], sfx_vol, language)
         musuh_group.add(musuh)
 
-def jana_ombak(bil_ombak, musuh_group, bil_musuh, pemain_rect, sfx_vol):
+def jana_ombak(bil_ombak, musuh_group, bil_musuh, pemain_rect, sfx_vol, language):
     #maybe blh buat class asing for this type of func
     
-    jana_musuh(Zombetta, bil_musuh['Zombetta'], musuh_group, ENEMY_ASSETS['Zombetta'], pemain_rect, sfx_vol)
-    jana_musuh(Basic, bil_musuh['Basic'], musuh_group, ENEMY_ASSETS['Basic'], pemain_rect, sfx_vol)
-    jana_musuh(Gargantuan, bil_musuh['Gargantuan'], musuh_group, ENEMY_ASSETS['Gargantuan'], pemain_rect, sfx_vol)
+    jana_musuh(Zombetta, bil_musuh['Zombetta'], musuh_group, ENEMY_ASSETS['Zombetta'], pemain_rect, sfx_vol, language)
+    jana_musuh(Basic, bil_musuh['Basic'], musuh_group, ENEMY_ASSETS['Basic'], pemain_rect, sfx_vol, language)
+    jana_musuh(Gargantuan, bil_musuh['Gargantuan'], musuh_group, ENEMY_ASSETS['Gargantuan'], pemain_rect, sfx_vol, language)
     
     bil_ombak += 1
     
