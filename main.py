@@ -632,8 +632,6 @@ def play(player_id):
                     to_main_menu = pause()
                     if to_main_menu:
                         return
-                if event.key == pygame.K_BACKSPACE:
-                    char_typed = char_typed[:-1]  #amik smua value selain akhir sekali dlm list tu
                 else:
                     btnType.play()
                     char_typed += event.unicode #utk amik keyboard text input
