@@ -18,6 +18,7 @@ rare_long_words = [word for word in least_used_words if len(word) >= 7]
 
 mixer.init()
 meletup = pygame.mixer.Sound('sound/meletup.mp3')
+zombi = pygame.mixer.Sound('sound/zombiedeath.mp3')
 
 class Musuh(pygame.sprite.Sprite):
     def __init__(self, x, y, animation, sasaran_rect, text_offset, word, sfx_vol) -> None:
@@ -81,7 +82,9 @@ class Musuh(pygame.sprite.Sprite):
                 if not self.exploded:
                     self.exploded = True
                     meletup.set_volume(self.sfx_vol)
+                    zombi.set_volume(self.sfx_vol)
                     meletup.play()
+                    zombi.play()
             else:
                 self.kill()
 

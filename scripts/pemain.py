@@ -5,6 +5,7 @@ from pygame import mixer
 from scripts.pemalar import PLAYER_ASSETS, WN_LEBAR, WN_TINGGI
 
 gameover = pygame.mixer.Sound('sound/gameover.mp3')
+mati = pygame.mixer.Sound('sound/die.mp3')
 class Pemain(pygame.sprite.Sprite):
     def __init__(self, player_id, x, y, animation, group_bullets) -> None:
         super().__init__()
@@ -83,6 +84,7 @@ class Pemain(pygame.sprite.Sprite):
         if pygame.sprite.spritecollide(self, enemy_group, False):#klo dh dekat dgn player baru check mask collision
             if pygame.sprite.spritecollide(self, enemy_group, True, pygame.sprite.collide_mask):
                 gameover.set_volume(music_volume)
+                mati.play()
                 gameover.play()
                 self.kill()
                 self.hidup = False
@@ -236,8 +238,6 @@ class Bullet(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
         self.sasaran = sasaran
         self.gerakanX,self.gerakanY = self.rect.x,self.rect.y #kene buat lagi satu variables coords sbb coords yg kat rect pygame x blh jdi float so akan ada rounding error
-        self.direction = pygame.math.Vector2(sasaran.rect.center) - pygame.math.Vector2(self.rect.center)
-        self.direction = self.direction.normalize() # unit vector (kene normalize kan sbb klo magnitude panjang/tinggi sgt ig)
         self.speed = 25
     
     def update(self, group_musuh):
@@ -253,6 +253,9 @@ class Bullet(pygame.sprite.Sprite):
         self.sudut = math.degrees(math.atan2(self.jrk_y, self.jrk_x))
         self.image = pygame.transform.rotate(self.image, self.sudut - 90)
         self.rect = self.image.get_rect(center = (self.x, self.y))
+        
+        self.direction = pygame.math.Vector2(self.sasaran.rect.center) - pygame.math.Vector2(self.rect.center)
+        self.direction = self.direction.normalize() # unit vector (kene normalize kan sbb klo magnitude panjang/tinggi sgt ig)
         
         # Update the position of the rect based on the direction and speed
         self.gerakanX +=  (self.speed * self.direction.x)
