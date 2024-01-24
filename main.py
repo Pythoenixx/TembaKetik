@@ -465,7 +465,9 @@ def options():
                     pygame.mixer.music.set_volume(music_volume)  # Set music volume
                     
         pygame.display.update()
-        
+
+def help():
+    print('help pressed')        
 def leaderboard():
     small_font = pygame.font.Font("font/font.ttf",10)
     leaderboard_list = []
@@ -489,6 +491,7 @@ def leaderboard():
         MOUSE_POS = pygame.mouse.get_pos()
         
         SCREEN.blit(BG, (0, 0))
+        
         transparent_surface = pygame.Surface (SCREEN.get_size(), pygame.SRCALPHA) # Create a transparent surface
         transparent_surface.fill ((0, 0, 0, 169)) # Fill the surface with a semi-transparent black color
         SCREEN.blit(transparent_surface, (0, 0)) # Blit the transparent surface to the screen)
@@ -517,6 +520,66 @@ def leaderboard():
         
         pygame.display.update()
 
+def pause():
+    transparent_surface = pygame.Surface (SCREEN.get_size(), pygame.SRCALPHA) # Create a transparent surface
+    transparent_surface.fill ((0, 0, 0, 169)) # Fill the surface with a semi-transparent black color
+    SCREEN.blit(transparent_surface, (0, 0)) # Blit the transparent surface to the screen)
+    
+    RESUME_BTN = Button(image=BTN_BG, pos=(center_x, 200),
+                            text_input="RESUME", font=font, base_color="#d7fcd4", hovering_color="Gold")
+    OPTIONS_BTN = Button(image=BTN_BG, pos=(center_x, 300),
+                            text_input="OPTIONS", font=font, base_color="#d7fcd4", hovering_color="Gold")
+    HELP_BTN = Button(image=BTN_BG, pos=(center_x, 400),
+                            text_input="HELP", font=font, base_color="#d7fcd4", hovering_color="Gold")
+    MAIN_MENU_BTN = Button(image=BTN_BG, pos=(center_x, 500),
+                            text_input="MAIN MENU", font=font, base_color="#d7fcd4", hovering_color="Gold")
+    QUIT_BTN = Button(image=BTN_BG, pos=(center_x, 600),
+                            text_input="QUIT", font=font, base_color="#d7fcd4", hovering_color="Gold")
+    while True:
+        MOUSE_POS = pygame.mouse.get_pos()
+        
+        pause_lbl = font.render("Paused", True, "White")
+        SCREEN.blit(pause_lbl, pause_lbl.get_rect(center=(center_x, 69)))#ni kene letak dlm while loop klo x dia invisible
+        
+        RESUME_BTN.changeColor(MOUSE_POS)
+        RESUME_BTN.draw(SCREEN)
+        
+        OPTIONS_BTN.changeColor(MOUSE_POS)
+        OPTIONS_BTN.draw(SCREEN)
+        
+        HELP_BTN.changeColor(MOUSE_POS)
+        HELP_BTN.draw(SCREEN)
+        
+        MAIN_MENU_BTN.changeColor(MOUSE_POS)
+        MAIN_MENU_BTN.draw(SCREEN)
+        
+        QUIT_BTN.changeColor(MOUSE_POS)
+        QUIT_BTN.draw(SCREEN)
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    return
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if RESUME_BTN.checkForInput(MOUSE_POS):
+                    return
+                if OPTIONS_BTN.checkForInput(MOUSE_POS):
+                    options()
+                    return
+                if HELP_BTN.checkForInput(MOUSE_POS):
+                    help()
+                if MAIN_MENU_BTN.checkForInput(MOUSE_POS):
+                    to_main_menu = True
+                    return to_main_menu
+                if QUIT_BTN.checkForInput(MOUSE_POS):
+                    pygame.quit()
+                    sys.exit()
+                
+        pygame.display.update()
+        
 def play(player_id):
     clock = pygame.time.Clock()
     
@@ -558,13 +621,17 @@ def play(player_id):
                 pygame.time.set_timer(WAVE_EVENT, 0)# Reset the timer to 0 to stop it
                 timer_setted = False
             # Check if the user has clicked the close button
-            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+            if event.type == pygame.QUIT:
                 # Exit the loop and quit the program
                 running = False
                 pygame.quit()
                 db.close()
                 sys.exit()
             if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    to_main_menu = pause()
+                    if to_main_menu:
+                        return
                 if event.key == pygame.K_BACKSPACE:
                     char_typed = char_typed[:-1]  #amik smua value selain akhir sekali dlm list tu
                 else:
@@ -597,7 +664,7 @@ def play(player_id):
         group_musuh.update(SCREEN, group_musuh)
         
         if not pemain.hidup:
-            pemain.stats(SCREEN)
+            pemain.show_stats(SCREEN)
             BACK_BTN = Button(image=None, pos=(center_x, 775), 
                             text_input="BACK TO MAIN MENU", font=font, base_color="#d7fcd4", hovering_color="Gold")
             BACK_BTN.changeColor(pygame.mouse.get_pos())

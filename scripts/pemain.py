@@ -83,7 +83,8 @@ class Pemain(pygame.sprite.Sprite):
         
         if pygame.sprite.spritecollide(self, enemy_group, False):#klo dh dekat dgn player baru check mask collision
             if pygame.sprite.spritecollide(self, enemy_group, True, pygame.sprite.collide_mask):
-                gameover.set_volume(music_volume)
+                mati.set_volume(music_volume)
+                gameover.set_volume(music_volume * 69)
                 mati.play()
                 gameover.play()
                 self.kill()
@@ -145,7 +146,7 @@ class Pemain(pygame.sprite.Sprite):
         # Return the nearest sprite
         return nearest_sprite
     
-    def stats(self, screen):
+    def show_stats(self, screen):
         width = screen.get_width()
         height = screen.get_height()
         
