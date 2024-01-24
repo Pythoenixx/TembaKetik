@@ -74,7 +74,7 @@ class Musuh(pygame.sprite.Sprite):
             screen.blit(self.text, self.text_rect)
             #if keluar dari screen then bunuh diri
             if self.gerakanY > WN_TINGGI + 69:
-                self.dying = True
+                self.kill()
         else:
             if self.explosion_i < len(self.explosion_ani):
                 screen.blit(self.explosion_ani[i := int(self.explosion_i)], self.explosion_ani[i].get_rect(center = self.rect.center))
