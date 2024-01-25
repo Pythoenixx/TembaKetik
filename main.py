@@ -594,6 +594,10 @@ def pause():
         pygame.display.update()
         
 def play(player_id):
+    pause_img = pygame.image.load('img/pause_btn.png').convert_alpha()
+    pause_img = pygame.transform.scale(pause_img, (40, 40))
+    PAUSE_BTN = Button(image=pause_img, pos=(25, 25),
+                            text_input="", font=font, base_color="#d7fcd4", hovering_color="Gold")
     clock = pygame.time.Clock()
     
     bil_ombak = 0
@@ -640,6 +644,12 @@ def play(player_id):
                 pygame.quit()
                 db.close()
                 sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if PAUSE_BTN.checkForInput(PLAY_MOUSE_POS):
+                    btnSound.play()
+                    to_main_menu = pause()
+                    if to_main_menu:
+                        return
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     to_main_menu = pause()
@@ -673,6 +683,9 @@ def play(player_id):
         
         group_musuh.draw(SCREEN)
         group_musuh.update(SCREEN, group_musuh)
+        
+        PAUSE_BTN.changeColor(PLAY_MOUSE_POS)
+        PAUSE_BTN.draw(SCREEN)
         
         if not pemain.hidup:
             pemain.show_stats(SCREEN)
