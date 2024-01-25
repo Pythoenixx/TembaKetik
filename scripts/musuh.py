@@ -91,7 +91,7 @@ class Musuh(pygame.sprite.Sprite):
                 if not self.exploded:
                     self.exploded = True
                     meletup.set_volume(self.sfx_vol)
-                    zombi.set_volume(self.sfx_vol)
+                    zombi.set_volume(self.sfx_vol * 0.69)
                     meletup.play()
                     zombi.play()
             else:

@@ -277,7 +277,7 @@ class Bullet(pygame.sprite.Sprite):
         if collision_list:
             if self.sasaran in collision_list:
                 self.kill()
-                bullet_impact.set_volume(sfx_vol)
+                bullet_impact.set_volume(sfx_vol * 0.25)
                 bullet_impact.play()
                 self.sasaran.max_bullet_hit -= 1
                 if self.sasaran.max_bullet_hit <= 0:

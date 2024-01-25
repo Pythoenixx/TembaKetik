@@ -394,7 +394,7 @@ def options():
         SCREEN.blit(OPTIONS_TEXT, OPTIONS_RECT)
 
         # Display SOUND EFFECT level
-        sound_effect_text = font.render("Sound Effect:", True, "Black")
+        sound_effect_text = font.render(f"Sound Effect: {int(sound_effect_volume * 100)}%", True, "Black")
         sound_effect_rect = sound_effect_text.get_rect(center=(center_x - 25, 320))
         SCREEN.blit(sound_effect_text, sound_effect_rect)
 
@@ -414,7 +414,6 @@ def options():
         pygame.draw.rect(SCREEN, "Green", (music_slider.x, music_slider.y, music_volume * 200, 20))
 
         # Language button
-        LANGUAGE_LBL = languages[current_language]
         language_button = Button(image=None, pos=(center_x, 550),
                                 text_input=f"Change Language: {languages[current_language]}", font=font, base_color="Black", hovering_color="Green")
         language_button.changeColor(OPTIONS_MOUSE_POS)
