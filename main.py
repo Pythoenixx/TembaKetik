@@ -387,9 +387,8 @@ def options():
 
     while True:
         OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
-
-        SCREEN.fill("white")
-
+        SCREEN.blit(BG, (0, 0))
+        
         OPTIONS_TEXT = font.render("Settings.", True, "Black")
         OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(center_x, 260))
         SCREEN.blit(OPTIONS_TEXT, OPTIONS_RECT)
@@ -421,7 +420,7 @@ def options():
         language_button.changeColor(OPTIONS_MOUSE_POS)
         language_button.draw(SCREEN)
 
-        OPTIONS_BACK = Button(image=None, pos=(center_x, 620),
+        OPTIONS_BACK = Button(image=None, pos=(center_x, 775),
                              text_input="BACK", font=font, base_color="Black", hovering_color="Green")
         OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS)
         OPTIONS_BACK.draw(SCREEN)
@@ -667,10 +666,10 @@ def play(player_id):
                 timer_setted = True
                 
         group_bullets.draw(SCREEN)
-        group_bullets.update(group_musuh)
+        group_bullets.update(group_musuh, sound_effect_volume)
         
         group_pemain.draw(SCREEN)
-        group_pemain.update(SCREEN, group_musuh, char_typed, char_updated, cursor, db, music_volume)
+        group_pemain.update(SCREEN, group_musuh, char_typed, char_updated, cursor, db, sound_effect_volume)
         char_updated = False
         
         group_musuh.draw(SCREEN)
