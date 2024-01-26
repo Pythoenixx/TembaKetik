@@ -688,10 +688,11 @@ def play(player_id):
                     to_main_menu = pause()
                     if to_main_menu:
                         return
-                else:
-                    btnType.play()
-                    char_typed += event.unicode #utk amik keyboard text input
-                    char_updated = True 
+            if event.type == pygame.TEXTINPUT:
+                btnType.play()
+                char_typed += event.text #utk amik keyboard text input
+                char_updated = True 
+                    
         
         #biar x de trail
         SCREEN.fill((0, 0, 0))
