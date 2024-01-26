@@ -474,7 +474,18 @@ def options():
         pygame.display.update()
 
 def help():
-    print('help pressed')        
+    #display text or textbox
+    while True:
+        SCREEN.blit(BG, (0, 0))
+        HELP_LBL = font.render("Help", True, "White")
+        SCREEN.blit(HELP_LBL, HELP_LBL.get_rect(center=(center_x, 69)))
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+        
+        pygame.display.update()
 def leaderboard():
     small_font = pygame.font.Font("font/font.ttf",10)
     leaderboard_list = []
@@ -529,10 +540,6 @@ def leaderboard():
         pygame.display.update()
 
 def pause():
-    transparent_surface = pygame.Surface (SCREEN.get_size(), pygame.SRCALPHA) # Create a transparent surface
-    transparent_surface.fill ((0, 0, 0, 169)) # Fill the surface with a semi-transparent black color
-    SCREEN.blit(transparent_surface, (0, 0)) # Blit the transparent surface to the screen)
-    
     RESUME_BTN = Button(image=BTN_BG, pos=(center_x, 200),
                             text_input="RESUME", font=font, base_color="#d7fcd4", hovering_color="Gold")
     OPTIONS_BTN = Button(image=BTN_BG, pos=(center_x, 300),
@@ -545,6 +552,7 @@ def pause():
                             text_input="QUIT", font=font, base_color="#d7fcd4", hovering_color="Gold")
     while True:
         MOUSE_POS = pygame.mouse.get_pos()
+        SCREEN.blit(BG, (0, 0))
         
         pause_lbl = font.render("Paused", True, "White")
         SCREEN.blit(pause_lbl, pause_lbl.get_rect(center=(center_x, 69)))#ni kene letak dlm while loop klo x dia invisible
@@ -703,7 +711,5 @@ def play(player_id):
         pygame.display.flip()
         clock.tick(FPS)
         pygame.display.set_caption(f'TembaKetik FPS: {clock.get_fps() :.1f}')# f' ' tu utk tukar jdi f-string (mcm string data type)
-        print('mouse coords:', pygame.mouse.get_pos())
-
 main_menu()
 

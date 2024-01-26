@@ -69,9 +69,12 @@ class Pemain(pygame.sprite.Sprite):
                     
                     self.nearest_enemy.word = self.nearest_enemy.word[1:] #dia phm aku nk delete word tu ke?
                     self.typed_word_count += 1
+                    
                     if self.nearest_enemy.word == '':
                         self.enemy_killed += 1
                         self.nearest_enemy = None
+                        print("enemy set to :", self.nearest_enemy)
+                        
                         if len(enemy_group.sprites()) == 1: #last musuh blm mati lagi sbb update dia lepas pemain and dia akan mati sbb enemy.word == '' so kene cek klo tinggal 1 bukan 0
                             self.end_time = pygame.time.get_ticks()
                             self.elapsed_time = ((self.end_time - self.start_time) / 1000) / self.enemy_killed
