@@ -72,6 +72,7 @@ class Pemain(pygame.sprite.Sprite):
                     
                     if self.nearest_enemy.word == '':
                         self.enemy_killed += 1
+                        print(self.nearest_enemy.ori_word, "killed")
                         self.nearest_enemy = None
                         print("enemy set to :", self.nearest_enemy)
                         

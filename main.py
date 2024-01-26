@@ -84,11 +84,11 @@ def main_menu():
     
     PLAY_BUTTON = Button(image=BTN_BG, pos=(center_x, 560), 
                             text_input="PLAY", font=font, base_color="#d7fcd4", hovering_color="Gold")
-    OPTIONS_BUTTON = Button(image=BTN_S, pos=(30, 25), 
+    OPTIONS_BUTTON = Button(image=BTN_S, pos=(45, 25), 
                             text_input="", font=font, base_color="#828582", hovering_color="GOLD")
     QUIT_BUTTON = Button(image=BTN_BG, pos=(center_x, 640), 
                             text_input="QUIT", font=font, base_color="#d7fcd4", hovering_color="GOLD")
-    LEADERBOARD_BUTTON = Button(image=LEARDERBOARD_BG, pos=(center_x + 210, 26), 
+    LEADERBOARD_BUTTON = Button(image=LEARDERBOARD_BG, pos=(SCREEN.get_width() - 45, 26), 
                             text_input="", font=font, base_color="#d7fcd4", hovering_color="GOLD")
     
     while True:
