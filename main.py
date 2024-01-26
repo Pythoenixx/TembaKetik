@@ -78,18 +78,18 @@ def main_menu():
     
     LOGIN_BUTTON = Button(image=BTN_BG, pos=(center_x, 400), 
                         text_input="LOGIN", font=font, base_color="#d7fcd4", hovering_color="Gold")
-    
     REGISTER_BUTTON = Button(image=BTN_BG, pos=(center_x, 480), 
                             text_input="REGISTER", font=font, base_color="#d7fcd4", hovering_color="GOLD")
-    
-    PLAY_BUTTON = Button(image=BTN_BG, pos=(center_x, 560), 
-                            text_input="PLAY", font=font, base_color="#d7fcd4", hovering_color="Gold")
     OPTIONS_BUTTON = Button(image=BTN_S, pos=(45, 25), 
                             text_input="", font=font, base_color="#828582", hovering_color="GOLD")
-    QUIT_BUTTON = Button(image=BTN_BG, pos=(center_x, 640), 
-                            text_input="QUIT", font=font, base_color="#d7fcd4", hovering_color="GOLD")
     LEADERBOARD_BUTTON = Button(image=LEARDERBOARD_BG, pos=(SCREEN.get_width() - 45, 26), 
                             text_input="", font=font, base_color="#d7fcd4", hovering_color="GOLD")
+    PLAY_BUTTON = Button(image=BTN_BG, pos=(center_x, 480), 
+                            text_input="PLAY", font=font, base_color="#d7fcd4", hovering_color="Gold")
+    HELP_BUTTON = Button(image=BTN_BG, pos=(center_x, 560),
+                            text_input="HELP", font=font, base_color="#d7fcd4", hovering_color="GOLD")
+    QUIT_BUTTON = Button(image=BTN_BG, pos=(center_x, 640), 
+                            text_input="QUIT", font=font, base_color="#d7fcd4", hovering_color="GOLD")
     
     while True:
         SCREEN.blit(BG, (0, 0))
@@ -100,7 +100,7 @@ def main_menu():
 
         SCREEN.blit(MENU_TEXT, MENU_RECT)
         if is_logged_in:
-            for button in [PLAY_BUTTON, OPTIONS_BUTTON, QUIT_BUTTON, LEADERBOARD_BUTTON]:
+            for button in [PLAY_BUTTON, OPTIONS_BUTTON, QUIT_BUTTON, LEADERBOARD_BUTTON,HELP_BUTTON]:
                 button.changeColor(MENU_MOUSE_POS)
                 button.draw(SCREEN)
         else:
@@ -118,6 +118,9 @@ def main_menu():
                         btnSound.play()
                         pygame.mixer.music.stop()
                         play(is_logged_in[0])
+                    elif HELP_BUTTON.checkForInput(MENU_MOUSE_POS):
+                        btnSound.play()
+                        help()
                     elif OPTIONS_BUTTON.checkForInput(MENU_MOUSE_POS):
                         btnSound.play()
                         options()
@@ -474,16 +477,38 @@ def options():
         pygame.display.update()
 
 def help():
+    mini_font = pygame.font.Font("font/font.ttf",15)
+    BACK_BTN = Button(image=None, pos=(center_x, 775),
+                            text_input="BACK", font=font, base_color="#d7fcd4", hovering_color="Gold")
+    text = "Type the words under the zombies\n\nto shoot the zombies. If the\n\nwords under the zombies is empty,\n\nthe zombie will die.\n\nIf the zombie is dead, the player\n\nwill get a point.\n\nIf the player is hit,\nthe game will end.\n\nHigher wave will bring\n\nmore zombies"
+    lines = len(text) // 23
+    print(lines)
     #display text or textbox
     while True:
+        mouse_pos = pygame.mouse.get_pos()
+        
         SCREEN.blit(BG, (0, 0))
+        transparent_surface = pygame.Surface (SCREEN.get_size(), pygame.SRCALPHA) # Create a transparent surface
+        transparent_surface.fill ((0, 0, 0, 169)) # Fill the surface with a semi-transparent black color
+        SCREEN.blit(transparent_surface, (0, 0)) # Blit the transparent surface to the screen)
+        
         HELP_LBL = font.render("Help", True, "White")
         SCREEN.blit(HELP_LBL, HELP_LBL.get_rect(center=(center_x, 69)))
+        
+        HELP_TEXT = mini_font.render(text, True, "White")
+        SCREEN.blit(HELP_TEXT, HELP_TEXT.get_rect(topleft=(10, 109)))
+        
+        BACK_BTN.changeColor(mouse_pos)
+        BACK_BTN.draw(SCREEN)
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if BACK_BTN.checkForInput(mouse_pos):
+                    btnSound.play()
+                    return
         
         pygame.display.update()
 def leaderboard():
