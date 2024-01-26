@@ -144,6 +144,8 @@ def main_menu():
 
 # i drawed the textbox but now i don't know how to type in it
 def login():
+    mini_font = pygame.font.Font("font/font.ttf",13)
+    error_msg = ''
     loginUsername = ''
     loginPassword = ''
     active_textbox = None  # Variable to track the active textbox (None for no textbox)
@@ -239,9 +241,11 @@ def login():
                             else:
                                 # The username and password are incorrect
                                 print("Invalid username or password.")
+                                error_msg = "Invalid username or password."
                         except mysql.connector.Error as err:
                                 # Handle any other MySQL error
                                 print("MySQL Error: {}".format(err))
+                                error_msg = "MySQL Error: {}".format(err)
                     elif event.key == pygame.K_BACKSPACE:
                         loginPassword = loginPassword[:-1]
                     elif len(loginPassword) <= 13:
@@ -249,10 +253,15 @@ def login():
                     keys = pygame.key.get_pressed()
                     if keys [pygame.K_LCTRL] and keys [pygame.K_BACKSPACE]:
                         loginPassword = ''
-        
+                        
+        # Draw error message
+        error_text = mini_font.render(error_msg, True, "Red")
+        SCREEN.blit(error_text, error_text.get_rect(center=(center_x, password_box.y + 40)))
         pygame.display.update()
 
 def register():
+    mini_font = pygame.font.Font("font/font.ttf", 13)
+    error_msg = ''
     registerUsername = ""
     registerPassword = ""
     confirmRegisterPassword = ""
@@ -364,15 +373,20 @@ def register():
                                             return
                                         except mysql.connector.IntegrityError as err:
                                             print("Username already taken.")
+                                            error_msg = "Username already taken."
                                             print(err)
                                         except mysql.connector.Error as err:
                                             print("MySQL Error: {}".format(err))
+                                            error_msg = "Error occurred while registering."
                                 else:
                                     print("Passwords do not match. Please try again.")
+                                    error_msg = "Passwords do not match.\nPlease try again."
                             else:
                                 print("Invalid username. Please try again.")
+                                error_msg = "Invalid username.\nPlease try again."
                         else:
                             print("Please fill in all fields before registering.")
+                            error_msg = "Please fill in all fields\nbefore registering."
 
                     elif event.key == pygame.K_BACKSPACE:
                         confirmRegisterPassword = confirmRegisterPassword[:-1]
@@ -381,6 +395,9 @@ def register():
                     keys = pygame.key.get_pressed()
                     if keys [pygame.K_LCTRL] and keys [pygame.K_BACKSPACE]:
                         confirmRegisterPassword = ''
+            # Draw error message
+            error_text = mini_font.render(error_msg, True, "Red")
+            SCREEN.blit(error_text, error_text.get_rect(center=(center_x, confirm_password_box.y + 69)))
             pygame.display.update()
 
 def options():
@@ -511,6 +528,7 @@ def help():
                     return
         
         pygame.display.update()
+
 def leaderboard():
     small_font = pygame.font.Font("font/font.ttf",10)
     leaderboard_list = []
