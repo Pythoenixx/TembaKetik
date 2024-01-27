@@ -327,7 +327,7 @@ def register():
                 pygame.quit()
                 sys.exit()
             
-            if pygame.mouse.get_pressed()[0] == True:
+            if pygame.mouse.get_pressed()[0] == True:# this seems causing error if multiple keys is pressed at the same time 
                 if REGISTER_BACK.checkForInput(REGISTER_MOUSE_POS):
                     btnSound.play()
                     return 
@@ -380,13 +380,13 @@ def register():
                                             error_msg = "Error occurred while registering."
                                 else:
                                     print("Passwords do not match. Please try again.")
-                                    error_msg = "Passwords do not match.\nPlease try again."
+                                    error_msg = "Passwords do not match. Please try again."
                             else:
                                 print("Invalid username. Please try again.")
-                                error_msg = "Invalid username.\nPlease try again."
+                                error_msg = "Invalid username. Please try again."
                         else:
                             print("Please fill in all fields before registering.")
-                            error_msg = "Please fill in all fields\nbefore registering."
+                            error_msg = "Please fill in all fields before registering."
 
                     elif event.key == pygame.K_BACKSPACE:
                         confirmRegisterPassword = confirmRegisterPassword[:-1]
@@ -395,9 +395,8 @@ def register():
                     keys = pygame.key.get_pressed()
                     if keys [pygame.K_LCTRL] and keys [pygame.K_BACKSPACE]:
                         confirmRegisterPassword = ''
-            # Draw error message
-            error_text = mini_font.render(error_msg, True, "Red")
-            SCREEN.blit(error_text, error_text.get_rect(center=(center_x, confirm_password_box.y + 69)))
+            # Draw error message 
+            renderTextCenteredAt(error_msg, mini_font, "red", center_x, confirm_password_box.y + 69, SCREEN, SCREEN.get_width())
             pygame.display.update()
 
 def options():
