@@ -68,6 +68,8 @@ def renderTextCenteredAt(text, font, colour, x, y, screen, allowed_width):
         font_surface = font.render(line, True, colour)
         screen.blit(font_surface, (tx, ty))
 
+        y_offset += fh
+
 #window
 WN_LEBAR = 500
 WN_TINGGI = 820
