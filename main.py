@@ -199,18 +199,19 @@ def login():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            if pygame.mouse.get_pressed()[0] == True:
-                if LOGIN_BACK.checkForInput(LOGIN_MOUSE_POS):
-                    btnSound.play()
-                    return  # Go back to the main menu
-                # Check if the mouse click is inside the username input box
-                if username_box.collidepoint(event.pos):
-                    active_textbox = 'username'
-                # Check if the mouse click is inside the password input box
-                elif password_box.collidepoint(event.pos):
-                    active_textbox = 'password'
-                else:
-                    active_textbox = None
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    if LOGIN_BACK.checkForInput(LOGIN_MOUSE_POS):
+                        btnSound.play()
+                        return  # Go back to the main menu
+                    # Check if the mouse click is inside the username input box
+                    if username_box.collidepoint(event.pos):
+                        active_textbox = 'username'
+                    # Check if the mouse click is inside the password input box
+                    elif password_box.collidepoint(event.pos):
+                        active_textbox = 'password'
+                    else:
+                        active_textbox = None
             if event.type == pygame.KEYDOWN:
                 if active_textbox == 'username':
                     if event.key == pygame.K_RETURN:
@@ -326,19 +327,19 @@ def register():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            
-            if pygame.mouse.get_pressed()[0] == True:# this seems causing error if multiple keys is pressed at the same time 
-                if REGISTER_BACK.checkForInput(REGISTER_MOUSE_POS):
-                    btnSound.play()
-                    return 
-                if username_box.collidepoint(event.pos):
-                    active_textbox = 'username'
-                elif password_box.collidepoint(event.pos):
-                    active_textbox = 'password'
-                elif confirm_password_box.collidepoint(event.pos):
-                    active_textbox = 'confirm_password'
-                else:
-                    active_textbox = None
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if pygame.mouse.get_pressed()[0] == True:
+                    if REGISTER_BACK.checkForInput(REGISTER_MOUSE_POS):
+                        btnSound.play()
+                        return 
+                    if username_box.collidepoint(event.pos):
+                        active_textbox = 'username'
+                    elif password_box.collidepoint(event.pos):
+                        active_textbox = 'password'
+                    elif confirm_password_box.collidepoint(event.pos):
+                        active_textbox = 'confirm_password'
+                    else:
+                        active_textbox = None
             
             if event.type == pygame.KEYDOWN:
                 if active_textbox == 'username':
