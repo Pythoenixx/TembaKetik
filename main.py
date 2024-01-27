@@ -21,10 +21,13 @@ pygame.init()
 # Initialize mixer
 mixer.init()
 
+iconWidth = 10
+iconHeight = 10
 
 # Create a window object
-icon = pygame.image.load('img/logo.PNG')
-pygame.display.set_icon(icon)
+icon = pygame.image.load('img/icon.png')
+resizedIcon = pygame.transform.scale(icon,(iconWidth, iconHeight))
+pygame.display.set_icon(resizedIcon)
 SCREEN = pygame.display.set_mode((WN_LEBAR, WN_TINGGI))
 
 font = pygame.font.Font("font/font.ttf",20)
