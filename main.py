@@ -27,6 +27,8 @@ icon = pygame.image.load('img/logo.PNG')
 pygame.display.set_icon(icon)
 SCREEN = pygame.display.set_mode((WN_LEBAR, WN_TINGGI))
 
+pygame.display.set_caption("Tembaketik")
+
 font = pygame.font.Font("font/font.ttf",20)
 
 # Get the center of the screen
@@ -141,7 +143,6 @@ def main_menu():
                 
                     
         pygame.display.update()
-
 # i drawed the textbox but now i don't know how to type in it
 def login():
     mini_font = pygame.font.Font("font/font.ttf",13)
@@ -754,6 +755,5 @@ def play(player_id):
         
         pygame.display.flip()
         clock.tick(FPS)
-        pygame.display.set_caption(f'TembaKetik FPS: {clock.get_fps() :.1f}')# f' ' tu utk tukar jdi f-string (mcm string data type)
 main_menu()
 
