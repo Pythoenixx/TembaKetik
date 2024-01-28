@@ -1,5 +1,4 @@
 import pygame,sys,asyncio,mysql.connector
-
 from pygame import mixer
 from scripts.pemalar import *
 from scripts.latar import Latar
@@ -21,10 +20,11 @@ pygame.init()
 # Initialize mixer
 mixer.init()
 
-
 # Create a window object
-icon = pygame.image.load('img/logo.PNG')
+icon = pygame.image.load('img/icon.png')
+resizedIcon = pygame.transform.scale(icon,(80, 80))
 pygame.display.set_icon(icon)
+
 SCREEN = pygame.display.set_mode((WN_LEBAR, WN_TINGGI))
 
 pygame.display.set_caption("Tembaketik")
