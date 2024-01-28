@@ -63,6 +63,7 @@ class Pemain(pygame.sprite.Sprite):
             self.nearest_enemy.text_color = 'Gold'
             pygame.draw.rect(screen, 'Gold', self.nearest_enemy.rect, 1)
             self.nearest_enemy.targeted = True
+            
             if self.nearest_enemy.word == '' or self.nearest_enemy.dying: #apa jadi klo enemy word tu mmg == ''?
                 self.enemy_killed += 1
                 print(self.nearest_enemy.ori_word, "killed, coords:", self.nearest_enemy.rect.center)
@@ -75,11 +76,12 @@ class Pemain(pygame.sprite.Sprite):
                     self.elapsed_time_list.append(self.elapsed_time)
                     self.enemy_killed = 0
                     self.start_time = 0 #utk benarkan timer start balik
-            if char_updated:
+            
+            elif char_updated:
                 print("player type:", char_typed[-1])
                 #update enemy
                 if self.nearest_enemy.word[0] == char_typed[-1]: # cane ai tau??
-                    tembak = Bullet(self.x, self.y, self.nearest_enemy)#buat mcm ztype, musuh akan explode bila sume bullet sampai kat dia
+                    tembak = Bullet(self.x, self.y, self.nearest_enemy)
                     self.group_bullets.add(tembak)
                     
                     self.nearest_enemy.word = self.nearest_enemy.word[1:] #dia phm aku nk delete word tu ke?
