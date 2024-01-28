@@ -64,7 +64,7 @@ class Pemain(pygame.sprite.Sprite):
             pygame.draw.rect(screen, 'Gold', self.nearest_enemy.rect, 1)
             self.nearest_enemy.targeted = True
             
-            if self.nearest_enemy.word == '' or self.nearest_enemy.dying: #apa jadi klo enemy word tu mmg == ''?
+            if self.nearest_enemy.word == '' or self.nearest_enemy.dying:
                 self.enemy_killed += 1
                 print(self.nearest_enemy.ori_word, "killed, coords:", self.nearest_enemy.rect.center)
                 self.nearest_enemy = None
