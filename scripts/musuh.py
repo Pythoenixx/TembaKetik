@@ -33,7 +33,7 @@ class Musuh(pygame.sprite.Sprite):
     def __init__(self, x, y, animation, sasaran_rect, text_offset, word, sfx_vol) -> None:
         super().__init__()
         self.animation = animation
-        self.image_i = 0
+        self.image_i = 0 #maybe blh buat ni random so dia start at random location and make dont make all of the same type of the enemy walk simultaneously? but have potential for it to have different hitbox(mask)
         self.image = self.animation[self.image_i]
         self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect(center = (x, y))
@@ -59,6 +59,8 @@ class Musuh(pygame.sprite.Sprite):
     def update(self, screen, group_musuh):
         # Update the position of the rect
         if not self.dying:
+            if self.max_bullet_hit <= 0:
+                self.dying = True
             #animation
             self.image_i += 0.1
             if self.image_i >= len(self.animation):
@@ -94,6 +96,7 @@ class Musuh(pygame.sprite.Sprite):
                     zombi.set_volume(self.sfx_vol * 0.69)
                     meletup.play()
                     zombi.play()
+                    self.word = ''
             else:
                 self.kill()
 
