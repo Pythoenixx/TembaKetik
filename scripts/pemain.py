@@ -188,7 +188,7 @@ class Pemain(pygame.sprite.Sprite):
         text = data_font.render(f"{self.accuracy:.2f}%", True, data_color)
         screen.blit(text, (accuracy_coords[0], accuracy_coords[1] + 40))
         
-        text = font.render(f"Miss", True, lbl_color)
+        text = font.render(f"Missed Word", True, lbl_color)
         screen.blit(text, miss_coords)
         text = data_font.render(f"{self.miss}", True, data_color)
         screen.blit(text, (miss_coords[0], miss_coords[1] + 40))
